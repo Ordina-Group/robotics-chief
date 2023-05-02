@@ -9,6 +9,7 @@ plugins {
     id("io.ktor.plugin") version "2.3.0"
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.20"
     id("com.github.node-gradle.node") version "4.0.0"
+    id("com.github.ManifestClasspath") version "0.1.0-RELEASE"
 }
 
 group = "nl.ordina.robotics"

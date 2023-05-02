@@ -14,7 +14,9 @@
     TableHeadCell
   } from 'flowbite-svelte';
 
-  import { roboStore, sendCommand, settingsStore } from "../lib/stores"
+  import { roboStore, settingsStore, statusStore } from "../lib/stores"
+  import { execute } from "../lib/actions";
+  import { sendCommand } from "../lib/socket";
 
   let host: String = $settingsStore.host
   let controller: String = $settingsStore.controller
@@ -56,15 +58,15 @@
 
     <Card class="grow" size="l">
         <span>Message:</span>
-        <span class="message-container">
-        {#key $roboStore}
-            <pre class="message" transition:slide>{$roboStore.message}</pre>
-        {/key}
-    </span>
+        <span class="message-container break-words">
+            {#key $roboStore}
+                <pre class="message" transition:slide>{$roboStore.message}</pre>
+            {/key}
+        </span>
     </Card>
 </div>
 
-{#if $roboStore.type === "StatusTable"}
+{#if $statusStore !== undefined}
     <Card size="xl">
         <h2 class="text-2xl mb-1">Status</h2>
         <Table>
@@ -75,7 +77,7 @@
                 <TableHeadCell>Action</TableHeadCell>
             </TableHead>
             <TableBody class="divide-y">
-                {#each $roboStore.items as item, i}
+                {#each $statusStore.items as item, i}
                     <TableBodyRow>
                         <TableBodyCell>{item.name}</TableBodyCell>
                         <TableBodyCell>
@@ -90,7 +92,7 @@
                         <TableBodyCell tdClass="px-6 py-4 font-medium">{item.message}</TableBodyCell>
                         <TableBodyCell>
                             {#if item.actionUrl && item.actionLabel}
-                                <Button on:click={() => fetch(item.actionUrl, {method: 'POST'})}>
+                                <Button on:click={() => execute(item)}>
                                     {item.actionLabel || 'Fix'}
                                 </Button>
                             {/if}

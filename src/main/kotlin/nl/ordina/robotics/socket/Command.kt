@@ -9,4 +9,7 @@ sealed class Command {
 
     @Serializable
     data class UpdateController(val mac: String) : Command()
+
+    @Serializable
+    data class ConnectWifi(val ssid: String, val password: String) : Command()
 }

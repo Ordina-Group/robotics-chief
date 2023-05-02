@@ -1,0 +1,49 @@
+<script lang="ts">
+  import { Alert, Button, Input, Label } from "flowbite-svelte";
+
+  import { register, sendCommand } from "../../lib/socket";
+  import { modalStore } from "../../lib/stores";
+
+  const success = register("nl.ordina.robotics.socket.Message.CommandSuccess");
+  const failure = register("nl.ordina.robotics.socket.Message.CommandFailure");
+
+  let ssid = "OrdinaNLGuest"
+  let password = ""
+  let connecting = false
+  let error: string | undefined = undefined
+
+  const connect = () => {
+    connecting = true;
+    sendCommand({ type: 'nl.ordina.robotics.socket.Command.ConnectWifi', ssid, password });
+  }
+
+  $: {
+    if ($success?.command === "ConnectWifi") {
+      modalStore.set(undefined);
+      success.set(undefined);
+    }
+
+    if ($failure?.command === "ConnectWifi") {
+        connecting = false;
+        error = $failure.message;
+    }
+  }
+</script>
+
+<div class="grid gap-2">
+    <h1>Connect to WiFi</h1>
+    <div>
+        <Label for="ssid">SSID</Label>
+        <Input id="ssid" type="text" bind:value={ssid}/>
+    </div>
+    <div>
+        <Label for="password">Password</Label>
+        <Input id="password" type="password" bind:value={password}/>
+    </div>
+    {#if error !== undefined}
+        <Alert color="red">{error}</Alert>
+    {/if}
+    <Button disabled={connecting} on:click={connect}>
+        Connect
+    </Button>
+</div>

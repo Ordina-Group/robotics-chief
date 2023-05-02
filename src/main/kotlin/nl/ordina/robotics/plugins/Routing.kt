@@ -19,6 +19,7 @@ import io.ktor.websocket.readText
 import io.ktor.websocket.send
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import nl.ordina.robotics.Cmd
 import nl.ordina.robotics.ignoreFailure
 import nl.ordina.robotics.runCableCommand
 import nl.ordina.robotics.runInWorkDir
@@ -40,28 +41,28 @@ fun Application.configureRouting() {
         }
 
         post("/commands/setupenv") {
-            val output = runCableCommand("echo \"source /opt/ros/foxy/setup.bash\" >> ~/.bashrc")
+            val output = runCableCommand("echo \"${Cmd.Ros.sourceBash}\" >> ~/.bashrc")
 
             call.respondText("Done: $output")
         }
 
         post("/commands/clone") {
             val output =
-                runCableCommand("git clone https://github.com/OrdinaNederland/robotics-workshop /home/jetson/robotics-workshop")
+                runCableCommand(Cmd.Git.clone("https://github.com/OrdinaNederland/robotics-workshop /home/jetson/robotics-workshop"))
 
             call.respondText("Clone output: $output")
         }
 
         post("/commands/pull") {
-            val output = runInWorkDir("git pull")
+            val output = runInWorkDir(Cmd.Git.pull)
 
             call.respondText("Pull output: $output")
         }
 
         post("/commands/build") {
             val output = runInWorkDir(
-                "colcon build --symlink-install",
-                "source install/local_setup.bash",
+                Cmd.Ros.buildInstall,
+                Cmd.Ros.sourceLocalSetup,
             )
 
             call.respondText("Clone output: $output")
@@ -77,9 +78,9 @@ fun Application.configureRouting() {
         post("/commands/restart/{number}") {
             val number = call.parameters["number"]
             val output = runInWorkDir(
-                "pkill -INT -f ros2".ignoreFailure(),
-                "source /opt/ros/foxy/setup.bash",
-                "source install/local_setup.bash",
+                Cmd.Ros.stop.ignoreFailure(),
+                Cmd.Ros.sourceBash,
+                Cmd.Ros.sourceLocalSetup,
                 "ROS_DOMAIN_ID=$number ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &",
             )
 
@@ -89,8 +90,8 @@ fun Application.configureRouting() {
         post("/commands/launch/{number}") {
             val number = call.parameters["number"]
             val output = runInWorkDir(
-                "source /opt/ros/foxy/setup.bash",
-                "source install/local_setup.bash",
+                Cmd.Ros.sourceBash,
+                Cmd.Ros.sourceLocalSetup,
                 "ROS_DOMAIN_ID=$number ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &",
             )
 

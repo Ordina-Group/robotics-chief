@@ -18,6 +18,12 @@ sealed class Message {
     data class CommandResult(val command: String, override val message: String) : Message()
 
     @Serializable
+    data class CommandSuccess(val command: String, override val message: String) : Message()
+
+    @Serializable
+    data class CommandFailure(val command: String, override val message: String) : Message()
+
+    @Serializable
     data class Settings(val value: JohnnyCableSettings) : Message() {
         override val message = "ssh settings"
     }

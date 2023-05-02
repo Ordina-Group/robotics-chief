@@ -15,7 +15,10 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import nl.ordina.robotics.Cmd
 import nl.ordina.robotics.JohnnyCableSettings
+import nl.ordina.robotics.runCableCommand
+import org.apache.sshd.common.SshException
 
 private val socketSerializer = Json {
     encodeDefaults = true
@@ -66,6 +69,20 @@ suspend fun DefaultWebSocketServerSession.handleChiefSocket() {
                     sendMessage(Message.Info("Updating controller..."))
                     settingsLock.withLock {
                         settings = settings.copy(controller = command.mac.trim())
+                    }
+                }
+                is Command.ConnectWifi -> {
+                    sendMessage(Message.Info("Connecting to wifi network ${command.ssid}..."))
+                    try {
+                        val output = settings.runCableCommand(Cmd.Networking.connectWifi(command.ssid, command.password))
+
+                        if (output.contains("successfully activated with")) {
+                            sendMessage(Message.CommandSuccess(command = "ConnectWifi", message = "Connected to ${command.ssid}"))
+                        } else {
+                            sendMessage(Message.CommandFailure(command = "ConnectWifi", message = output))
+                        }
+                    } catch (e: SshException) {
+                        sendMessage(Message.CommandFailure(command = "ConnectWifi", message = e.message ?: "Unknown error connecting to wifi"))
                     }
                 }
             }
