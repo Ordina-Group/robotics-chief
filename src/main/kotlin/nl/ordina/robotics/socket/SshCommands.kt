@@ -2,6 +2,7 @@ package nl.ordina.robotics.socket
 
 import nl.ordina.robotics.JohnnyCableSettings
 import nl.ordina.robotics.runCableCommand
+import nl.ordina.robotics.runInWorkDir
 
 object SshCommands {
     fun debug(): StatusTable = debug(JohnnyCableSettings())
@@ -10,7 +11,7 @@ object SshCommands {
         val user = settings.runCableCommand("whoami")
         val dir = settings.runCableCommand("ls -lah /home/jetson/robotics-workshop")
         val projectCloned = !dir.contains("No such file or directory")
-        val projectCloning = settings.runCableCommand("cd /home/jetson/robotics-workshop/ && git status").contains("No commits yet")
+        val projectCloning = settings.runInWorkDir("git status").contains("No commits yet")
         val projectBuilding = settings.runCableCommand("pgrep -f /usr/bin/colcon").isNotEmpty()
         val projectBuilt = !projectBuilding && !settings
             .runCableCommand("ls -lah /home/jetson/robotics-workshop/build")

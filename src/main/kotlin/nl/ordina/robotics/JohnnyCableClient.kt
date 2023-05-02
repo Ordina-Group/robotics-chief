@@ -18,15 +18,26 @@ data class JohnnyCableSettings(
     val host: String = "192.168.55.1",
     val port: Int = 22,
     val timeout: Duration = 5000.milliseconds,
+    val workDir: String = "/home/jetson/robotics-workshop",
     internal var current: ClientSession? = null,
 )
 
-fun runCableCommand(command: String = "whoami"): String =
-    JohnnyCableSettings().runCableCommand(command)
+fun runInWorkDir(vararg command: String, separator: String = " && "): String =
+    with(JohnnyCableSettings()) {
+        runCableCommand("cd $workDir", *command, separator = separator)
+    }
 
-fun JohnnyCableSettings.runCableCommand(command: String = "whoami"): String =
+fun runCableCommand(vararg command: String, separator: String = " && "): String =
+    JohnnyCableSettings().runCableCommand(*command, separator = separator)
+
+fun JohnnyCableSettings.runInWorkDir(vararg command: String, separator: String = " && "): String =
     JohnnyCableSession.withSession(this) { session ->
-        session.runCommand(command, this.timeout)
+        session.runCommand(arrayOf("cd $workDir", *command).joinToString(separator), this.timeout)
+    }
+
+fun JohnnyCableSettings.runCableCommand(vararg command: String, separator: String = " && "): String =
+    JohnnyCableSession.withSession(this) { session ->
+        session.runCommand(command.joinToString(separator), this.timeout)
     }
 
 object JohnnyCableSession {

@@ -19,9 +19,10 @@ import io.ktor.websocket.readText
 import io.ktor.websocket.send
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import nl.ordina.robotics.socket.handleChiefSocket
 import nl.ordina.robotics.runCableCommand
+import nl.ordina.robotics.runInWorkDir
 import nl.ordina.robotics.socket.SshCommands
+import nl.ordina.robotics.socket.handleChiefSocket
 
 fun Application.configureRouting() {
     install(StatusPages) {
@@ -51,16 +52,21 @@ fun Application.configureRouting() {
         }
 
         post("/commands/build") {
-            val output =
-                runCableCommand("cd /home/jetson/robotics-workshop && colcon build --symlink-install && source install/local_setup.bash")
+            val output = runInWorkDir(
+                "colcon build --symlink-install",
+                "source install/local_setup.bash",
+            )
 
             call.respondText("Clone output: $output")
         }
 
         post("/commands/launch/{number}") {
             val number = call.parameters["number"]
-            val output =
-                runCableCommand("cd /home/jetson/robotics-workshop && source /opt/ros/foxy/setup.bash && source install/local_setup.bash && ROS_DOMAIN_ID=$number ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &")
+            val output = runInWorkDir(
+                "source /opt/ros/foxy/setup.bash",
+                "source install/local_setup.bash",
+                "ROS_DOMAIN_ID=$number ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &",
+            )
 
             call.respondText("Launched robot number $number: $output")
         }
