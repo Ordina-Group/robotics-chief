@@ -40,4 +40,5 @@ data class StatusLine(
     val message: String = "",
     val failure: String = "",
     val fixUrl: String? = null,
+    val fixLabel: String? = null,
 )

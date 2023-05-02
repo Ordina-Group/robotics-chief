@@ -51,6 +51,12 @@ fun Application.configureRouting() {
             call.respondText("Clone output: $output")
         }
 
+        post("/commands/pull") {
+            val output = runInWorkDir("git pull")
+
+            call.respondText("Pull output: $output")
+        }
+
         post("/commands/build") {
             val output = runInWorkDir(
                 "colcon build --symlink-install",

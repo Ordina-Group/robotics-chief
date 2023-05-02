@@ -32,18 +32,21 @@ object SshCommands {
                     success = projectCloned,
                     pending = projectCloning,
                     fixUrl = "/commands/clone",
+                    fixLabel = "Clone",
                 ),
                 StatusLine(
                     name = "revision",
                     success = revision.isNotEmpty(),
                     message = revision,
                     pending = false,
+                    fixLabel = "Pull",
                 ),
                 StatusLine(
                     name = "built",
                     success = projectBuilt,
                     pending = projectBuilding,
                     fixUrl = "/commands/build",
+                    fixLabel = "Build",
                 ),
                 StatusLine(
                     name = "running",
@@ -51,6 +54,7 @@ object SshCommands {
                     success = running.isNotEmpty(),
                     pending = false,
                     fixUrl = "/commands/launch/8",
+                    fixLabel = "Start",
                 ),
             ),
         )
