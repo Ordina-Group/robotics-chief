@@ -12,6 +12,7 @@ object SshCommands {
         val dir = settings.runCableCommand("ls -lah /home/jetson/robotics-workshop")
         val projectCloned = !dir.contains("No such file or directory")
         val projectCloning = settings.runInWorkDir("git status").contains("No commits yet")
+        val revision = if (projectCloned) settings.runInWorkDir("git --no-pager log --decorate --oneline -1") else ""
         val projectBuilding = settings.runCableCommand("pgrep -f /usr/bin/colcon").isNotEmpty()
         val projectBuilt = !projectBuilding && !settings
             .runCableCommand("ls -lah /home/jetson/robotics-workshop/build")
@@ -31,6 +32,12 @@ object SshCommands {
                     success = projectCloned,
                     pending = projectCloning,
                     fixUrl = "/commands/clone",
+                ),
+                StatusLine(
+                    name = "revision",
+                    success = revision.isNotEmpty(),
+                    message = revision,
+                    pending = false,
                 ),
                 StatusLine(
                     name = "built",
