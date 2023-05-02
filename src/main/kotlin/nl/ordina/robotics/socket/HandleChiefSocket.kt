@@ -45,8 +45,6 @@ suspend fun DefaultWebSocketServerSession.handleChiefSocket() {
             if (lastValue != result) {
                 sendMessage(result)
                 lastValue = result
-            } else {
-                println("Discarding $result")
             }
             delay(500)
         }
@@ -62,6 +60,12 @@ suspend fun DefaultWebSocketServerSession.handleChiefSocket() {
                     sendMessage(Message.Info("Updating host..."))
                     settingsLock.withLock {
                         settings = settings.copy(host = command.host.trim())
+                    }
+                }
+                is Command.UpdateController -> {
+                    sendMessage(Message.Info("Updating controller..."))
+                    settingsLock.withLock {
+                        settings = settings.copy(controller = command.mac.trim())
                     }
                 }
             }

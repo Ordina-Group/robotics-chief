@@ -17,6 +17,7 @@
   import { roboStore, sendCommand, settingsStore } from "../lib/stores"
 
   let host: String = $settingsStore.host
+  let controller: String = $settingsStore.controller
 
 </script>
 
@@ -42,7 +43,14 @@
             <Input id="host" type="text" bind:value={host}/>
         </div>
         <Button on:click={() => sendCommand({ type: 'nl.ordina.robotics.socket.Command.UpdateHost', host })}>
-            Update
+            Update host
+        </Button>
+        <div>
+            <Label for="host">Controller</Label>
+            <Input id="host" type="text" bind:value={controller}/>
+        </div>
+        <Button on:click={() => sendCommand({ type: 'nl.ordina.robotics.socket.Command.UpdateController', mac: controller })}>
+            Update controller
         </Button>
     </Card>
 
@@ -64,7 +72,7 @@
                 <TableHeadCell>Name</TableHeadCell>
                 <TableHeadCell></TableHeadCell>
                 <TableHeadCell>Message</TableHeadCell>
-                <TableHeadCell>Fix</TableHeadCell>
+                <TableHeadCell>Action</TableHeadCell>
             </TableHead>
             <TableBody class="divide-y">
                 {#each $roboStore.items as item, i}
@@ -81,9 +89,9 @@
                         </TableBodyCell>
                         <TableBodyCell tdClass="px-6 py-4 font-medium">{item.message}</TableBodyCell>
                         <TableBodyCell>
-                            {#if item.fixUrl && !item.success && !item.pending}
-                                <Button on:click={() => fetch(item.fixUrl, {method: 'POST'})}>
-                                    {item.fixLabel || 'Fix'}
+                            {#if item.actionUrl && item.actionLabel}
+                                <Button on:click={() => fetch(item.actionUrl, {method: 'POST'})}>
+                                    {item.actionLabel || 'Fix'}
                                 </Button>
                             {/if}
                         </TableBodyCell>

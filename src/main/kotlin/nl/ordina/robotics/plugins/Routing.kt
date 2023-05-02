@@ -19,6 +19,7 @@ import io.ktor.websocket.readText
 import io.ktor.websocket.send
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import nl.ordina.robotics.ignoreFailure
 import nl.ordina.robotics.runCableCommand
 import nl.ordina.robotics.runInWorkDir
 import nl.ordina.robotics.socket.SshCommands
@@ -64,6 +65,25 @@ fun Application.configureRouting() {
             )
 
             call.respondText("Clone output: $output")
+        }
+
+        post("/commands/connect/{controllerId}") {
+            val controllerId = call.parameters["controllerId"]
+            val output = runCableCommand("bluetoothctl connect $controllerId")
+
+            call.respondText("Clone output: $output")
+        }
+
+        post("/commands/restart/{number}") {
+            val number = call.parameters["number"]
+            val output = runInWorkDir(
+                "pkill -INT -f ros2".ignoreFailure(),
+                "source /opt/ros/foxy/setup.bash",
+                "source install/local_setup.bash",
+                "ROS_DOMAIN_ID=$number ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &",
+            )
+
+            call.respondText("Launched robot number $number: $output")
         }
 
         post("/commands/launch/{number}") {

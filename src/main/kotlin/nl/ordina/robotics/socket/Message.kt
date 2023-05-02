@@ -39,6 +39,6 @@ data class StatusLine(
     val pending: Boolean,
     val message: String = "",
     val failure: String = "",
-    val fixUrl: String? = null,
-    val fixLabel: String? = null,
+    val actionUrl: String? = null,
+    val actionLabel: String? = null,
 )

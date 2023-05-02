@@ -17,7 +17,12 @@ object SshCommands {
         val projectBuilt = !projectBuilding && !settings
             .runCableCommand("ls -lah /home/jetson/robotics-workshop/build")
             .contains("No such file or directory")
-        val running = settings.runCableCommand("pgrep -a ros2")
+        val controllers = settings.runCableCommand("bluetoothctl paired-devices")
+        val devices = settings.runCableCommand("bluetoothctl devices")
+        val running = settings.runCableCommand("pgrep -af ros2")
+        val runningParts = running.isNotEmpty()
+        val runningMainProcess = running.contains("ros2 launch -n ")
+        val runningMainAndController = runningMainProcess && running.split("\n").size >= 2
 
         return StatusTable(
             listOf(
@@ -31,39 +36,47 @@ object SshCommands {
                     name = "cloned",
                     success = projectCloned,
                     pending = projectCloning,
-                    fixUrl = "/commands/clone",
-                    fixLabel = "Clone",
+                    actionUrl = "/commands/clone",
+                    actionLabel = "Clone".onlyWhen(!projectCloned),
                 ),
                 StatusLine(
                     name = "revision",
                     success = revision.isNotEmpty(),
                     message = revision,
                     pending = false,
-                    fixLabel = "Pull",
+                    actionLabel = "Pull",
                 ),
                 StatusLine(
                     name = "built",
                     success = projectBuilt,
                     pending = projectBuilding,
-                    fixUrl = "/commands/build",
-                    fixLabel = "Build",
+                    actionUrl = "/commands/build",
+                    actionLabel = "Build".onlyWhen(!projectBuilt),
+                ),
+                StatusLine(
+                    name = "controller",
+                    success = controllers.isNotEmpty(),
+                    pending = false,
+                    message = controllers.ifEmpty { devices },
+                    actionUrl = "/commands/connect/${settings.controller}",
+                    actionLabel = if (controllers.isEmpty()) "Pair & Connect" else null,
                 ),
                 StatusLine(
                     name = "running",
                     message = "PID $running",
-                    success = running.isNotEmpty(),
-                    pending = false,
-                    fixUrl = "/commands/launch/8",
-                    fixLabel = "Start",
+                    success = runningMainAndController,
+                    pending = runningParts && !runningMainAndController,
+                    actionUrl = if (runningParts) "/commands/restart/8" else "/commands/launch/8",
+                    actionLabel = if (runningParts) "Restart" else "Start",
                 ),
             ),
         )
     }
 
-    private fun Boolean.checked(success: String = "", fail: String = ""): String =
-        if (this) {
-            "✅ $success"
+    private fun String.onlyWhen(condition: Boolean): String? =
+        if (condition) {
+            this
         } else {
-            "❌ $fail"
+            null
         }
 }

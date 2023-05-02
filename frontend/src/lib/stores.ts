@@ -1,7 +1,10 @@
 import { writable } from 'svelte/store';
 
 export const roboStore = writable({ message: 'Hailing the Chief!' });
-export const settingsStore = writable({ host: "192.168.55.1" });
+export const settingsStore = writable({
+  controller: "20:21:06:16:1B:F3",
+  host: "192.168.55.1",
+});
 
 const socket = new WebSocket('ws://localhost:8080/subscribe');
 
