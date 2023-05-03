@@ -63,6 +63,7 @@ tasks.named("classes") {
 node {
     version.set("18.16.0")
     nodeProjectDir.set(project.projectDir.toPath().resolve("frontend").toFile())
+    download.set(true)
 }
 
 task<NpmTask>("buildFrontend") {
