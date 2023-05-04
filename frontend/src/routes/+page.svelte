@@ -56,7 +56,7 @@
         <span>Message:</span>
         <span class="message-container break-words">
             {#key $roboStore}
-                <pre class="message" transition:slide>{$roboStore.message}</pre>
+                <span class="message" transition:slide>{$roboStore.message}</span>
             {/key}
         </span>
     </Card>
