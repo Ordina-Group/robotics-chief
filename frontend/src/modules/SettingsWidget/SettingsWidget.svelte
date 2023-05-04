@@ -21,20 +21,32 @@
 
 <div class="flex columns-2 gap-2">
     <Card class="gap-1" size="s">
-        <div>
-            <Label for="host">Host</Label>
-            <Input id="host" type="text" bind:value={$settingsStore.host}/>
-        </div>
-        <Button on:click={() => sendCommand({ type: 'nl.ordina.robotics.socket.Command.UpdateHost', host: $settingsStore.host })}>
-            Update host
-        </Button>
-        <div>
-            <Label for="host">Controller</Label>
-            <Input id="host" type="text" bind:value={$settingsStore.controller}/>
-        </div>
-        <Button on:click={() => sendCommand({ type: 'nl.ordina.robotics.socket.Command.UpdateController', mac: $settingsStore.controller })}>
-            Update controller
-        </Button>
+        <form
+            action="#"
+            class="flex flex-col gap-1"
+            on:submit|preventDefault={() => sendCommand({ type: 'nl.ordina.robotics.socket.Command.UpdateHost', host: $settingsStore.host })}
+        >
+            <div>
+                <Label for="host">Host</Label>
+                <Input id="host" type="text" bind:value={$settingsStore.host}/>
+            </div>
+            <Button type="submit">
+                Update host
+            </Button>
+        </form>
+        <form
+            action="#"
+            class="flex flex-col gap-1"
+            on:submit|preventDefault={() => sendCommand({ type: 'nl.ordina.robotics.socket.Command.UpdateController', mac: $settingsStore.controller })}
+        >
+            <div>
+                <Label for="host">Controller</Label>
+                <Input id="host" type="text" bind:value={$settingsStore.controller}/>
+            </div>
+            <Button type="submit">
+                Update controller
+            </Button>
+        </form>
     </Card>
 
     <Card class="grow" size="l">

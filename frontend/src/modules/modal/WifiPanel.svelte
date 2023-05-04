@@ -1,8 +1,8 @@
 <script lang="ts">
   import { Alert, Button, Input, Label } from "flowbite-svelte";
 
-  import { register, sendCommand } from "../../lib/socket";
-  import { modalStore } from "../../lib/stores";
+  import { register, sendCommand } from "$lib/socket";
+  import { modalStore } from "$lib/stores";
 
   const success = register("nl.ordina.robotics.socket.Message.CommandSuccess");
   const failure = register("nl.ordina.robotics.socket.Message.CommandFailure");
@@ -30,7 +30,11 @@
   }
 </script>
 
-<div class="grid gap-2">
+<form
+    action="#"
+    class="grid gap-2"
+    on:submit|preventDefault={connect}
+>
     <h1>Connect to WiFi</h1>
     <div>
         <Label for="ssid">SSID</Label>
@@ -43,7 +47,7 @@
     {#if error !== undefined}
         <Alert color="red">{error}</Alert>
     {/if}
-    <Button disabled={connecting} on:click={connect}>
+    <Button type="submit" disabled={connecting}>
         Connect
     </Button>
-</div>
+</form>
