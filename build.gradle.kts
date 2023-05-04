@@ -31,6 +31,8 @@ dependencies {
     implementation("org.apache.sshd:sshd-contrib:2.9.2")
     implementation("org.apache.sshd:sshd-sftp:2.9.2")
 
+    implementation("net.harawata:appdirs:1.2.1")
+
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.0-RC")
 
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")

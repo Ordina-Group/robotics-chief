@@ -8,7 +8,7 @@ object SshSession {
     private val client = SshClient.setUpDefaultClient()
 
     fun <T> withSession(
-        settings: SshSettings = SshSettings(),
+        settings: SshSettings = SshSettingsLoader.load(),
         block: (session: ClientSession) -> T,
     ): T {
         val session = settings.current ?: settings.initialize()

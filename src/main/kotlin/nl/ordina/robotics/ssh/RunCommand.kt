@@ -9,12 +9,12 @@ import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 
 fun runInWorkDir(vararg command: String, separator: String = " && "): String =
-    with(SshSettings()) {
+    with(SshSettingsLoader.load()) {
         runSshCommand("cd $workDir", *command, separator = separator)
     }
 
 fun runSshCommand(vararg command: String, separator: String = " && "): String =
-    SshSettings().runSshCommand(*command, separator = separator)
+    SshSettingsLoader.load().runSshCommand(*command, separator = separator)
 
 fun SshSettings.runInWorkDir(vararg command: String, separator: String = " && "): String =
     SshSession.withSession(this) { session ->

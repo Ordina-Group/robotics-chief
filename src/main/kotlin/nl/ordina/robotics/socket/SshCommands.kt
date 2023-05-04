@@ -8,9 +8,10 @@ import nl.ordina.robotics.socket.checks.loginCheck
 import nl.ordina.robotics.socket.checks.revisionCheck
 import nl.ordina.robotics.socket.checks.runningCheck
 import nl.ordina.robotics.socket.checks.wifiCheck
+import nl.ordina.robotics.ssh.SshSettingsLoader
 
 object SshCommands {
-    fun debug(): StatusTable = debug(SshSettings())
+    fun debug(): StatusTable = debug(SshSettingsLoader.load())
 
     fun debug(settings: SshSettings): StatusTable {
         return StatusTable(

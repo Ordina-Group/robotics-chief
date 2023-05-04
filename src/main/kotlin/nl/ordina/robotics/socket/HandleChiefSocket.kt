@@ -16,7 +16,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import nl.ordina.robotics.ssh.Cmd
-import nl.ordina.robotics.ssh.SshSettings
+import nl.ordina.robotics.ssh.SshSettingsLoader
 import nl.ordina.robotics.ssh.runSshCommand
 import org.apache.sshd.common.SshException
 
@@ -32,7 +32,9 @@ private suspend fun DefaultWebSocketServerSession.sendMessage(message: Message) 
 suspend fun DefaultWebSocketServerSession.handleChiefSocket() {
     sendMessage(Message.Haling())
     val settingsLock = Mutex(false)
-    var settings = SshSettings()
+    var settings = SshSettingsLoader.load()
+
+    sendMessage(Message.Settings(settings))
 
     val broadcaster = launch(Dispatchers.IO) {
         var lastValue: Message? = null
@@ -62,27 +64,39 @@ suspend fun DefaultWebSocketServerSession.handleChiefSocket() {
                 is Command.UpdateHost -> {
                     sendMessage(Message.Info("Updating host..."))
                     settingsLock.withLock {
-                        settings = settings.copy(host = command.host.trim())
+                        settings = settings.copy(host = command.host.trim()).also(SshSettingsLoader::save)
                     }
                 }
+
                 is Command.UpdateController -> {
                     sendMessage(Message.Info("Updating controller..."))
                     settingsLock.withLock {
-                        settings = settings.copy(controller = command.mac.trim())
+                        settings = settings.copy(controller = command.mac.trim()).also(SshSettingsLoader::save)
                     }
                 }
+
                 is Command.ConnectWifi -> {
                     sendMessage(Message.Info("Connecting to wifi network ${command.ssid}..."))
                     try {
                         val output = settings.runSshCommand(Cmd.Networking.connectWifi(command.ssid, command.password))
 
                         if (output.contains("successfully activated with")) {
-                            sendMessage(Message.CommandSuccess(command = "ConnectWifi", message = "Connected to ${command.ssid}"))
+                            sendMessage(
+                                Message.CommandSuccess(
+                                    command = "ConnectWifi",
+                                    message = "Connected to ${command.ssid}",
+                                ),
+                            )
                         } else {
                             sendMessage(Message.CommandFailure(command = "ConnectWifi", message = output))
                         }
                     } catch (e: SshException) {
-                        sendMessage(Message.CommandFailure(command = "ConnectWifi", message = e.message ?: "Unknown error connecting to wifi"))
+                        sendMessage(
+                            Message.CommandFailure(
+                                command = "ConnectWifi",
+                                message = e.message ?: "Unknown error connecting to wifi",
+                            ),
+                        )
                     }
                 }
             }
