@@ -1,9 +1,9 @@
 package nl.ordina.robotics.socket.checks
 
+import nl.ordina.robotics.socket.StatusLine
 import nl.ordina.robotics.ssh.Cmd
 import nl.ordina.robotics.ssh.SshSettings
 import nl.ordina.robotics.ssh.runSshCommand
-import nl.ordina.robotics.socket.StatusLine
 
 fun controllerCheck(settings: SshSettings): StatusLine {
     val controllers = settings.runSshCommand(Cmd.Bluetooth.paired)
@@ -15,6 +15,6 @@ fun controllerCheck(settings: SshSettings): StatusLine {
         pending = false,
         message = controllers.ifEmpty { devices },
         actionUrl = "/commands/connect/${settings.controller}",
-        actionLabel = if (controllers.isEmpty()) "Pair & Connect" else null,
+        actionLabel = if (controllers.isEmpty()) "Pair & Connect" else null
     )
 }

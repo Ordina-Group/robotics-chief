@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class Form(
     val url: String,
     val template: String,
-    val method: String = "POST",
+    val method: String = "POST"
 )

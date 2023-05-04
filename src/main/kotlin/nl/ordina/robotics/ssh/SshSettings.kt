@@ -14,5 +14,5 @@ data class SshSettings(
     val controller: String = "20:21:06:16:1B:F3",
     val timeout: Duration = 5000.milliseconds,
     val workDir: String = "/home/jetson/robotics-workshop",
-    internal var current: ClientSession? = null,
+    internal var current: ClientSession? = null
 )

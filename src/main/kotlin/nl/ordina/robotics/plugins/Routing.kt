@@ -19,12 +19,12 @@ import io.ktor.websocket.readText
 import io.ktor.websocket.send
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import nl.ordina.robotics.ssh.Cmd
-import nl.ordina.robotics.ssh.ignoreFailure
-import nl.ordina.robotics.ssh.runSshCommand
-import nl.ordina.robotics.ssh.runInWorkDir
 import nl.ordina.robotics.socket.SshCommands
 import nl.ordina.robotics.socket.handleChiefSocket
+import nl.ordina.robotics.ssh.Cmd
+import nl.ordina.robotics.ssh.ignoreFailure
+import nl.ordina.robotics.ssh.runInWorkDir
+import nl.ordina.robotics.ssh.runSshCommand
 
 fun Application.configureRouting() {
     install(StatusPages) {
@@ -62,7 +62,7 @@ fun Application.configureRouting() {
         post("/commands/build") {
             val output = runInWorkDir(
                 Cmd.Ros.buildInstall,
-                Cmd.Ros.sourceLocalSetup,
+                Cmd.Ros.sourceLocalSetup
             )
 
             call.respondText("Clone output: $output")
@@ -81,7 +81,7 @@ fun Application.configureRouting() {
                 Cmd.Ros.stop.ignoreFailure(),
                 Cmd.Ros.sourceBash,
                 Cmd.Ros.sourceLocalSetup,
-                "ROS_DOMAIN_ID=$number ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &",
+                "ROS_DOMAIN_ID=$number ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &"
             )
 
             call.respondText("Launched robot number $number: $output")
@@ -92,7 +92,7 @@ fun Application.configureRouting() {
             val output = runInWorkDir(
                 Cmd.Ros.sourceBash,
                 Cmd.Ros.sourceLocalSetup,
-                "ROS_DOMAIN_ID=$number ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &",
+                "ROS_DOMAIN_ID=$number ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &"
             )
 
             call.respondText("Launched robot number $number: $output")

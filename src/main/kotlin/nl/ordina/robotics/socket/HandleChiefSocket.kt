@@ -84,8 +84,8 @@ suspend fun DefaultWebSocketServerSession.handleChiefSocket() {
                             sendMessage(
                                 Message.CommandSuccess(
                                     command = "ConnectWifi",
-                                    message = "Connected to ${command.ssid}",
-                                ),
+                                    message = "Connected to ${command.ssid}"
+                                )
                             )
                         } else {
                             sendMessage(Message.CommandFailure(command = "ConnectWifi", message = output))
@@ -94,8 +94,8 @@ suspend fun DefaultWebSocketServerSession.handleChiefSocket() {
                         sendMessage(
                             Message.CommandFailure(
                                 command = "ConnectWifi",
-                                message = e.message ?: "Unknown error connecting to wifi",
-                            ),
+                                message = e.message ?: "Unknown error connecting to wifi"
+                            )
                         )
                     }
                 }

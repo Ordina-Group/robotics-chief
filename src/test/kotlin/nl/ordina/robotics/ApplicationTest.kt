@@ -1,11 +1,12 @@
 package nl.ordina.robotics
 
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
-import io.ktor.server.testing.*
-import kotlin.test.*
-import io.ktor.http.*
-import nl.ordina.robotics.plugins.*
+import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.testing.testApplication
+import nl.ordina.robotics.plugins.configureRouting
+import org.junit.Test
+import kotlin.test.assertEquals
 
 class ApplicationTest {
     @Test

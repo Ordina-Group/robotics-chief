@@ -10,6 +10,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "1.8.20"
     id("com.github.node-gradle.node") version "4.0.0"
     id("com.github.ManifestClasspath") version "0.1.0-RELEASE"
+    id("org.jlleitschuh.gradle.ktlint") version "11.3.2"
 }
 
 group = "nl.ordina.robotics"

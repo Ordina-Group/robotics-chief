@@ -5,13 +5,12 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.harawata.appdirs.AppDirsFactory
 import java.io.File
-import java.nio.file.Files
 
 object SshSettingsLoader {
     private val configDir: String = AppDirsFactory.getInstance().getUserConfigDir(
         "robochief",
         "0.0.1",
-        "ordina",
+        "ordina"
     )
 
     private val configFile = File(configDir, "settings.json")

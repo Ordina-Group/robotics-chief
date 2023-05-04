@@ -1,9 +1,9 @@
 package nl.ordina.robotics.socket.checks
 
+import nl.ordina.robotics.socket.StatusLine
 import nl.ordina.robotics.ssh.Cmd
 import nl.ordina.robotics.ssh.SshSettings
 import nl.ordina.robotics.ssh.runSshCommand
-import nl.ordina.robotics.socket.StatusLine
 
 fun buildCheck(settings: SshSettings): StatusLine {
     val projectBuilding = settings.runSshCommand("pgrep -f /usr/bin/colcon").isNotEmpty()
@@ -16,6 +16,6 @@ fun buildCheck(settings: SshSettings): StatusLine {
         success = projectBuilt,
         pending = projectBuilding,
         actionUrl = "/commands/build",
-        actionLabel = "Build".onlyWhen(!projectBuilt),
+        actionLabel = "Build".onlyWhen(!projectBuilt)
     )
 }

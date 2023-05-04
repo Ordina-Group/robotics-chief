@@ -32,7 +32,7 @@ sealed class Message {
 @Serializable
 @SerialName("StatusTable")
 data class StatusTable(
-    val items: List<StatusLine>,
+    val items: List<StatusLine>
 ) : Message() {
     override val message: String
         get() = "Status"
@@ -46,5 +46,5 @@ data class StatusLine(
     val message: String = "",
     val failure: String = "",
     val actionUrl: String? = null,
-    val actionLabel: String? = null,
+    val actionLabel: String? = null
 )

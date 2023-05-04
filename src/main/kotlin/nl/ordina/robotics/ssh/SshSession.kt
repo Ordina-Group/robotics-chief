@@ -9,7 +9,7 @@ object SshSession {
 
     fun <T> withSession(
         settings: SshSettings = SshSettingsLoader.load(),
-        block: (session: ClientSession) -> T,
+        block: (session: ClientSession) -> T
     ): T {
         val session = settings.current ?: settings.initialize()
 
@@ -26,7 +26,7 @@ object SshSession {
         val connection = client.connect(
             username,
             host,
-            port,
+            port
         )
         connection.await(timeout.toJavaDuration())
 

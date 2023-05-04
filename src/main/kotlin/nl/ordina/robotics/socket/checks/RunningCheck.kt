@@ -1,9 +1,9 @@
 package nl.ordina.robotics.socket.checks
 
+import nl.ordina.robotics.socket.StatusLine
 import nl.ordina.robotics.ssh.Cmd
 import nl.ordina.robotics.ssh.SshSettings
 import nl.ordina.robotics.ssh.runSshCommand
-import nl.ordina.robotics.socket.StatusLine
 
 fun runningCheck(settings: SshSettings): StatusLine {
     val running = settings.runSshCommand(Cmd.Ros.running)
@@ -17,6 +17,6 @@ fun runningCheck(settings: SshSettings): StatusLine {
         success = runningMainAndController,
         pending = runningParts && !runningMainAndController,
         actionUrl = if (runningParts) "/commands/restart/8" else "/commands/launch/8",
-        actionLabel = if (runningParts) "Restart" else "Start",
+        actionLabel = if (runningParts) "Restart" else "Start"
     )
 }
