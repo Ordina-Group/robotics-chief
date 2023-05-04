@@ -19,6 +19,7 @@ import nl.ordina.robotics.ssh.Cmd
 import nl.ordina.robotics.ssh.SshSettingsLoader
 import nl.ordina.robotics.ssh.runSshCommand
 import org.apache.sshd.common.SshException
+import kotlin.time.Duration.Companion.milliseconds
 
 private val socketSerializer = Json {
     encodeDefaults = true
@@ -84,8 +85,8 @@ suspend fun DefaultWebSocketServerSession.handleChiefSocket() {
                             sendMessage(
                                 Message.CommandSuccess(
                                     command = "ConnectWifi",
-                                    message = "Connected to ${command.ssid}"
-                                )
+                                    message = "Connected to ${command.ssid}",
+                                ),
                             )
                         } else {
                             sendMessage(Message.CommandFailure(command = "ConnectWifi", message = output))
@@ -94,8 +95,57 @@ suspend fun DefaultWebSocketServerSession.handleChiefSocket() {
                         sendMessage(
                             Message.CommandFailure(
                                 command = "ConnectWifi",
-                                message = e.message ?: "Unknown error connecting to wifi"
-                            )
+                                message = e.message ?: "Unknown error connecting to wifi.",
+                            ),
+                        )
+                    }
+                }
+
+                is Command.ScanBluetooth -> {
+                    try {
+                        settings.runSshCommand(Cmd.Bluetooth.scan, timeout = 200.milliseconds)
+                    } catch (e: Exception) {
+                        sendMessage(
+                            Message.CommandFailure(
+                                command = "ScanBluetooth",
+                                message = e.message ?: "Failed to scan.",
+                            ),
+                        )
+                    }
+                }
+
+                is Command.GetBluetoothDevices -> {
+                    try {
+                        val pairedDevices = settings.runSshCommand(Cmd.Bluetooth.paired)
+                            .split("\n")
+                            .filter { it.isNotEmpty() }
+                            .map { it.split(' ')[1] }
+
+                        val devices = settings.runSshCommand(Cmd.Bluetooth.list)
+                            .split("\n")
+                            .map {
+                                val (_, mac, name) = it.split(" ")
+                                val paired = pairedDevices.contains(mac)
+                                val connected = if (paired) {
+                                    settings.runSshCommand(Cmd.Bluetooth.info(mac)).contains("Connected: yes")
+                                } else {
+                                    false
+                                }
+
+                                Device(
+                                    name,
+                                    mac,
+                                    paired,
+                                    connected,
+                                )
+                            }
+                        sendMessage(Message.BluetoothDevices(devices))
+                    } catch (e: Exception) {
+                        sendMessage(
+                            Message.CommandFailure(
+                                command = "GetBluetoothDevices",
+                                message = e.message ?: "Failed to list devices.",
+                            ),
                         )
                     }
                 }

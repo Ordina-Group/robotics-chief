@@ -24,10 +24,24 @@ sealed class Message {
     data class CommandFailure(val command: String, override val message: String) : Message()
 
     @Serializable
+    @SerialName("BluetoothDevices")
+    data class BluetoothDevices(val devices: List<Device>) : Message() {
+        override val message = "Bluetooth scan update"
+    }
+
+    @Serializable
     data class Settings(val value: SshSettings) : Message() {
         override val message = "ssh settings"
     }
 }
+
+@Serializable
+data class Device(
+    val name: String,
+    val mac: String,
+    val paired: Boolean,
+    val connected: Boolean,
+)
 
 @Serializable
 @SerialName("StatusTable")

@@ -2,9 +2,13 @@ package nl.ordina.robotics.ssh
 
 object Cmd {
     object Bluetooth {
+        fun info(mac: String) = "bluetoothctl info $mac"
+
         const val paired = "bluetoothctl paired-devices"
 
         const val list = "bluetoothctl devices"
+
+        const val scan = "bluetoothctl scan on"
     }
 
     object Git {

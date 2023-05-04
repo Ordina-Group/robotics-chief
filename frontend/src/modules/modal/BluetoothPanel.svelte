@@ -1,0 +1,92 @@
+<script lang="ts">
+  import {
+    Alert,
+    Button,
+    Table,
+    TableBody,
+    TableBodyCell,
+    TableBodyRow,
+    TableHead,
+    TableHeadCell
+  } from "flowbite-svelte";
+
+  import { register, sendCommand } from "$lib/socket";
+  import { modalStore } from "$lib/stores";
+  import { execute } from "$lib/actions";
+  import { onDestroy, onMount } from "svelte";
+
+  const update = register("BluetoothDevices", { devices: [] });
+
+  let error: string | undefined = undefined
+  let timeout: number;
+
+  const refresh = () => sendCommand({ type: 'GetBluetoothDevices' })
+
+  const startScan = () => {
+    sendCommand({ type: 'ScanBluetooth', scan: true });
+    timeout = setInterval(() => {
+      refresh();
+    }, 1000);
+  }
+
+  const onDone = () => {
+    clearInterval(timeout)
+    sendCommand({ type: 'ScanBluetooth', scan: false })
+    modalStore.set(undefined);
+  }
+
+  onMount(refresh);
+
+  onDestroy(onDone);
+</script>
+
+<form
+    action="#"
+    class="grid gap-2"
+    on:submit|preventDefault={onDone}
+>
+    <h1>Connect Bluetooth device</h1>
+    <Table striped>
+        <TableHead>
+            <TableHeadCell>Name</TableHeadCell>
+            <TableHeadCell>MAC</TableHeadCell>
+            <TableHeadCell>Action</TableHeadCell>
+        </TableHead>
+        <TableBody>
+            {#if $update.devices.length === 0}
+                <TableBodyRow>
+                    <TableBodyCell>No devices found</TableBodyCell>
+                    <TableBodyCell>Try scanning</TableBodyCell>
+                    <TableBodyCell/>
+                </TableBodyRow>
+            {/if}
+
+            {#each $update.devices as device}
+                <TableBodyRow>
+                    <TableBodyCell>{device.name}</TableBodyCell>
+                    <TableBodyCell>{device.mac}</TableBodyCell>
+                    <TableBodyCell>
+                        {#if !device.connected}
+                            <Button on:click={() => execute({ actionUrl: `/commands/connect/${device.mac}` }).then(refresh)}>
+                                Connect
+                            </Button>
+                        {:else}
+                            <Button color="yellow" on:click={() => execute({ actionUrl: `/commands/disconnect/${device.mac}` }).then(refresh)}>
+                                Disconnect
+                            </Button>
+                        {/if}
+                    </TableBodyCell>
+                </TableBodyRow>
+            {/each}
+        </TableBody>
+    </Table>
+    {#if error !== undefined}
+        <Alert color="red">{error}</Alert>
+    {/if}
+    <div class="flex flex-row justify-end gap-1">
+        <Button on:click={startScan}>
+            Scan
+        </Button>
+        <Button type="submit">Done</Button>
+    </div>
+</form>

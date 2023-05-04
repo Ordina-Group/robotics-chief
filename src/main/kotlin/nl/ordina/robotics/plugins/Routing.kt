@@ -62,7 +62,7 @@ fun Application.configureRouting() {
         post("/commands/build") {
             val output = runInWorkDir(
                 Cmd.Ros.buildInstall,
-                Cmd.Ros.sourceLocalSetup
+                Cmd.Ros.sourceLocalSetup,
             )
 
             call.respondText("Clone output: $output")
@@ -75,13 +75,20 @@ fun Application.configureRouting() {
             call.respondText("Clone output: $output")
         }
 
+        post("/commands/disconnect/{controllerId}") {
+            val controllerId = call.parameters["controllerId"]
+            val output = runSshCommand("bluetoothctl disconnect $controllerId")
+
+            call.respondText("Clone output: $output")
+        }
+
         post("/commands/restart/{number}") {
             val number = call.parameters["number"]
             val output = runInWorkDir(
                 Cmd.Ros.stop.ignoreFailure(),
                 Cmd.Ros.sourceBash,
                 Cmd.Ros.sourceLocalSetup,
-                "ROS_DOMAIN_ID=$number ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &"
+                "ROS_DOMAIN_ID=$number ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &",
             )
 
             call.respondText("Launched robot number $number: $output")

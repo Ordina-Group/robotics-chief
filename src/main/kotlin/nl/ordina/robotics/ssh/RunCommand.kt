@@ -21,9 +21,13 @@ fun SshSettings.runInWorkDir(vararg command: String, separator: String = " && ")
         session.runCommand(arrayOf("cd $workDir", *command).joinToString(separator), this.timeout)
     }
 
-fun SshSettings.runSshCommand(vararg command: String, separator: String = " && "): String =
+fun SshSettings.runSshCommand(
+    vararg command: String,
+    separator: String = " && ",
+    timeout: Duration = this.timeout,
+): String =
     SshSession.withSession(this) { session ->
-        session.runCommand(command.joinToString(separator), this.timeout)
+        session.runCommand(command.joinToString(separator), timeout)
     }
 
 fun ClientSession.runCommand(command: String, timeout: Duration): String {
@@ -34,7 +38,7 @@ fun ClientSession.runCommand(command: String, timeout: Duration): String {
     channel.err = stream
     channel.open().verify(timeout.toJavaDuration())
     // Wait (forever) for the channel to close - signalling command finished
-    channel.waitFor(EnumSet.of(ClientChannelEvent.CLOSED), 0L)
+    channel.waitFor(EnumSet.of(ClientChannelEvent.CLOSED), timeout.inWholeMilliseconds)
 
     return stream.toByteArray().toString(Charset.defaultCharset()).trim()
 }
