@@ -1,6 +1,6 @@
 package nl.ordina.robotics.socket
 
-import nl.ordina.robotics.JohnnyCableSettings
+import nl.ordina.robotics.ssh.SshSettings
 import nl.ordina.robotics.socket.checks.buildCheck
 import nl.ordina.robotics.socket.checks.cloneCheck
 import nl.ordina.robotics.socket.checks.controllerCheck
@@ -10,9 +10,9 @@ import nl.ordina.robotics.socket.checks.runningCheck
 import nl.ordina.robotics.socket.checks.wifiCheck
 
 object SshCommands {
-    fun debug(): StatusTable = debug(JohnnyCableSettings())
+    fun debug(): StatusTable = debug(SshSettings())
 
-    fun debug(settings: JohnnyCableSettings): StatusTable {
+    fun debug(settings: SshSettings): StatusTable {
         return StatusTable(
             listOf(
                 loginCheck(settings),

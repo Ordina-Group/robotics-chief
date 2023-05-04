@@ -2,7 +2,7 @@ package nl.ordina.robotics.socket
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import nl.ordina.robotics.JohnnyCableSettings
+import nl.ordina.robotics.ssh.SshSettings
 
 @Serializable
 sealed class Message {
@@ -24,7 +24,7 @@ sealed class Message {
     data class CommandFailure(val command: String, override val message: String) : Message()
 
     @Serializable
-    data class Settings(val value: JohnnyCableSettings) : Message() {
+    data class Settings(val value: SshSettings) : Message() {
         override val message = "ssh settings"
     }
 }

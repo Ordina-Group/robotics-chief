@@ -19,10 +19,10 @@ import io.ktor.websocket.readText
 import io.ktor.websocket.send
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import nl.ordina.robotics.Cmd
-import nl.ordina.robotics.ignoreFailure
-import nl.ordina.robotics.runCableCommand
-import nl.ordina.robotics.runInWorkDir
+import nl.ordina.robotics.ssh.Cmd
+import nl.ordina.robotics.ssh.ignoreFailure
+import nl.ordina.robotics.ssh.runSshCommand
+import nl.ordina.robotics.ssh.runInWorkDir
 import nl.ordina.robotics.socket.SshCommands
 import nl.ordina.robotics.socket.handleChiefSocket
 
@@ -41,14 +41,14 @@ fun Application.configureRouting() {
         }
 
         post("/commands/setupenv") {
-            val output = runCableCommand("echo \"${Cmd.Ros.sourceBash}\" >> ~/.bashrc")
+            val output = runSshCommand("echo \"${Cmd.Ros.sourceBash}\" >> ~/.bashrc")
 
             call.respondText("Done: $output")
         }
 
         post("/commands/clone") {
             val output =
-                runCableCommand(Cmd.Git.clone("https://github.com/OrdinaNederland/robotics-workshop /home/jetson/robotics-workshop"))
+                runSshCommand(Cmd.Git.clone("https://github.com/OrdinaNederland/robotics-workshop /home/jetson/robotics-workshop"))
 
             call.respondText("Clone output: $output")
         }
@@ -70,7 +70,7 @@ fun Application.configureRouting() {
 
         post("/commands/connect/{controllerId}") {
             val controllerId = call.parameters["controllerId"]
-            val output = runCableCommand("bluetoothctl connect $controllerId")
+            val output = runSshCommand("bluetoothctl connect $controllerId")
 
             call.respondText("Clone output: $output")
         }
@@ -100,7 +100,7 @@ fun Application.configureRouting() {
 
         get("/exec/{command}") {
             val command = call.parameters["command"] ?: throw BadRequestException("No command given")
-            val result = runCableCommand(command)
+            val result = runSshCommand(command)
 
             call.respondText(result)
         }

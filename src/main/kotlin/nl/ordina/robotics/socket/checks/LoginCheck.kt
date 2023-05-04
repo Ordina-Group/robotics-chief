@@ -1,12 +1,12 @@
 package nl.ordina.robotics.socket.checks
 
-import nl.ordina.robotics.Cmd
-import nl.ordina.robotics.JohnnyCableSettings
-import nl.ordina.robotics.runCableCommand
+import nl.ordina.robotics.ssh.Cmd
+import nl.ordina.robotics.ssh.SshSettings
+import nl.ordina.robotics.ssh.runSshCommand
 import nl.ordina.robotics.socket.StatusLine
 
-fun loginCheck(settings: JohnnyCableSettings): StatusLine {
-    val user = settings.runCableCommand(Cmd.Unix.userInfo)
+fun loginCheck(settings: SshSettings): StatusLine {
+    val user = settings.runSshCommand(Cmd.Unix.userInfo)
 
     return StatusLine(
         name = "Login",

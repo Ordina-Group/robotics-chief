@@ -1,12 +1,12 @@
 package nl.ordina.robotics.socket.checks
 
-import nl.ordina.robotics.Cmd
-import nl.ordina.robotics.JohnnyCableSettings
-import nl.ordina.robotics.runCableCommand
+import nl.ordina.robotics.ssh.Cmd
+import nl.ordina.robotics.ssh.SshSettings
+import nl.ordina.robotics.ssh.runSshCommand
 import nl.ordina.robotics.socket.StatusLine
 
-fun wifiCheck(settings: JohnnyCableSettings): StatusLine {
-    val addresses = settings.runCableCommand(Cmd.Networking.ipAddresses)
+fun wifiCheck(settings: SshSettings): StatusLine {
+    val addresses = settings.runSshCommand(Cmd.Networking.ipAddresses)
     val connected = addresses.split('\n').size > 3
 
     return StatusLine(

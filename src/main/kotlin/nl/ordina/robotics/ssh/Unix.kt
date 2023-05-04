@@ -1,4 +1,4 @@
-package nl.ordina.robotics
+package nl.ordina.robotics.ssh
 
 object Cmd {
     object Bluetooth {

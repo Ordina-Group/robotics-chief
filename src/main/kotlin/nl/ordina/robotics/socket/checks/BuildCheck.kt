@@ -1,14 +1,14 @@
 package nl.ordina.robotics.socket.checks
 
-import nl.ordina.robotics.Cmd
-import nl.ordina.robotics.JohnnyCableSettings
-import nl.ordina.robotics.runCableCommand
+import nl.ordina.robotics.ssh.Cmd
+import nl.ordina.robotics.ssh.SshSettings
+import nl.ordina.robotics.ssh.runSshCommand
 import nl.ordina.robotics.socket.StatusLine
 
-fun buildCheck(settings: JohnnyCableSettings): StatusLine {
-    val projectBuilding = settings.runCableCommand("pgrep -f /usr/bin/colcon").isNotEmpty()
+fun buildCheck(settings: SshSettings): StatusLine {
+    val projectBuilding = settings.runSshCommand("pgrep -f /usr/bin/colcon").isNotEmpty()
     val projectBuilt = !projectBuilding && !settings
-        .runCableCommand(Cmd.Unix.list("${settings.workDir}/build"))
+        .runSshCommand(Cmd.Unix.list("${settings.workDir}/build"))
         .contains("No such file or directory")
 
     return StatusLine(

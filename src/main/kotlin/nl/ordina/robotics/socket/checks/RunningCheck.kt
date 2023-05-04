@@ -1,12 +1,12 @@
 package nl.ordina.robotics.socket.checks
 
-import nl.ordina.robotics.Cmd
-import nl.ordina.robotics.JohnnyCableSettings
-import nl.ordina.robotics.runCableCommand
+import nl.ordina.robotics.ssh.Cmd
+import nl.ordina.robotics.ssh.SshSettings
+import nl.ordina.robotics.ssh.runSshCommand
 import nl.ordina.robotics.socket.StatusLine
 
-fun runningCheck(settings: JohnnyCableSettings): StatusLine {
-    val running = settings.runCableCommand(Cmd.Ros.running)
+fun runningCheck(settings: SshSettings): StatusLine {
+    val running = settings.runSshCommand(Cmd.Ros.running)
     val runningParts = running.isNotEmpty()
     val runningMainProcess = running.contains(Cmd.Ros.mainCmdRunning)
     val runningMainAndController = runningMainProcess && running.split("\n").size >= 2
