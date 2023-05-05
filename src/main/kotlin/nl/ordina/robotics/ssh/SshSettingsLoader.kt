@@ -26,10 +26,8 @@ object SshSettingsLoader {
 
     fun load(): SshSettings =
         if (configFile.exists()) {
-            println("WTTF? ${configFile.exists()}, ${configFile.absolutePath}")
             Json.decodeFromString<SshSettings>(configFile.readText()).also(::println)
         } else {
-            println("WTF? ${configFile.exists()}, ${configFile.absolutePath}")
             SshSettings()
         }
 }

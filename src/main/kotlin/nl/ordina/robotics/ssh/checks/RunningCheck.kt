@@ -1,4 +1,4 @@
-package nl.ordina.robotics.socket.checks
+package nl.ordina.robotics.ssh.checks
 
 import nl.ordina.robotics.socket.StatusLine
 import nl.ordina.robotics.ssh.Cmd
@@ -17,6 +17,6 @@ fun runningCheck(settings: SshSettings): StatusLine {
         success = runningMainAndController,
         pending = runningParts && !runningMainAndController,
         actionUrl = if (runningParts) "/commands/restart/8" else "/commands/launch/8",
-        actionLabel = if (runningParts) "Restart" else "Start"
+        actionLabel = if (runningParts) "Restart" else "Start",
     )
 }

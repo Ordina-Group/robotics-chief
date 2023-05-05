@@ -1,4 +1,4 @@
-package nl.ordina.robotics.socket.checks
+package nl.ordina.robotics.ssh.checks
 
 import nl.ordina.robotics.socket.StatusLine
 import nl.ordina.robotics.ssh.Cmd

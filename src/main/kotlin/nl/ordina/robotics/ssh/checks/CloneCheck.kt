@@ -1,4 +1,4 @@
-package nl.ordina.robotics.socket.checks
+package nl.ordina.robotics.ssh.checks
 
 import nl.ordina.robotics.socket.StatusLine
 import nl.ordina.robotics.ssh.Cmd
@@ -6,16 +6,16 @@ import nl.ordina.robotics.ssh.SshSettings
 import nl.ordina.robotics.ssh.runInWorkDir
 import nl.ordina.robotics.ssh.runSshCommand
 
-fun revisionCheck(settings: SshSettings): StatusLine {
+fun cloneCheck(settings: SshSettings): StatusLine {
     val dir = settings.runSshCommand(Cmd.Unix.list(settings.workDir))
     val projectCloned = !dir.contains("No such file or directory")
-    val revision = if (projectCloned) settings.runInWorkDir(Cmd.Git.revision) else ""
+    val projectCloning = settings.runInWorkDir(Cmd.Git.status).contains("No commits yet")
 
     return StatusLine(
-        name = "Revision",
-        success = revision.isNotEmpty(),
-        message = revision,
-        pending = false,
-        actionLabel = "Pull"
+        name = "Cloned",
+        success = projectCloned,
+        pending = projectCloning,
+        actionUrl = "/commands/clone",
+        actionLabel = "Clone".onlyWhen(!projectCloned),
     )
 }

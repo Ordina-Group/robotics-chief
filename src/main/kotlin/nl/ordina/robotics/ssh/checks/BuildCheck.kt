@@ -1,4 +1,4 @@
-package nl.ordina.robotics.socket.checks
+package nl.ordina.robotics.ssh.checks
 
 import nl.ordina.robotics.socket.StatusLine
 import nl.ordina.robotics.ssh.Cmd
@@ -16,6 +16,6 @@ fun buildCheck(settings: SshSettings): StatusLine {
         success = projectBuilt,
         pending = projectBuilding,
         actionUrl = "/commands/build",
-        actionLabel = "Build".onlyWhen(!projectBuilt)
+        actionLabel = "Build".onlyWhen(!projectBuilt),
     )
 }

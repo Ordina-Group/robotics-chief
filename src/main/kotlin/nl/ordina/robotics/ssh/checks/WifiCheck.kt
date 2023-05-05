@@ -1,4 +1,4 @@
-package nl.ordina.robotics.socket.checks
+package nl.ordina.robotics.ssh.checks
 
 import nl.ordina.robotics.socket.StatusLine
 import nl.ordina.robotics.ssh.Cmd
@@ -15,6 +15,6 @@ fun wifiCheck(settings: SshSettings): StatusLine {
         pending = false,
         message = addresses,
         actionUrl = "/actions/modal?resource=wifi",
-        actionLabel = "Connect to wifi".onlyWhen(!connected)
+        actionLabel = "Connect to wifi".onlyWhen(!connected),
     )
 }

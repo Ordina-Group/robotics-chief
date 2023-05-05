@@ -17,6 +17,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import nl.ordina.robotics.ssh.Cmd
 import nl.ordina.robotics.ssh.SshSettingsLoader
+import nl.ordina.robotics.ssh.checks.createSshStatusTable
 import nl.ordina.robotics.ssh.runSshCommand
 import org.apache.sshd.common.SshException
 import kotlin.time.Duration.Companion.milliseconds
@@ -43,7 +44,7 @@ suspend fun DefaultWebSocketServerSession.handleChiefSocket() {
         while (this.isActive && !incoming.isClosedForReceive) {
             val result = try {
                 settingsLock.withLock {
-                    SshCommands.debug(settings)
+                    createSshStatusTable(settings)
                 }
             } catch (e: Exception) {
                 Message.CommandResult("debug", e.message ?: "")
