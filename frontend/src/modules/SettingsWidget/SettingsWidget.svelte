@@ -2,8 +2,8 @@
   import { Button, Card, Input, Label } from "flowbite-svelte";
   import { slide } from "svelte/transition";
 
+  import { roboStore, settingsStore } from "$lib/dashboard"
   import { sendCommand } from "$lib/socket";
-  import { roboStore, settingsStore } from "$lib/stores";
 </script>
 
 <style>

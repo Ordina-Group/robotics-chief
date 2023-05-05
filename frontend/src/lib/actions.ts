@@ -1,4 +1,4 @@
-import { modalStore } from "./stores";
+import { currentModal } from "$lib/modal";
 
 export interface Action {
   actionUrl: string;
@@ -10,9 +10,9 @@ export const execute = (action: Action): Promise<unknown> | undefined => {
   if (url.pathname === "/actions/modal") {
     const resource = url.searchParams.get("resource");
     if (resource && resource !== "close") {
-      modalStore.set(resource);
+      currentModal.set(resource);
     } else {
-      modalStore.set(undefined);
+      currentModal.set(undefined);
     }
 
     return undefined;

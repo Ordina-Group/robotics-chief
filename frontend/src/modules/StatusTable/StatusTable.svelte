@@ -11,8 +11,8 @@
     TableHeadCell,
   } from "flowbite-svelte";
 
+  import { statusStore } from "$lib/dashboard";
   import { execute } from "$lib/actions";
-  import { statusStore } from "$lib/stores";
 </script>
 
 {#if $statusStore !== undefined}

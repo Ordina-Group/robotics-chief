@@ -2,7 +2,7 @@
   import { Alert, Button, Input, Label } from "flowbite-svelte";
 
   import { register, sendCommand } from "$lib/socket";
-  import { modalStore } from "$lib/stores";
+  import { currentModal } from "$lib/modal";
 
   const success = register("Message.CommandSuccess");
   const failure = register("Message.CommandFailure");
@@ -19,7 +19,7 @@
 
   $: {
     if ($success?.command === "ConnectWifi") {
-      modalStore.set(undefined);
+      currentModal.set(undefined);
       success.set(undefined);
     }
 

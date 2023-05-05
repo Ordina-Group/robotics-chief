@@ -13,7 +13,7 @@
 
   import { execute } from "$lib/actions";
   import { register, sendCommand } from "$lib/socket";
-  import { modalStore } from "$lib/stores";
+  import { currentModal } from "$lib/modal";
 
   const update = register("Message.BluetoothDevices", { devices: [] });
 
@@ -32,7 +32,7 @@
   const onDone = () => {
     clearInterval(timeout);
     sendCommand({ type: "Command.ScanBluetooth", scan: false });
-    modalStore.set(undefined);
+    currentModal.set(undefined);
   };
 
   onMount(refresh);

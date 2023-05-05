@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { modalStore } from "$lib/stores";
+  import { currentModal } from "$lib/modal";
 
   import "../app.postcss";
   import Modal from "../modules/modal/Modal.svelte";
@@ -8,8 +8,8 @@
 <div class="grid container mx-auto gap-1">
     <slot />
 
-    {#if $modalStore !== undefined}
-        <Modal resource={$modalStore} onClose={() => modalStore.set(undefined)} />
+    {#if $currentModal !== undefined}
+        <Modal resource={$currentModal} onClose={() => currentModal.set(undefined)} />
     {/if}
 </div>
 
