@@ -1,0 +1,56 @@
+<script lang="ts">
+  import { Button, Spinner, TableBodyCell, TableBodyRow } from "flowbite-svelte";
+
+  import { execute } from "$lib/actions";
+  import { sendCommand } from "$lib/socket";
+
+  export let device;
+
+  let loading: boolean = false;
+
+  const refresh = () => sendCommand({ type: "Command.GetBluetoothDevices" });
+  const connect = async () => {
+      loading = true;
+      try {
+        await execute({ actionUrl: `/commands/connect/${device.mac}` });
+      } finally {
+        loading = false;
+        refresh();
+      }
+  };
+  const disconnect = async () => {
+      loading = true;
+      try {
+        execute({ actionUrl: `/commands/disconnect/${device.mac}` });
+      } finally {
+        loading = false;
+        refresh();
+      }
+  };
+</script>
+
+<TableBodyRow>
+    <TableBodyCell>{device.name}</TableBodyCell>
+    <TableBodyCell>{device.mac}</TableBodyCell>
+    <TableBodyCell>
+        {#if !device.connected}
+            <Button on:click={connect}>
+                {#if loading}
+                    <Spinner class="mr-3" size="4" color="white" />
+                    Connecting
+                {:else}
+                    Connect
+                {/if}
+            </Button>
+        {:else}
+            <Button color="yellow" on:click={disconnect}>
+                {#if loading}
+                    <Spinner class="mr-3" size="4" color="white" />
+                    Disconnecting
+                {:else}
+                    Disconnect
+                {/if}
+            </Button>
+        {/if}
+    </TableBodyCell>
+</TableBodyRow>

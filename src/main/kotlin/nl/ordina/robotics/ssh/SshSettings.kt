@@ -12,7 +12,7 @@ data class SshSettings(
     val host: String = "192.168.55.1",
     val port: Int = 22,
     val controller: String = "20:21:06:16:1B:F3",
-    val timeout: Duration = 5000.milliseconds,
+    val timeout: Duration = 10000.milliseconds,
     val workDir: String = "/home/jetson/robotics-workshop",
     internal var current: ClientSession? = null,
 )

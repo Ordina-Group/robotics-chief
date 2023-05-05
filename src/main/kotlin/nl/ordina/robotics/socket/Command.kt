@@ -23,5 +23,9 @@ data class ConnectWifi(val ssid: String, val password: String) : Command
 data class ScanBluetooth(val scan: Boolean) : Command
 
 @Serializable
+@SerialName("Command.BluetoothConnect")
+data class BluetoothConnect(val mac: String) : Command
+
+@Serializable
 @SerialName("Command.GetBluetoothDevices")
 object GetBluetoothDevices : Command

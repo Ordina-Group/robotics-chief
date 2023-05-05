@@ -2,6 +2,8 @@ import { derived, writable } from "svelte/store";
 
 import { register } from "./socket";
 
+export const alertStore = writable<String | undefined>(undefined);
+
 export const roboStore = derived(
   register("*", { message: "Hailing the Chief!" }),
   (message) => message,

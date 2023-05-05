@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Modal as FBModal } from "flowbite-svelte";
 
-  import BluetoothPanel from "./BluetoothPanel.svelte";
+  import BluetoothPanel from "../BluetoothPanel/BluetoothPanel.svelte";
   import WifiPanel from "./WifiPanel.svelte";
 
   export let resource: String | undefined = undefined;

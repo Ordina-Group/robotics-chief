@@ -11,9 +11,9 @@
   } from "flowbite-svelte";
   import { onDestroy, onMount } from "svelte";
 
-  import { execute } from "$lib/actions";
   import { register, sendCommand } from "$lib/socket";
   import { currentModal } from "$lib/modal";
+  import DeviceRow from "./DeviceRow.svelte";
 
   const update = register("Message.BluetoothDevices", { devices: [] });
 
@@ -62,24 +62,7 @@
             {/if}
 
             {#each $update.devices as device}
-                <TableBodyRow>
-                    <TableBodyCell>{device.name}</TableBodyCell>
-                    <TableBodyCell>{device.mac}</TableBodyCell>
-                    <TableBodyCell>
-                        {#if !device.connected}
-                            <Button on:click={() => execute({ actionUrl: `/commands/connect/${device.mac}` }).then(refresh)}>
-                                Connect
-                            </Button>
-                        {:else}
-                            <Button
-                                color="yellow"
-                                on:click={() => execute({ actionUrl: `/commands/disconnect/${device.mac}` }).then(refresh)}
-                            >
-                                Disconnect
-                            </Button>
-                        {/if}
-                    </TableBodyCell>
-                </TableBodyRow>
+                <DeviceRow device={device} />
             {/each}
         </TableBody>
     </Table>

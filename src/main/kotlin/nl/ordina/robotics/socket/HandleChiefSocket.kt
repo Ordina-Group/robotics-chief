@@ -150,6 +150,8 @@ suspend fun DefaultWebSocketServerSession.handleChiefSocket() {
                         )
                     }
                 }
+
+                is BluetoothConnect -> TODO()
             }
         }
     }
