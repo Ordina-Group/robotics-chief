@@ -1,8 +1,8 @@
 <script lang="ts">
   import { Modal as FBModal } from "flowbite-svelte";
 
-  import WifiPanel from "./WifiPanel.svelte";
   import BluetoothPanel from "./BluetoothPanel.svelte";
+  import WifiPanel from "./WifiPanel.svelte";
 
   export let resource: String | undefined = undefined;
   export let onClose: () => undefined;
@@ -17,8 +17,8 @@
 
 <FBModal bind:open={modalOpen}>
     {#if resource === "wifi"}
-        <WifiPanel/>
+        <WifiPanel />
     {:else if resource === "bluetooth"}
-        <BluetoothPanel/>
+        <BluetoothPanel />
     {/if}
 </FBModal>

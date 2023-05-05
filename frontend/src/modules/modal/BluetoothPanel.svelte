@@ -7,17 +7,17 @@
     TableBodyCell,
     TableBodyRow,
     TableHead,
-    TableHeadCell
+    TableHeadCell,
   } from "flowbite-svelte";
+  import { onDestroy, onMount } from "svelte";
 
+  import { execute } from "$lib/actions";
   import { register, sendCommand } from "$lib/socket";
   import { modalStore } from "$lib/stores";
-  import { execute } from "$lib/actions";
-  import { onDestroy, onMount } from "svelte";
 
   const update = register("Message.BluetoothDevices", { devices: [] });
 
-  let error: string | undefined = undefined
+  let error: string | undefined = undefined;
   let timeout: number;
 
   const refresh = () => sendCommand({ type: "Command.GetBluetoothDevices" });
@@ -27,13 +27,13 @@
     timeout = setInterval(() => {
       refresh();
     }, 1000);
-  }
+  };
 
   const onDone = () => {
     clearInterval(timeout);
     sendCommand({ type: "Command.ScanBluetooth", scan: false });
     modalStore.set(undefined);
-  }
+  };
 
   onMount(refresh);
 
@@ -57,7 +57,7 @@
                 <TableBodyRow>
                     <TableBodyCell>No devices found</TableBodyCell>
                     <TableBodyCell>Try scanning</TableBodyCell>
-                    <TableBodyCell/>
+                    <TableBodyCell />
                 </TableBodyRow>
             {/if}
 
@@ -71,7 +71,10 @@
                                 Connect
                             </Button>
                         {:else}
-                            <Button color="yellow" on:click={() => execute({ actionUrl: `/commands/disconnect/${device.mac}` }).then(refresh)}>
+                            <Button
+                                color="yellow"
+                                on:click={() => execute({ actionUrl: `/commands/disconnect/${device.mac}` }).then(refresh)}
+                            >
                                 Disconnect
                             </Button>
                         {/if}

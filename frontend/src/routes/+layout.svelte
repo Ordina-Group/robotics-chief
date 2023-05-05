@@ -6,10 +6,10 @@
 </script>
 
 <div class="grid container mx-auto gap-1">
-    <slot/>
+    <slot />
 
     {#if $modalStore !== undefined}
-        <Modal resource={$modalStore} onClose={() => modalStore.set(undefined)}/>
+        <Modal resource={$modalStore} onClose={() => modalStore.set(undefined)} />
     {/if}
 </div>
 

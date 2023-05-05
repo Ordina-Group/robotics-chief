@@ -1,9 +1,9 @@
-import { derived, writable } from 'svelte/store';
+import { derived, writable } from "svelte/store";
 
 import { register } from "./socket";
 
 export const roboStore = derived(
-  register("*", { message: 'Hailing the Chief!' }),
+  register("*", { message: "Hailing the Chief!" }),
   (message) => message,
 );
 
@@ -21,6 +21,6 @@ register("Message.Settings").subscribe((message) => {
   if (message?.value) {
     settingsStore.set(message.value);
   }
-})
+});
 
 export const modalStore = writable<String | undefined>(undefined);

@@ -8,13 +8,12 @@
     TableBodyCell,
     TableBodyRow,
     TableHead,
-    TableHeadCell
-  } from 'flowbite-svelte';
+    TableHeadCell,
+  } from "flowbite-svelte";
 
-  import { statusStore } from "$lib/stores"
   import { execute } from "$lib/actions";
+  import { statusStore } from "$lib/stores";
 </script>
-
 
 {#if $statusStore !== undefined}
     <Card size="xl">
@@ -54,6 +53,6 @@
     </Card>
 {:else}
     <Card size="xl">
-        <Skeleton size="2xl"/>
+        <Skeleton size="2xl" />
     </Card>
 {/if}

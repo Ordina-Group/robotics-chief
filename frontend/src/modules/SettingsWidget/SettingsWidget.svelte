@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { slide } from 'svelte/transition';
-  import { Button, Card, Input, Label, } from 'flowbite-svelte';
+  import { Button, Card, Input, Label } from "flowbite-svelte";
+  import { slide } from "svelte/transition";
 
-  import { roboStore, settingsStore } from "$lib/stores"
   import { sendCommand } from "$lib/socket";
+  import { roboStore, settingsStore } from "$lib/stores";
 </script>
 
 <style>
@@ -28,7 +28,7 @@
         >
             <div>
                 <Label for="host">Host</Label>
-                <Input id="host" type="text" bind:value={$settingsStore.host}/>
+                <Input bind:value={$settingsStore.host} id="host" type="text" />
             </div>
             <Button type="submit">
                 Update host
@@ -41,7 +41,7 @@
         >
             <div>
                 <Label for="host">Controller</Label>
-                <Input id="host" type="text" bind:value={$settingsStore.controller}/>
+                <Input bind:value={$settingsStore.controller} id="host" type="text" />
             </div>
             <Button type="submit">
                 Update controller

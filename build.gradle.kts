@@ -63,6 +63,10 @@ tasks.named("classes") {
     dependsOn("buildFrontend")
 }
 
+ktlint {
+    version.set("0.48.2")
+}
+
 node {
     version.set("18.16.0")
     nodeProjectDir.set(project.projectDir.toPath().resolve("frontend").toFile())

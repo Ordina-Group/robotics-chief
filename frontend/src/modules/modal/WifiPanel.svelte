@@ -7,15 +7,15 @@
   const success = register("Message.CommandSuccess");
   const failure = register("Message.CommandFailure");
 
-  let ssid = "OrdinaNLGuest"
-  let password = ""
-  let connecting = false
-  let error: string | undefined = undefined
+  let ssid = "OrdinaNLGuest";
+  let password = "";
+  let connecting = false;
+  let error: string | undefined = undefined;
 
   const connect = () => {
     connecting = true;
-    sendCommand({ type: 'Command.ConnectWifi', ssid, password });
-  }
+    sendCommand({ type: "Command.ConnectWifi", ssid, password });
+  };
 
   $: {
     if ($success?.command === "ConnectWifi") {
@@ -24,8 +24,8 @@
     }
 
     if ($failure?.command === "ConnectWifi") {
-        connecting = false;
-        error = $failure.message;
+      connecting = false;
+      error = $failure.message;
     }
   }
 </script>
@@ -38,16 +38,16 @@
     <h1>Connect to WiFi</h1>
     <div>
         <Label for="ssid">SSID</Label>
-        <Input id="ssid" type="text" bind:value={ssid}/>
+        <Input bind:value={ssid} id="ssid" type="text" />
     </div>
     <div>
         <Label for="password">Password</Label>
-        <Input id="password" type="password" bind:value={password}/>
+        <Input bind:value={password} id="password" type="password" />
     </div>
     {#if error !== undefined}
         <Alert color="red">{error}</Alert>
     {/if}
-    <Button type="submit" disabled={connecting}>
+    <Button disabled={connecting} type="submit">
         Connect
     </Button>
 </form>
