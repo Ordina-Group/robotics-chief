@@ -97,7 +97,7 @@ fun Application.configureRouting() {
 
             respondCommand(
                 command = "Command.BluetoothConnect",
-                success = output.contains("Failed to connect"),
+                success = !output.contains("Failed to connect"),
                 message = output,
             )
         }
@@ -108,7 +108,7 @@ fun Application.configureRouting() {
 
             respondCommand(
                 command = "Command.BluetoothDisconnect",
-                success = output.contains("Failed to disconnect"),
+                success = output.contains("Successful disconnected"),
                 message = output,
             )
         }
@@ -163,9 +163,9 @@ fun Application.configureRouting() {
 
 private suspend fun PipelineContext<Unit, ApplicationCall>.respondCommand(command: String, success: Boolean, message: String) {
     val (status, result) = if (success) {
-        Pair(HttpStatusCode.InternalServerError, CommandFailure(command, message))
-    } else {
         Pair(HttpStatusCode.OK, CommandSuccess(command, message))
+    } else {
+        Pair(HttpStatusCode.InternalServerError, CommandFailure(command, message))
     }
 
     call.respond(status, result)
