@@ -10,7 +10,7 @@ object SshSettingsLoader {
     private val configDir: String = AppDirsFactory.getInstance().getUserConfigDir(
         "robochief",
         "0.0.1",
-        "ordina"
+        "ordina",
     )
 
     private val configFile = File(configDir, "settings.json")

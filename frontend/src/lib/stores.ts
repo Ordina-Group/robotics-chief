@@ -8,7 +8,7 @@ export const roboStore = derived(
 );
 
 export const statusStore = derived(
-  register("StatusTable", undefined),
+  register("Message.StatusTable", undefined),
   (message) => message,
 );
 
@@ -17,7 +17,7 @@ export const settingsStore = writable({
   host: "192.168.55.1",
 });
 
-register("nl.ordina.robotics.socket.Message.Settings").subscribe((message) => {
+register("Message.Settings").subscribe((message) => {
   if (message?.value) {
     settingsStore.set(message.value);
   }

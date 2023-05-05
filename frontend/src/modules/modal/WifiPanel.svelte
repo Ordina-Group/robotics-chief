@@ -4,8 +4,8 @@
   import { register, sendCommand } from "$lib/socket";
   import { modalStore } from "$lib/stores";
 
-  const success = register("nl.ordina.robotics.socket.Message.CommandSuccess");
-  const failure = register("nl.ordina.robotics.socket.Message.CommandFailure");
+  const success = register("Message.CommandSuccess");
+  const failure = register("Message.CommandFailure");
 
   let ssid = "OrdinaNLGuest"
   let password = ""
@@ -14,7 +14,7 @@
 
   const connect = () => {
     connecting = true;
-    sendCommand({ type: 'nl.ordina.robotics.socket.Command.ConnectWifi', ssid, password });
+    sendCommand({ type: 'Command.ConnectWifi', ssid, password });
   }
 
   $: {

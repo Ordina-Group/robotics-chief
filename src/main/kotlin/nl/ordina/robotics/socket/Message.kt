@@ -5,34 +5,32 @@ import kotlinx.serialization.Serializable
 import nl.ordina.robotics.ssh.SshSettings
 
 @Serializable
-sealed class Message {
-    abstract val message: String
+sealed interface Message {
+    val message: String
+}
 
-    @Serializable
-    class Haling(override val message: String = "Chief says hi!") : Message()
+@Serializable
+@SerialName("Message.Info")
+data class Info(override val message: String) : Message
 
-    @Serializable
-    data class Info(override val message: String) : Message()
+@Serializable
+@SerialName("Message.CommandSuccess")
+data class CommandSuccess(val command: String, override val message: String) : Message
 
-    @Serializable
-    data class CommandResult(val command: String, override val message: String) : Message()
+@Serializable
+@SerialName("Message.CommandFailure")
+data class CommandFailure(val command: String, override val message: String) : Message
 
-    @Serializable
-    data class CommandSuccess(val command: String, override val message: String) : Message()
+@Serializable
+@SerialName("Message.BluetoothDevices")
+data class BluetoothDevices(val devices: List<Device>) : Message {
+    override val message = "Bluetooth scan update"
+}
 
-    @Serializable
-    data class CommandFailure(val command: String, override val message: String) : Message()
-
-    @Serializable
-    @SerialName("BluetoothDevices")
-    data class BluetoothDevices(val devices: List<Device>) : Message() {
-        override val message = "Bluetooth scan update"
-    }
-
-    @Serializable
-    data class Settings(val value: SshSettings) : Message() {
-        override val message = "ssh settings"
-    }
+@Serializable
+@SerialName("Message.Settings")
+data class Settings(val value: SshSettings) : Message {
+    override val message = "ssh settings"
 }
 
 @Serializable
@@ -44,10 +42,10 @@ data class Device(
 )
 
 @Serializable
-@SerialName("StatusTable")
+@SerialName("Message.StatusTable")
 data class StatusTable(
-    val items: List<StatusLine>
-) : Message() {
+    val items: List<StatusLine>,
+) : Message {
     override val message: String
         get() = "Status"
 }
@@ -60,5 +58,5 @@ data class StatusLine(
     val message: String = "",
     val failure: String = "",
     val actionUrl: String? = null,
-    val actionLabel: String? = null
+    val actionLabel: String? = null,
 )

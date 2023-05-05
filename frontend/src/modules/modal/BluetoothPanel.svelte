@@ -15,23 +15,23 @@
   import { execute } from "$lib/actions";
   import { onDestroy, onMount } from "svelte";
 
-  const update = register("BluetoothDevices", { devices: [] });
+  const update = register("Message.BluetoothDevices", { devices: [] });
 
   let error: string | undefined = undefined
   let timeout: number;
 
-  const refresh = () => sendCommand({ type: 'GetBluetoothDevices' })
+  const refresh = () => sendCommand({ type: "Command.GetBluetoothDevices" });
 
   const startScan = () => {
-    sendCommand({ type: 'ScanBluetooth', scan: true });
+    sendCommand({ type: "Command.ScanBluetooth", scan: true });
     timeout = setInterval(() => {
       refresh();
     }, 1000);
   }
 
   const onDone = () => {
-    clearInterval(timeout)
-    sendCommand({ type: 'ScanBluetooth', scan: false })
+    clearInterval(timeout);
+    sendCommand({ type: "Command.ScanBluetooth", scan: false });
     modalStore.set(undefined);
   }
 

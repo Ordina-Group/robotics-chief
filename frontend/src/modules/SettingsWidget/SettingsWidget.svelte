@@ -24,7 +24,7 @@
         <form
             action="#"
             class="flex flex-col gap-1"
-            on:submit|preventDefault={() => sendCommand({ type: 'nl.ordina.robotics.socket.Command.UpdateHost', host: $settingsStore.host })}
+            on:submit|preventDefault={() => sendCommand({ type: 'Command.UpdateHost', host: $settingsStore.host })}
         >
             <div>
                 <Label for="host">Host</Label>
@@ -37,7 +37,7 @@
         <form
             action="#"
             class="flex flex-col gap-1"
-            on:submit|preventDefault={() => sendCommand({ type: 'nl.ordina.robotics.socket.Command.UpdateController', mac: $settingsStore.controller })}
+            on:submit|preventDefault={() => sendCommand({ type: 'Command.UpdateController', mac: $settingsStore.controller })}
         >
             <div>
                 <Label for="host">Controller</Label>

@@ -100,7 +100,7 @@ fun Application.configureRouting() {
             val output = runInWorkDir(
                 Cmd.Ros.sourceBash,
                 Cmd.Ros.sourceLocalSetup,
-                "ROS_DOMAIN_ID=$number ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &"
+                "ROS_DOMAIN_ID=$number ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &",
             )
 
             call.respondText("Launched robot number $number: $output")

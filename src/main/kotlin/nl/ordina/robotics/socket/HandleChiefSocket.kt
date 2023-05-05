@@ -32,11 +32,11 @@ private suspend fun DefaultWebSocketServerSession.sendMessage(message: Message) 
 
 @OptIn(DelicateCoroutinesApi::class)
 suspend fun DefaultWebSocketServerSession.handleChiefSocket() {
-    sendMessage(Message.Haling())
+    sendMessage(Info("Chief says hi!"))
     val settingsLock = Mutex(false)
     var settings = SshSettingsLoader.load()
 
-    sendMessage(Message.Settings(settings))
+    sendMessage(Settings(settings))
 
     val broadcaster = launch(Dispatchers.IO) {
         var lastValue: Message? = null
@@ -47,7 +47,7 @@ suspend fun DefaultWebSocketServerSession.handleChiefSocket() {
                     createSshStatusTable(settings)
                 }
             } catch (e: Exception) {
-                Message.CommandResult("debug", e.message ?: "")
+                CommandFailure("debug", e.message ?: "")
             }
             if (lastValue != result) {
                 sendMessage(result)
@@ -63,38 +63,38 @@ suspend fun DefaultWebSocketServerSession.handleChiefSocket() {
             val receivedText = frame.readText()
 
             when (val command = Json.decodeFromString<Command>(receivedText)) {
-                is Command.UpdateHost -> {
-                    sendMessage(Message.Info("Updating host..."))
+                is UpdateHost -> {
+                    sendMessage(Info("Updating host..."))
                     settingsLock.withLock {
                         settings = settings.copy(host = command.host.trim()).also(SshSettingsLoader::save)
                     }
                 }
 
-                is Command.UpdateController -> {
-                    sendMessage(Message.Info("Updating controller..."))
+                is UpdateController -> {
+                    sendMessage(Info("Updating controller..."))
                     settingsLock.withLock {
                         settings = settings.copy(controller = command.mac.trim()).also(SshSettingsLoader::save)
                     }
                 }
 
-                is Command.ConnectWifi -> {
-                    sendMessage(Message.Info("Connecting to wifi network ${command.ssid}..."))
+                is ConnectWifi -> {
+                    sendMessage(Info("Connecting to wifi network ${command.ssid}..."))
                     try {
                         val output = settings.runSshCommand(Cmd.Networking.connectWifi(command.ssid, command.password))
 
                         if (output.contains("successfully activated with")) {
                             sendMessage(
-                                Message.CommandSuccess(
+                                CommandSuccess(
                                     command = "ConnectWifi",
                                     message = "Connected to ${command.ssid}",
                                 ),
                             )
                         } else {
-                            sendMessage(Message.CommandFailure(command = "ConnectWifi", message = output))
+                            sendMessage(CommandFailure(command = "ConnectWifi", message = output))
                         }
                     } catch (e: SshException) {
                         sendMessage(
-                            Message.CommandFailure(
+                            CommandFailure(
                                 command = "ConnectWifi",
                                 message = e.message ?: "Unknown error connecting to wifi.",
                             ),
@@ -102,20 +102,20 @@ suspend fun DefaultWebSocketServerSession.handleChiefSocket() {
                     }
                 }
 
-                is Command.ScanBluetooth -> {
+                is ScanBluetooth -> {
                     try {
                         settings.runSshCommand(Cmd.Bluetooth.scan, timeout = 200.milliseconds)
                     } catch (e: Exception) {
                         sendMessage(
-                            Message.CommandFailure(
-                                command = "ScanBluetooth",
+                            CommandFailure(
+                                command = "Command.ScanBluetooth",
                                 message = e.message ?: "Failed to scan.",
                             ),
                         )
                     }
                 }
 
-                is Command.GetBluetoothDevices -> {
+                is GetBluetoothDevices -> {
                     try {
                         val pairedDevices = settings.runSshCommand(Cmd.Bluetooth.paired)
                             .split("\n")
@@ -140,11 +140,11 @@ suspend fun DefaultWebSocketServerSession.handleChiefSocket() {
                                     connected,
                                 )
                             }
-                        sendMessage(Message.BluetoothDevices(devices))
+                        sendMessage(BluetoothDevices(devices))
                     } catch (e: Exception) {
                         sendMessage(
-                            Message.CommandFailure(
-                                command = "GetBluetoothDevices",
+                            CommandFailure(
+                                command = "Command.GetBluetoothDevices",
                                 message = e.message ?: "Failed to list devices.",
                             ),
                         )
