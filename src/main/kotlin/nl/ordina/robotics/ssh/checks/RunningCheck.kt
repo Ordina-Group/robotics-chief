@@ -16,7 +16,7 @@ fun runningCheck(settings: SshSettings): StatusLine {
         message = "PID $running",
         success = runningMainAndController,
         pending = runningParts && !runningMainAndController,
-        actionUrl = if (runningParts) "/commands/restart/8" else "/commands/launch/8",
+        actionUrl = if (runningParts) "/commands/restart/${settings.domainId}" else "/commands/launch/${settings.domainId}",
         actionLabel = if (runningParts) "Restart" else "Start",
     )
 }

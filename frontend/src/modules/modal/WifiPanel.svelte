@@ -18,12 +18,12 @@
   };
 
   $: {
-    if ($success?.command === "ConnectWifi") {
+    if ($success?.command === "Command.ConnectWifi") {
       currentModal.set(undefined);
       success.set(undefined);
     }
 
-    if ($failure?.command === "ConnectWifi") {
+    if ($failure?.command === "Command.ConnectWifi") {
       connecting = false;
       error = $failure.message;
     }

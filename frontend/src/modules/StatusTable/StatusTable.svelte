@@ -6,7 +6,7 @@
 </script>
 
 {#if $statusStore !== undefined}
-    <Card size="xl">
+    <Card size="2xl">
         <h2 class="text-2xl mb-1">Status</h2>
         <Table>
             <TableHead>
@@ -23,7 +23,7 @@
         </Table>
     </Card>
 {:else}
-    <Card size="xl">
+    <Card size="2xl">
         <Skeleton size="2xl" />
     </Card>
 {/if}

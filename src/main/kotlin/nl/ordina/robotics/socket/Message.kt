@@ -28,6 +28,16 @@ data class BluetoothDevices(val devices: List<Device>) : Message {
 }
 
 @Serializable
+@SerialName("Message.Topics")
+data class Topics(val topics: List<Topic>) : Message {
+    override val message = "Topics"
+}
+
+@Serializable
+@SerialName("Message.TopicMessage")
+data class TopicMessage(val topic: String, override val message: String) : Message
+
+@Serializable
 @SerialName("Message.Settings")
 data class Settings(val value: SshSettings) : Message {
     override val message = "ssh settings"
@@ -39,6 +49,12 @@ data class Device(
     val mac: String,
     val paired: Boolean,
     val connected: Boolean,
+)
+
+@Serializable
+data class Topic(
+    val id: String,
+    val count: Int,
 )
 
 @Serializable

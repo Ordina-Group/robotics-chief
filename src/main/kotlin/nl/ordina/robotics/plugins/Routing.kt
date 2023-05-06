@@ -14,16 +14,13 @@ import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
-import io.ktor.server.websocket.DefaultWebSocketServerSession
 import io.ktor.server.websocket.webSocket
 import io.ktor.util.pipeline.PipelineContext
-import io.ktor.websocket.Frame
-import io.ktor.websocket.readText
-import io.ktor.websocket.send
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import nl.ordina.robotics.socket.CommandFailure
 import nl.ordina.robotics.socket.CommandSuccess
+import nl.ordina.robotics.socket.SocketSession
 import nl.ordina.robotics.socket.handleChiefSocket
 import nl.ordina.robotics.ssh.Cmd
 import nl.ordina.robotics.ssh.SshSettingsLoader
@@ -31,7 +28,6 @@ import nl.ordina.robotics.ssh.checks.createSshStatusTable
 import nl.ordina.robotics.ssh.ignoreFailure
 import nl.ordina.robotics.ssh.runInWorkDir
 import nl.ordina.robotics.ssh.runSshCommand
-import javax.security.auth.PrivateCredentialPermission
 
 fun Application.configureRouting() {
     install(StatusPages) {
@@ -155,13 +151,19 @@ fun Application.configureRouting() {
             )
         }
 
-        webSocket(path = "/subscribe", handler = DefaultWebSocketServerSession::handleChiefSocket)
+        webSocket(path = "/subscribe") {
+            SocketSession(this).handleChiefSocket()
+        }
 
         staticResources("/", null)
     }
 }
 
-private suspend fun PipelineContext<Unit, ApplicationCall>.respondCommand(command: String, success: Boolean, message: String) {
+private suspend fun PipelineContext<Unit, ApplicationCall>.respondCommand(
+    command: String,
+    success: Boolean,
+    message: String,
+) {
     val (status, result) = if (success) {
         Pair(HttpStatusCode.OK, CommandSuccess(command, message))
     } else {

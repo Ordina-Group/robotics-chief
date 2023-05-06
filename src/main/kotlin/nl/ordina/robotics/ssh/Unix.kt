@@ -23,7 +23,7 @@ object Cmd {
 
     object Networking {
         fun connectWifi(ssid: String, password: String) =
-            "sudo nmcli device wifi connect $ssid password $password"
+            "sudo nmcli device wifi connect '$ssid' password '$password'"
 
         const val ipAddresses = "ip -br -o -f inet addr show | awk '{ print \$3}'"
     }
@@ -40,6 +40,10 @@ object Cmd {
         const val running = "pgrep -af ros2"
 
         const val mainCmdRunning = "ros2 launch -n"
+
+        fun listTopics(domainId: Int) = "ROS_DOMAIN_ID=$domainId ros2 topic list"
+
+        fun subscribeTopic(domainId: Int, topicId: String) = "ROS_DOMAIN_ID=$domainId ros2 topic echo $topicId"
     }
 
     object Unix {

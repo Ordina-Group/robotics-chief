@@ -28,7 +28,7 @@ socket.addEventListener("message", function (event) {
   }
 });
 
-export const register = (type: string, initial: any = undefined): Writable<any> => {
+export const register = <T = any>(type: string, initial: any = undefined): Writable<T> => {
   subscribers[type] ||= writable(initial);
 
   return subscribers[type];
