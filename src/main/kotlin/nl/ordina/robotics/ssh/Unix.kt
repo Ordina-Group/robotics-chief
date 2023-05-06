@@ -50,6 +50,8 @@ object Cmd {
         fun list(dir: String) = "ls -lah $dir"
 
         const val userInfo = "whoami"
+
+        const val osInfo = "lsb_release -a"
     }
 }
 

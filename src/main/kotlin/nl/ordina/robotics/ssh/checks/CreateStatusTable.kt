@@ -5,6 +5,7 @@ import nl.ordina.robotics.ssh.SshSettings
 
 fun createSshStatusTable(settings: SshSettings): StatusTable = StatusTable(
     listOf(
+        osCheck(settings),
         loginCheck(settings),
         wifiCheck(settings),
         cloneCheck(settings),
