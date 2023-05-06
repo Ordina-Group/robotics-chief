@@ -6,9 +6,11 @@
   import DashboardIcon from "../icons/DashboardIcon.svelte";
   import TopicsIcon from "../icons/TopicsIcon.svelte";
   import Topics from "../modules/Topics/Topics.svelte";
+  import StatusBar from "../modules/StatusBar/StatusBar.svelte";
 </script>
 
 <h1 class="text-6xl">Welcome to RoboChief</h1>
+<StatusBar />
 
 <Tabs style="underline">
     <TabItem open>

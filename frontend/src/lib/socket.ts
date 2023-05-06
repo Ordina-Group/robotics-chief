@@ -3,15 +3,25 @@ import type { Writable } from "svelte/types/runtime/store";
 
 const subscribers: { [k: string]: Writable<any> } = {};
 
-const socket = new WebSocket("ws://localhost:8080/subscribe");
+let socket: WebSocket;
+let reconnect: number | undefined;
 
-// Connection opened
-socket.addEventListener("open", function (event) {
-  console.log("It's open");
-});
+export const connected = writable(false);
 
-// Listen for messages
-socket.addEventListener("message", function (event) {
+const open = () => {
+  clearInterval(reconnect);
+  reconnect = undefined;
+  connected.set(true);
+}
+
+const close = () => {
+  connected.set(false);
+  if (reconnect === undefined) {
+    reconnect = setInterval(() => initializeSocket(), 1000);
+  }
+}
+
+const handleMessage = (event: MessageEvent<any>) => {
   const message = JSON.parse(event.data);
   const store = subscribers[message.type];
 
@@ -26,7 +36,28 @@ socket.addEventListener("message", function (event) {
   if (store === undefined && subscribers["*"] === undefined) {
     console.log(`Discarding ${message}`);
   }
-});
+};
+
+const initializeSocket = () => {
+  if (socket !== undefined && socket.readyState === socket.CONNECTING) {
+    return;
+  }
+
+  if (socket !== undefined) {
+    socket.close();
+    socket.removeEventListener("open", open);
+    socket.removeEventListener("close", close);
+    socket.removeEventListener("message", handleMessage);
+  }
+
+  socket = new WebSocket("ws://localhost:8080/subscribe");
+
+  socket.addEventListener("open", open);
+  socket.addEventListener("close", close);
+  socket.addEventListener("message", handleMessage);
+};
+
+initializeSocket();
 
 export const register = <T = any>(type: string, initial: any = undefined): Writable<T> => {
   subscribers[type] ||= writable(initial);
@@ -35,5 +66,9 @@ export const register = <T = any>(type: string, initial: any = undefined): Writa
 };
 
 export const sendCommand = (command: {}) => {
-  socket.send(JSON.stringify(command));
+  if (socket.readyState === socket.OPEN) {
+    socket.send(JSON.stringify(command));
+  } else {
+    console.error(`Discarding command ${command}, asked too soon`);
+  }
 };

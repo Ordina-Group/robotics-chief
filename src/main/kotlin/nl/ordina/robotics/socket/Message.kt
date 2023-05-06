@@ -22,6 +22,22 @@ data class CommandSuccess(val command: String, override val message: String) : M
 data class CommandFailure(val command: String, override val message: String) : Message
 
 @Serializable
+@SerialName("Message.RobotConnection")
+data class RobotConnection(val connected: Boolean) : Message {
+    override val message: String = "$connected"
+}
+
+@Serializable
+@SerialName("Message.WifiInfo")
+data class WifiInfo(
+    val ssid: String,
+    val signal: String,
+    val rate: String,
+) : Message {
+    override val message: String = "$ssid $signal $rate"
+}
+
+@Serializable
 @SerialName("Message.BluetoothDevices")
 data class BluetoothDevices(val devices: List<Device>) : Message {
     override val message = "Bluetooth scan update"

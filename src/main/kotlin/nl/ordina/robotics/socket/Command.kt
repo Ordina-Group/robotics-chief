@@ -9,6 +9,10 @@ sealed interface Command {
 }
 
 @Serializable
+@SerialName("Command.CheckRobotConnection")
+data class CheckRobotConnection(override val name: String = "Command.CheckRobotConnection") : Command
+
+@Serializable
 @SerialName("Command.UpdateHost")
 data class UpdateHost(val host: String) : Command {
     override val name = "Command.UpdateHost"
@@ -19,6 +23,10 @@ data class UpdateHost(val host: String) : Command {
 data class ConnectWifi(val ssid: String, val password: String) : Command {
     override val name = "Command.ConnectWifi"
 }
+
+@Serializable
+@SerialName("Command.GetWifiInfo")
+data class GetWifiInfo(override val name: String = "Command.GetWifiInfo") : Command
 
 @Serializable
 @SerialName("Command.ScanBluetooth")
