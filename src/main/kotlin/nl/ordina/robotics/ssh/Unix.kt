@@ -2,6 +2,10 @@ package nl.ordina.robotics.ssh
 
 object Cmd {
     object Bluetooth {
+        fun connect(mac: String) = "bluetoothctl connect $mac"
+
+        fun disconnect(mac: String) = "bluetoothctl disconnect $mac"
+
         fun info(mac: String) = "bluetoothctl info $mac"
 
         const val paired = "bluetoothctl paired-devices"
@@ -12,7 +16,7 @@ object Cmd {
     }
 
     object Git {
-        fun clone(repo: String) = "git clone $repo"
+        fun clone(repo: String, directory: String) = "git clone $repo $directory"
 
         const val pull = "git pull"
 
@@ -44,10 +48,14 @@ object Cmd {
         fun listTopics(domainId: Int) = "ROS_DOMAIN_ID=$domainId ros2 topic list"
 
         fun subscribeTopic(domainId: Int, topicId: String) = "ROS_DOMAIN_ID=$domainId ros2 topic echo $topicId"
+
+        fun launch(domainId: Int) = "ROS_DOMAIN_ID=$domainId ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &"
     }
 
     object Unix {
         fun list(dir: String) = "ls -lah $dir"
+
+        fun addToBashRc(command: String) = "echo \"$command\" >> ~/.bashrc"
 
         const val userInfo = "whoami"
 

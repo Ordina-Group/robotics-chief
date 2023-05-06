@@ -44,7 +44,7 @@ fun Application.configureRouting() {
         }
 
         post("/commands/setupenv") {
-            val output = runSshCommand("echo \"${Cmd.Ros.sourceBash}\" >> ~/.bashrc")
+            val output = runSshCommand(Cmd.Unix.addToBashRc(Cmd.Ros.sourceBash))
 
             respondCommand(
                 command = "Command.SetupEnv",
@@ -54,8 +54,12 @@ fun Application.configureRouting() {
         }
 
         post("/commands/clone") {
-            val output =
-                runSshCommand(Cmd.Git.clone("https://github.com/OrdinaNederland/robotics-workshop /home/jetson/robotics-workshop"))
+            val output = runSshCommand(
+                Cmd.Git.clone(
+                    "https://github.com/OrdinaNederland/robotics-workshop",
+                    "/home/jetson/robotics-workshop",
+                ),
+            )
 
             respondCommand(
                 command = "Command.Clone",
@@ -88,8 +92,8 @@ fun Application.configureRouting() {
         }
 
         post("/commands/connect/{controllerId}") {
-            val controllerId = call.parameters["controllerId"]
-            val output = runSshCommand("bluetoothctl connect $controllerId")
+            val controllerId = call.parameters["controllerId"] ?: throw BadRequestException("Missing controller id")
+            val output = runSshCommand(Cmd.Bluetooth.connect(controllerId))
 
             respondCommand(
                 command = "Command.BluetoothConnect",
@@ -99,8 +103,8 @@ fun Application.configureRouting() {
         }
 
         post("/commands/disconnect/{controllerId}") {
-            val controllerId = call.parameters["controllerId"]
-            val output = runSshCommand("bluetoothctl disconnect $controllerId")
+            val controllerId = call.parameters["controllerId"] ?: throw BadRequestException("Missing controller id")
+            val output = runSshCommand(Cmd.Bluetooth.disconnect(controllerId))
 
             respondCommand(
                 command = "Command.BluetoothDisconnect",
@@ -110,12 +114,12 @@ fun Application.configureRouting() {
         }
 
         post("/commands/restart/{number}") {
-            val number = call.parameters["number"]
+            val number = call.parameters["number"] ?: throw BadRequestException("Missing domain id")
             val output = runInWorkDir(
                 Cmd.Ros.stop.ignoreFailure(),
                 Cmd.Ros.sourceBash,
                 Cmd.Ros.sourceLocalSetup,
-                "ROS_DOMAIN_ID=$number ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &",
+                Cmd.Ros.launch(number.toInt().coerceIn(1..100)),
             )
 
             respondCommand(
@@ -126,11 +130,11 @@ fun Application.configureRouting() {
         }
 
         post("/commands/launch/{number}") {
-            val number = call.parameters["number"]
+            val number = call.parameters["number"] ?: throw BadRequestException("Missing domain id")
             val output = runInWorkDir(
                 Cmd.Ros.sourceBash,
                 Cmd.Ros.sourceLocalSetup,
-                "ROS_DOMAIN_ID=$number ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &",
+                Cmd.Ros.launch(number.toInt().coerceIn(1..100)),
             )
 
             respondCommand(
