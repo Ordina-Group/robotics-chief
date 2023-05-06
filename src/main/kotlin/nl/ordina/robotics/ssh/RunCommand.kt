@@ -1,7 +1,9 @@
 package nl.ordina.robotics.ssh
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.withContext
 import org.apache.sshd.client.channel.ClientChannelEvent
 import org.apache.sshd.client.session.ClientSession
 import java.io.ByteArrayOutputStream
@@ -12,23 +14,23 @@ import java.util.EnumSet
 import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 
-fun runInWorkDir(vararg command: String, separator: String = " && "): String =
+suspend fun runInWorkDir(vararg command: String, separator: String = " && "): String =
     with(SshSettingsLoader.load()) {
         runSshCommand("cd $workDir", *command, separator = separator)
     }
 
-fun runSshCommand(vararg command: String, separator: String = " && "): String =
+suspend fun runSshCommand(vararg command: String, separator: String = " && "): String =
     SshSettingsLoader.load().runSshCommand(*command, separator = separator)
 
-fun streamSshCommand(vararg command: String, separator: String = " && "): Flow<String> =
+suspend fun streamSshCommand(vararg command: String, separator: String = " && "): Flow<String> =
     SshSettingsLoader.load().streamSshCommand(*command, separator = separator)
 
-fun SshSettings.runInWorkDir(vararg command: String, separator: String = " && "): String =
+suspend fun SshSettings.runInWorkDir(vararg command: String, separator: String = " && "): String =
     SshSession.withSession(this) { session ->
         session.runCommand(arrayOf("cd $workDir", *command).joinToString(separator), this.timeout)
     }
 
-fun SshSettings.runSshCommand(
+suspend fun SshSettings.runSshCommand(
     vararg command: String,
     separator: String = " && ",
     timeout: Duration = this.timeout,
@@ -37,7 +39,7 @@ fun SshSettings.runSshCommand(
         session.runCommand(command.joinToString(separator), timeout)
     }
 
-fun SshSettings.streamSshCommand(
+suspend fun SshSettings.streamSshCommand(
     vararg command: String,
     separator: String = " && ",
 ): Flow<String> =
@@ -45,7 +47,7 @@ fun SshSettings.streamSshCommand(
         session.streamCommand(command.joinToString(separator))
     }
 
-fun ClientSession.runCommand(command: String, timeout: Duration): String {
+suspend fun ClientSession.runCommand(command: String, timeout: Duration): String = withContext(Dispatchers.IO) {
     val channel = createExecChannel(command)
 
     val stream = ByteArrayOutputStream()
@@ -55,7 +57,10 @@ fun ClientSession.runCommand(command: String, timeout: Duration): String {
     // Wait (forever) for the channel to close - signalling command finished
     channel.waitFor(EnumSet.of(ClientChannelEvent.CLOSED), timeout.inWholeMilliseconds)
 
-    return stream.toByteArray().toString(Charset.defaultCharset()).trim()
+    stream
+        .toByteArray()
+        .toString(Charset.defaultCharset())
+        .trim()
 }
 
 fun ClientSession.streamCommand(command: String): Flow<String> {

@@ -15,12 +15,6 @@ data class UpdateHost(val host: String) : Command {
 }
 
 @Serializable
-@SerialName("Command.UpdateController")
-data class UpdateController(val mac: String) : Command {
-    override val name = "Command.UpdateController"
-}
-
-@Serializable
 @SerialName("Command.ConnectWifi")
 data class ConnectWifi(val ssid: String, val password: String) : Command {
     override val name = "Command.ConnectWifi"

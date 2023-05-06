@@ -7,6 +7,9 @@ import net.harawata.appdirs.AppDirsFactory
 import java.io.File
 
 object SshSettingsLoader {
+    private val json = Json {
+        ignoreUnknownKeys = true
+    }
     private val configDir: String = AppDirsFactory.getInstance().getUserConfigDir(
         "robochief",
         "0.0.1",
@@ -26,7 +29,7 @@ object SshSettingsLoader {
 
     fun load(): SshSettings =
         if (configFile.exists()) {
-            Json.decodeFromString<SshSettings>(configFile.readText()).also(::println)
+            json.decodeFromString<SshSettings>(configFile.readText()).also(::println)
         } else {
             SshSettings()
         }

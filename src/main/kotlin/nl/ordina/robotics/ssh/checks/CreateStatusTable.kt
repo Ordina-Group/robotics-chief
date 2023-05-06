@@ -3,7 +3,7 @@ package nl.ordina.robotics.ssh.checks
 import nl.ordina.robotics.socket.StatusTable
 import nl.ordina.robotics.ssh.SshSettings
 
-fun createSshStatusTable(settings: SshSettings): StatusTable = StatusTable(
+suspend fun createSshStatusTable(settings: SshSettings): StatusTable = StatusTable(
     listOf(
         osCheck(settings),
         loginCheck(settings),

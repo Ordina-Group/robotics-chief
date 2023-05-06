@@ -6,7 +6,7 @@ import nl.ordina.robotics.ssh.SshSettings
 import nl.ordina.robotics.ssh.runInWorkDir
 import nl.ordina.robotics.ssh.runSshCommand
 
-fun revisionCheck(settings: SshSettings): StatusLine {
+suspend fun revisionCheck(settings: SshSettings): StatusLine {
     val dir = settings.runSshCommand(Cmd.Unix.list(settings.workDir))
     val projectCloned = !dir.contains("No such file or directory")
     val revision = if (projectCloned) settings.runInWorkDir(Cmd.Git.revision) else ""

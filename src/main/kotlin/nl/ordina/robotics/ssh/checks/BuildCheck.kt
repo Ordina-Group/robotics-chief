@@ -5,7 +5,7 @@ import nl.ordina.robotics.ssh.Cmd
 import nl.ordina.robotics.ssh.SshSettings
 import nl.ordina.robotics.ssh.runSshCommand
 
-fun buildCheck(settings: SshSettings): StatusLine {
+suspend fun buildCheck(settings: SshSettings): StatusLine {
     val projectBuilding = settings.runSshCommand("pgrep -f /usr/bin/colcon").isNotEmpty()
     val projectBuilt = !projectBuilding && !settings
         .runSshCommand(Cmd.Unix.list("${settings.workDir}/build"))

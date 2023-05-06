@@ -5,7 +5,7 @@ import nl.ordina.robotics.ssh.Cmd
 import nl.ordina.robotics.ssh.SshSettings
 import nl.ordina.robotics.ssh.runSshCommand
 
-fun runningCheck(settings: SshSettings): StatusLine {
+suspend fun runningCheck(settings: SshSettings): StatusLine {
     val running = settings.runSshCommand(Cmd.Ros.running)
     val runningParts = running.isNotEmpty()
     val runningMainProcess = running.contains(Cmd.Ros.mainCmdRunning)

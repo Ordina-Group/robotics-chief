@@ -5,7 +5,7 @@ import nl.ordina.robotics.ssh.Cmd
 import nl.ordina.robotics.ssh.SshSettings
 import nl.ordina.robotics.ssh.runSshCommand
 
-fun wifiCheck(settings: SshSettings): StatusLine {
+suspend fun wifiCheck(settings: SshSettings): StatusLine {
     val addresses = settings.runSshCommand(Cmd.Networking.ipAddresses)
     val connected = addresses.split('\n').size > 3
 

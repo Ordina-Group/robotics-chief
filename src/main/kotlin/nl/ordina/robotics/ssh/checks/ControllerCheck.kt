@@ -5,7 +5,7 @@ import nl.ordina.robotics.ssh.Cmd
 import nl.ordina.robotics.ssh.SshSettings
 import nl.ordina.robotics.ssh.runSshCommand
 
-fun controllerCheck(settings: SshSettings): StatusLine {
+suspend fun controllerCheck(settings: SshSettings): StatusLine {
     val controllers = settings.runSshCommand(Cmd.Bluetooth.paired)
 
     return StatusLine(

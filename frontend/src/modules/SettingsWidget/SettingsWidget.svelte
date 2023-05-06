@@ -34,19 +34,6 @@
                 Update host
             </Button>
         </form>
-        <form
-            action="#"
-            class="flex flex-col gap-1"
-            on:submit|preventDefault={() => sendCommand({ type: 'Command.UpdateController', mac: $settingsStore.controller })}
-        >
-            <div>
-                <Label for="host">Controller</Label>
-                <Input bind:value={$settingsStore.controller} id="host" type="text" />
-            </div>
-            <Button type="submit">
-                Update controller
-            </Button>
-        </form>
     </Card>
 
     <Card class="grow" size="l">

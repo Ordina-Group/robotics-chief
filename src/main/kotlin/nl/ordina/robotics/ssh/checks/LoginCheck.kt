@@ -5,7 +5,7 @@ import nl.ordina.robotics.ssh.Cmd
 import nl.ordina.robotics.ssh.SshSettings
 import nl.ordina.robotics.ssh.runSshCommand
 
-fun loginCheck(settings: SshSettings): StatusLine {
+suspend fun loginCheck(settings: SshSettings): StatusLine {
     val user = settings.runSshCommand(Cmd.Unix.userInfo)
 
     return StatusLine(

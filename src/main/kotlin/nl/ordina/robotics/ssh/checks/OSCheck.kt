@@ -5,7 +5,7 @@ import nl.ordina.robotics.ssh.Cmd
 import nl.ordina.robotics.ssh.SshSettings
 import nl.ordina.robotics.ssh.runSshCommand
 
-fun osCheck(settings: SshSettings): StatusLine {
+suspend fun osCheck(settings: SshSettings): StatusLine {
     val info = settings.runSshCommand(Cmd.Unix.osInfo)
 
     return StatusLine(

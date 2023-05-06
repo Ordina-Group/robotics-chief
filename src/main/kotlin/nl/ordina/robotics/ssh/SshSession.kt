@@ -7,9 +7,9 @@ import kotlin.time.toJavaDuration
 object SshSession {
     private val client = SshClient.setUpDefaultClient()
 
-    fun <T> withSession(
+    suspend fun <T> withSession(
         settings: SshSettings = SshSettingsLoader.load(),
-        block: (session: ClientSession) -> T,
+        block: suspend (session: ClientSession) -> T,
     ): T {
         val session = settings.current ?: settings.initialize()
 
