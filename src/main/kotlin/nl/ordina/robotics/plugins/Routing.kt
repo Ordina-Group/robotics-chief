@@ -1,5 +1,6 @@
 package nl.ordina.robotics.plugins
 
+import io.ktor.http.CacheControl
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
@@ -28,6 +29,7 @@ import nl.ordina.robotics.ssh.checks.createSshStatusTable
 import nl.ordina.robotics.ssh.ignoreFailure
 import nl.ordina.robotics.ssh.runInWorkDir
 import nl.ordina.robotics.ssh.runSshCommand
+import kotlin.time.Duration.Companion.days
 
 fun Application.configureRouting() {
     install(StatusPages) {
@@ -159,7 +161,18 @@ fun Application.configureRouting() {
             SocketSession(this).handleChiefSocket()
         }
 
-        staticResources("/", null)
+        staticResources("/", null) {
+            cacheControl {
+                val cacheControl = when (it.file.split(".").lastOrNull()) {
+                    "html" -> CacheControl.MaxAge(maxAgeSeconds = 60)
+                    "js" -> CacheControl.MaxAge(maxAgeSeconds = 365.days.inWholeSeconds.toInt())
+                    "css" -> CacheControl.MaxAge(maxAgeSeconds = 365.days.inWholeSeconds.toInt())
+                    else -> null
+                }
+
+                listOfNotNull(cacheControl)
+            }
+        }
     }
 }
 
