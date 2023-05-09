@@ -2,8 +2,27 @@
   import { Button, Card, Input, Label } from "flowbite-svelte";
   import { slide } from "svelte/transition";
 
-  import { roboStore, settingsStore } from "$lib/dashboard"
-  import { sendCommand } from "$lib/socket";
+  import { settingsStore } from "$lib/dashboard";
+  import { register, sendCommand } from "$lib/socket";
+  import { onDestroy } from "svelte";
+
+  const excluded = [
+    "Message.BluetoothDevices",
+    "Message.WifiInfo",
+    "Message.StatusTable",
+    "Message.RobotConnection",
+    "Message.Settings",
+  ];
+
+  let lastMessage = "";
+
+  const unsub = register("*", { message: "Hailing the Chief!" }).subscribe((message) => {
+    if (!excluded.includes(message.type)) {
+      lastMessage = message.message;
+    }
+  });
+
+  onDestroy(unsub);
 </script>
 
 <style>
@@ -39,8 +58,8 @@
     <Card class="grow" size="l">
         <span>Message:</span>
         <span class="message-container break-words">
-            {#key $roboStore}
-                <span class="message" transition:slide>{$roboStore.message}</span>
+            {#key lastMessage}
+                <span class="message" transition:slide>{lastMessage}</span>
             {/key}
         </span>
     </Card>
