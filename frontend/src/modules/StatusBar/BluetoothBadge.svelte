@@ -29,4 +29,4 @@
   setInterval(refresh, 1000);
 </script>
 
-<Badge large>🎮 {$controller}</Badge>
+<Badge large class="whitespace-nowrap">🎮 {$controller}</Badge>

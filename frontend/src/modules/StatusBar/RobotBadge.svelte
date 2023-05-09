@@ -26,7 +26,7 @@
   setInterval(refresh, 1000);
 </script>
 
-<Badge large id="robot-connection">
+<Badge large class="whitespace-nowrap" id="robot-connection">
     {#if $robotConnected === true}
         🟢
     {:else if $robotConnected === undefined}
