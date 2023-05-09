@@ -28,4 +28,4 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: build/distributions/robochief-shadow-0.0.1.zip
+          files: build/distributions/robochief.zip
