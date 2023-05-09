@@ -27,7 +27,6 @@
 </script>
 
 <TableBodyRow>
-    <TableBodyCell>{item.name}</TableBodyCell>
     <TableBodyCell>
         {#if item.pending}
             🚧
@@ -36,8 +35,9 @@
         {:else}
             ❌
         {/if}
+        {item.name}
     </TableBodyCell>
-    <TableBodyCell tdClass="px-6 py-4 font-medium">{item.message}</TableBodyCell>
+    <TableBodyCell tdClass="px-6 py-4 break-words font-medium">{item.message}</TableBodyCell>
     <TableBodyCell>
         {#if item.actionUrl && item.actionLabel}
             <Button disabled={loading} on:click={execAction}>
