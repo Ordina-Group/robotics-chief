@@ -19,5 +19,3 @@ register("Message.Settings").subscribe((message) => {
     settingsStore.set(message.value);
   }
 });
-
-export const modalStore = writable<String | undefined>(undefined);

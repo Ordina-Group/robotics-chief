@@ -7,6 +7,8 @@
   import TopicsIcon from "../icons/TopicsIcon.svelte";
   import Topics from "../modules/Topics/Topics.svelte";
   import StatusBar from "../modules/StatusBar/StatusBar.svelte";
+  import SettingsIcon from "../icons/SettingsIcon.svelte";
+  import Settings from "../modules/Settings/Settings.svelte";
 </script>
 
 <h1 class="text-6xl">Welcome to RoboChief</h1>
@@ -31,6 +33,16 @@
         </div>
         <div class="grid gap-2">
             <Topics />
+        </div>
+    </TabItem>
+
+    <TabItem>
+        <span slot="title" class="flex items-center gap-2" role="tab" aria-label="Settings">
+            <SettingsIcon class="h-5 w-auto" />
+            Settings
+        </span>
+        <div class="grid gap-2">
+            <Settings />
         </div>
     </TabItem>
 </Tabs>

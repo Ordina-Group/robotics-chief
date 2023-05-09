@@ -1,8 +1,11 @@
 <script lang="ts">
   import { Badge } from "flowbite-svelte";
   import { derived } from "svelte/store";
+
   import { withRefeshableData } from "$lib/withRefeshableData";
   import { ResultType, Status } from "$lib/state";
+
+  import settings from "../Settings/Settings";
 
   interface Device {
     mac: string;
@@ -21,7 +24,13 @@
       if (message.status === Status.Loading) {
         return "checking";
       } else if (message.type === ResultType.Success) {
-        return message.result.devices.find((d) => d.connected === true)?.mac ?? "No controller";
+        const mac = message.result.devices.find((d) => d.connected === true)?.mac;
+
+        if (mac) {
+          return settings.get(`bluetooth.device.${mac}.name`) ?? mac;
+        } else {
+          return "No controller";
+        }
       }
     },
   );

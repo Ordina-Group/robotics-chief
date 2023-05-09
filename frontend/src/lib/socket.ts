@@ -9,7 +9,9 @@ let reconnect: number | undefined;
 export const connected = writable(false);
 
 const open = () => {
-  clearInterval(reconnect);
+  if (reconnect) {
+    clearInterval(reconnect);
+  }
   reconnect = undefined;
   connected.set(true);
 }
