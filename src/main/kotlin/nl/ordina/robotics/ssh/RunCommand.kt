@@ -14,25 +14,25 @@ import java.util.EnumSet
 import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 
-suspend fun runInWorkDir(vararg command: String, separator: String = " && "): String =
+suspend fun runInWorkDir(vararg command: String, separator: String = Cmd.Unix.And): String =
     with(SshSettingsLoader.load()) {
-        runSshCommand("cd $workDir", *command, separator = separator)
+        runSshCommand(Cmd.Unix.cd(workDir), *command, separator = separator)
     }
 
-suspend fun runSshCommand(vararg command: String, separator: String = " && "): String =
+suspend fun runSshCommand(vararg command: String, separator: String = Cmd.Unix.And): String =
     SshSettingsLoader.load().runSshCommand(*command, separator = separator)
 
-suspend fun streamSshCommand(vararg command: String, separator: String = " && "): Flow<String> =
+suspend fun streamSshCommand(vararg command: String, separator: String = Cmd.Unix.And): Flow<String> =
     SshSettingsLoader.load().streamSshCommand(*command, separator = separator)
 
-suspend fun SshSettings.runInWorkDir(vararg command: String, separator: String = " && "): String =
+suspend fun SshSettings.runInWorkDir(vararg command: String, separator: String = Cmd.Unix.And): String =
     SshSession.withSession(this) { session ->
-        session.runCommand(arrayOf("cd $workDir", *command).joinToString(separator), this.timeout)
+        session.runCommand(arrayOf(Cmd.Unix.cd(workDir), *command).joinToString(separator), this.timeout)
     }
 
 suspend fun SshSettings.runSshCommand(
     vararg command: String,
-    separator: String = " && ",
+    separator: String = Cmd.Unix.And,
     timeout: Duration = this.timeout,
 ): String =
     SshSession.withSession(this) { session ->
@@ -41,7 +41,7 @@ suspend fun SshSettings.runSshCommand(
 
 suspend fun SshSettings.streamSshCommand(
     vararg command: String,
-    separator: String = " && ",
+    separator: String = Cmd.Unix.And,
 ): Flow<String> =
     SshSession.withSession(this) { session ->
         session.streamCommand(command.joinToString(separator))

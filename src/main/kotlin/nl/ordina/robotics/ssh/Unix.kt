@@ -57,6 +57,10 @@ object Cmd {
     }
 
     object Unix {
+        const val And = " && "
+
+        fun cd(dir: String) = "cd $dir"
+
         fun list(dir: String) = "ls -lah $dir"
 
         fun addToBashRc(command: String) = "echo \"$command\" >> ~/.bashrc"

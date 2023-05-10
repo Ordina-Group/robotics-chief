@@ -10,7 +10,7 @@ import nl.ordina.robotics.plugins.configureSecurity
 import nl.ordina.robotics.plugins.configureSerialization
 import nl.ordina.robotics.plugins.configureSockets
 
-fun main() {
+fun main(args: Array<String>) {
     embeddedServer(CIO, port = 8080, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
 }

@@ -3,6 +3,7 @@ package nl.ordina.robotics.ssh.commands
 import kotlinx.coroutines.sync.withLock
 import nl.ordina.robotics.socket.Info
 import nl.ordina.robotics.socket.Message
+import nl.ordina.robotics.socket.Settings
 import nl.ordina.robotics.socket.SocketSession
 import nl.ordina.robotics.socket.UpdateHost
 import nl.ordina.robotics.socket.sendMessage
@@ -14,5 +15,5 @@ suspend fun SocketSession.updateHost(command: UpdateHost): Message {
         settings = settings.copy(host = command.host.trim()).also(SshSettingsLoader::save)
     }
 
-    return Info("Updated host...")
+    return Settings(settings)
 }

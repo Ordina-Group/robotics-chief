@@ -1,5 +1,6 @@
 <script lang="ts">
   import { Badge } from "flowbite-svelte";
+  import { onDestroy } from "svelte";
   import { derived } from "svelte/store";
 
   import { withRefeshableData } from "$lib/withRefeshableData";
@@ -24,7 +25,9 @@
     },
   );
 
-  setInterval(refresh, 1000);
+  const intervalID = setInterval(refresh, 1000);
+
+  onDestroy(() => clearInterval(intervalID));
 </script>
 
 <Badge large class="whitespace-nowrap">🛜 {$wifi}</Badge>
