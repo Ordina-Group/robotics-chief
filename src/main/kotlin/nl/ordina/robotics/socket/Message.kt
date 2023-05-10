@@ -70,6 +70,7 @@ data class Device(
 @Serializable
 data class Topic(
     val id: String,
+    val type: String,
     val count: Int,
 )
 

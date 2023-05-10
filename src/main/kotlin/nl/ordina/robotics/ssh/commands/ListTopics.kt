@@ -8,13 +8,23 @@ import nl.ordina.robotics.ssh.Cmd
 import nl.ordina.robotics.ssh.runSshCommand
 
 suspend fun SocketSession.listTopics(): Message {
-    val topics = runSshCommand(
+    val topicNames = runSshCommand(
         Cmd.Ros.sourceBash,
         Cmd.Ros.listTopics(settings.domainId),
     )
         .split('\n')
         .filter { it.startsWith('/') }
-        .map { id -> Topic(id, -1) }
+
+    val topicInfos = topicNames.associateWith {
+        runSshCommand(
+            Cmd.Ros.sourceBash,
+            Cmd.Ros.topicInfo(settings.domainId, it),
+        ).split("/n").first()
+    }
+
+    val topics = topicNames.map { id ->
+        Topic(id, topicInfos[id]!!, -1)
+    }
 
     return Topics(topics)
 }

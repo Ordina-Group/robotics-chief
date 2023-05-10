@@ -49,6 +49,8 @@ object Cmd {
 
         fun listTopics(domainId: Int) = "ROS_DOMAIN_ID=$domainId ros2 topic list"
 
+        fun topicInfo(domainId: Int, topicId: String) = "ROS_DOMAIN_ID=$domainId ros2 topic info $topicId"
+
         fun subscribeTopic(domainId: Int, topicId: String) = "ROS_DOMAIN_ID=$domainId ros2 topic echo $topicId"
 
         fun launch(domainId: Int) = "ROS_DOMAIN_ID=$domainId ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &"
