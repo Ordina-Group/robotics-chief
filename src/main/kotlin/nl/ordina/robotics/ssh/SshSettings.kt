@@ -1,6 +1,7 @@
 package nl.ordina.robotics.ssh
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.apache.sshd.client.session.ClientSession
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -14,5 +15,6 @@ data class SshSettings(
     val domainId: Int = 8,
     val timeout: Duration = 5000.milliseconds,
     val workDir: String = "/home/jetson/robotics-workshop",
+    @Transient
     internal var current: ClientSession? = null,
 )
