@@ -3,10 +3,12 @@ package nl.ordina.robotics.ssh
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import mu.KotlinLogging
 import net.harawata.appdirs.AppDirsFactory
 import java.io.File
 
 object SshSettingsLoader {
+    private val logger = KotlinLogging.logger {}
     private val json = Json {
         ignoreUnknownKeys = true
     }
@@ -19,18 +21,21 @@ object SshSettingsLoader {
     private val configFile = File(configDir, "settings.json")
 
     fun save(value: SshSettings) {
+        logger.debug { "Persisting settings to ${configFile.absolutePath}" }
         try {
             configFile.parentFile.mkdirs()
             configFile.writeText(Json.encodeToString(value))
         } catch (e: Exception) {
-            println("Error saving settings: ${e.message}")
+            logger.error("Error saving settings: ${e.message}")
         }
     }
 
     fun load(): SshSettings =
         if (configFile.exists()) {
-            json.decodeFromString<SshSettings>(configFile.readText()).also(::println)
+            logger.debug { "Loading settings from filesystem" }
+            json.decodeFromString<SshSettings>(configFile.readText())
         } else {
+            logger.debug { "Using default settings" }
             SshSettings()
         }
 }
