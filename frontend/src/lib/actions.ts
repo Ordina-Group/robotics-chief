@@ -22,10 +22,13 @@ export const execute = async (action: Action): Promise<unknown> => {
   try {
     const response = await fetch(action.actionUrl, { method: "POST" });
     const body = await response.json();
-    currentAlert.set({
-      color: response.status === 200 ? 'green' : 'red',
-      message: body.message,
-    });
+
+    if (body.message) {
+      currentAlert.set({
+        color: response.status === 200 ? 'green' : 'red',
+        message: body.message,
+      });
+    }
   } catch (e: any) {
     currentAlert.set({
       color: "red",
