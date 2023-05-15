@@ -3,10 +3,13 @@
 
   import { execute } from "$lib/actions";
   import { sendCommand } from "$lib/socket";
+  import settings from "../Settings/Settings";
 
   export let device;
 
   let loading: boolean = false;
+
+  const friendlyName = settings.get(`bluetooth.device.${device.mac}.name`);
 
   const refresh = () => sendCommand({ type: "Command.GetBluetoothDevices" });
   const connect = async () => {
@@ -21,7 +24,7 @@
   const disconnect = async () => {
       loading = true;
       try {
-        execute({ actionUrl: `/commands/disconnect/${device.mac}` });
+        await execute({ actionUrl: `/commands/disconnect/${device.mac}` });
       } finally {
         loading = false;
         refresh();
@@ -30,7 +33,12 @@
 </script>
 
 <TableBodyRow>
-    <TableBodyCell>{device.name}</TableBodyCell>
+    <TableBodyCell class="whitespace-break-spaces">
+        {device.name}
+        {#if friendlyName }
+            ({friendlyName})
+        {/if}
+    </TableBodyCell>
     <TableBodyCell>{device.mac}</TableBodyCell>
     <TableBodyCell>
         {#if !device.connected}
