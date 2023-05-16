@@ -61,7 +61,7 @@
                 </TableBodyRow>
             {/if}
 
-            {#each $update.devices as device}
+            {#each $update.devices as device (device.mac)}
                 <DeviceRow device={device} />
             {/each}
         </TableBody>

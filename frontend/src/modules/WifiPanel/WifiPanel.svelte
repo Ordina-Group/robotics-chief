@@ -60,7 +60,7 @@
                 </TableBodyRow>
             {/if}
 
-            {#each $update.networks as network}
+            {#each $update.networks as network (network.ssid)}
                 <NetworkRow network={network} />
             {/each}
         </TableBody>

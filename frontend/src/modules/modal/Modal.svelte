@@ -22,9 +22,6 @@
   }
 </script>
 
-<p>Modal: {resource}</p>
-<p>Value: {value}</p>
-
 <FBModal bind:open={modalOpen}>
     {#if resource === "wifi"}
         <WifiPanel />
