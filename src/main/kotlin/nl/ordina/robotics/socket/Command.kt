@@ -20,8 +20,20 @@ data class UpdateHost(val host: String) : Command {
 
 @Serializable
 @SerialName("Command.ConnectWifi")
-data class ConnectWifi(val ssid: String, val password: String) : Command {
+data class ConnectWifi(val ssid: String, val password: String? = null) : Command {
     override val name = "Command.ConnectWifi"
+}
+
+@Serializable
+@SerialName("Command.ForgetWifi")
+data class ForgetWifi(val ssid: String) : Command {
+    override val name = "Command.ForgetWifi"
+}
+
+@Serializable
+@SerialName("Command.GetWifiNetworks")
+object GetWifiNetworks : Command {
+    override val name = "Command.GetWifiNetworks"
 }
 
 @Serializable

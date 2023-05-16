@@ -1,7 +1,8 @@
 <script lang="ts">
   import { Button, Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from "flowbite-svelte";
 
-  import { getAllSettingsAndValues, Setting, Type } from "./Settings";
+  import { getAllSettingsAndValues, Type } from "./Settings";
+  import type { Setting } from "./Settings";
   import { execute } from "$lib/actions.js";
   import { onDestroy, onMount } from "svelte";
 

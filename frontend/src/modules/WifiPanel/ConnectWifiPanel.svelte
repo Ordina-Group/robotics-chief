@@ -2,12 +2,12 @@
   import { Alert, Button, Input, Label } from "flowbite-svelte";
 
   import { register, sendCommand } from "$lib/socket";
-  import { currentModal } from "$lib/modal";
+  import { closeModal } from "../ModalManager/modals";
 
   const success = register("Message.CommandSuccess");
   const failure = register("Message.CommandFailure");
 
-  let ssid = "OrdinaNLGuest";
+  export let ssid = "OrdinaNLGuest";
   let password = "";
   let connecting = false;
   let error: string | undefined = undefined;
@@ -19,8 +19,9 @@
 
   $: {
     if ($success?.command === "Command.ConnectWifi") {
-      currentModal.set(undefined);
+      closeModal("connect_wifi");
       success.set(undefined);
+      sendCommand({ type: "Command.GetWifiNetworks" });
     }
 
     if ($failure?.command === "Command.ConnectWifi") {

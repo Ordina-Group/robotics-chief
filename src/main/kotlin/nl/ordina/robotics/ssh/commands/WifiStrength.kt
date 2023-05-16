@@ -27,12 +27,22 @@ fun String.parseWifiInfo(): WifiInfo {
     val rate = lines.getOrNull(2)?.split("   ")?.first()?.split("Bit Rate=")?.last()
 
     if (ssid.startsWith("off")) {
-        return WifiInfo("Not connected", "", "")
+        return WifiInfo(
+            "Not connected",
+            "",
+            "",
+            connected = false,
+            protocol = "",
+            known = false,
+        )
     }
 
     return WifiInfo(
         ssid,
         signal ?: "",
         rate ?: "",
+        connected = false,
+        protocol = "",
+        known = false,
     )
 }

@@ -12,18 +12,19 @@
   import { onDestroy, onMount } from "svelte";
 
   import { register, sendCommand } from "$lib/socket";
-  import DeviceRow from "./DeviceRow.svelte";
   import { closeModal } from "../ModalManager/modals";
 
-  const update = register("Message.BluetoothDevices", { devices: [] });
+  import NetworkRow from "./NetworkRow.svelte";
+
+  const update = register("Message.WifiNetworks", { networks: [] });
 
   let error: string | undefined = undefined;
   let timeout: number;
 
-  const refresh = () => sendCommand({ type: "Command.GetBluetoothDevices" });
+  const refresh = () => sendCommand({ type: "Command.GetWifiNetworks" });
 
   const startScan = () => {
-    sendCommand({ type: "Command.ScanBluetooth", scan: true });
+    sendCommand({ type: "Command.GetWifiNetworks" });
     timeout = setInterval(() => {
       refresh();
     }, 1000);
@@ -31,8 +32,7 @@
 
   const onDone = () => {
     clearInterval(timeout);
-    sendCommand({ type: "Command.ScanBluetooth", scan: false });
-    closeModal("bluetooth");
+    closeModal("wifi");
   };
 
   onMount(refresh);
@@ -45,24 +45,23 @@
     class="grid gap-2"
     on:submit|preventDefault={onDone}
 >
-    <h1>Connect Bluetooth device</h1>
+    <h1>Connect Wifi network</h1>
     <Table striped>
         <TableHead>
             <TableHeadCell>Name</TableHeadCell>
-            <TableHeadCell>MAC</TableHeadCell>
             <TableHeadCell>Action</TableHeadCell>
         </TableHead>
         <TableBody>
-            {#if $update.devices.length === 0}
+            {#if $update.networks.length === 0}
                 <TableBodyRow>
-                    <TableBodyCell>No devices found</TableBodyCell>
+                    <TableBodyCell>No networks found</TableBodyCell>
                     <TableBodyCell>Try scanning</TableBodyCell>
                     <TableBodyCell />
                 </TableBodyRow>
             {/if}
 
-            {#each $update.devices as device}
-                <DeviceRow device={device} />
+            {#each $update.networks as network}
+                <NetworkRow network={network} />
             {/each}
         </TableBody>
     </Table>

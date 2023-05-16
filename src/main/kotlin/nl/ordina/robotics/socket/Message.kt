@@ -28,11 +28,22 @@ data class RobotConnection(val connected: Boolean) : Message {
 }
 
 @Serializable
+@SerialName("Message.WifiNetworks")
+data class WifiNetworks(
+    val networks: List<WifiInfo>,
+) : Message {
+    override val message: String = "${networks.size} wireless networks"
+}
+
+@Serializable
 @SerialName("Message.WifiInfo")
 data class WifiInfo(
     val ssid: String,
     val signal: String,
     val rate: String,
+    val connected: Boolean,
+    val protocol: String,
+    val known: Boolean,
 ) : Message {
     override val message: String = "$ssid $signal $rate"
 }

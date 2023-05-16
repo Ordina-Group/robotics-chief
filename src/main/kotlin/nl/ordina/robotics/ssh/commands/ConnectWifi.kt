@@ -15,7 +15,11 @@ suspend fun SocketSession.connectWifi(command: ConnectWifi): Message {
     sendMessage(Info("Connecting to wifi network ${command.ssid}..."))
 
     return try {
-        val output = settings.runSshCommand(Cmd.Networking.connectWifi(command.ssid, command.password))
+        val output = if (command.password != null) {
+            settings.runSshCommand(Cmd.Networking.connectWifi(command.ssid, command.password))
+        } else {
+            settings.runSshCommand(Cmd.Networking.activateConnection(command.ssid))
+        }
 
         if (output.contains("successfully activated with")) {
             CommandSuccess(

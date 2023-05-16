@@ -10,6 +10,7 @@
     ssid: string;
     signal: string;
     rate: string;
+    known: boolean;
   }
 
   const [wifiSignal, refresh] = withRefeshableData<WifiInfo>("Message.WifiInfo", "Command.GetWifiInfo");

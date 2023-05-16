@@ -1,18 +1,15 @@
 <script lang="ts">
-  import { currentModal } from "$lib/modal";
   import { currentAlert } from "$lib/alert";
 
   import "../app.postcss";
-  import Modal from "../modules/modal/Modal.svelte";
   import Alert from "../modules/Alert/Alert.svelte";
+  import ModalManager from "../modules/ModalManager/ModalManager.svelte";
 </script>
 
 <div class="grid container mx-auto gap-1">
     <slot />
 
-    {#if $currentModal !== undefined}
-        <Modal resource={$currentModal} onClose={() => currentModal.set(undefined)} />
-    {/if}
+    <ModalManager />
     {#if $currentAlert !== undefined}
         <Alert color={$currentAlert.color} message={$currentAlert.message}/>
     {/if}

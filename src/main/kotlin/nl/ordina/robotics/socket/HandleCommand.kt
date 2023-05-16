@@ -2,7 +2,9 @@ package nl.ordina.robotics.socket
 
 import nl.ordina.robotics.ssh.commands.connectBluetooth
 import nl.ordina.robotics.ssh.commands.connectWifi
+import nl.ordina.robotics.ssh.commands.forgetWifi
 import nl.ordina.robotics.ssh.commands.getBluetoothDevices
+import nl.ordina.robotics.ssh.commands.getWifiNetworks
 import nl.ordina.robotics.ssh.commands.listTopics
 import nl.ordina.robotics.ssh.commands.robotConnection
 import nl.ordina.robotics.ssh.commands.scanBluetooth
@@ -15,6 +17,8 @@ suspend fun SocketSession.handleCommand(command: Command) {
         is CheckRobotConnection -> robotConnection(command)
         is UpdateHost -> updateHost(command)
         is ConnectWifi -> connectWifi(command)
+        is ForgetWifi -> forgetWifi(command)
+        is GetWifiNetworks -> getWifiNetworks(command)
         is GetWifiInfo -> wifiInfo(command)
         is ScanBluetooth -> scanBluetooth(command)
         is GetBluetoothDevices -> getBluetoothDevices()

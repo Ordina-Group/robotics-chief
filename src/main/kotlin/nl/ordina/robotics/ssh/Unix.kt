@@ -29,6 +29,16 @@ object Cmd {
         fun connectWifi(ssid: String, password: String) =
             "sudo nmcli device wifi connect '$ssid' password '$password'"
 
+        fun activateConnection(ssid: String) = "sudo nmcli c up '$ssid'"
+
+        fun forgetConnection(ssid: String) = "sudo nmcli c delete '$ssid'"
+
+        fun stopConnection(ssid: String) = "sudo nmcli c down '$ssid'"
+
+        const val listStoredNetworks = "sudo nmcli -t connection show"
+
+        const val listWirelessNetworks = "sudo nmcli -t device wifi list"
+
         const val connectionInfo = "iwconfig wlan0"
 
         const val ipAddresses = "ip -br -o -f inet addr show | awk '{ print \$3}'"

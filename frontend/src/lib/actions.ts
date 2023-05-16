@@ -1,5 +1,5 @@
 import { currentAlert } from "$lib/alert";
-import { currentModal } from "$lib/modal";
+import { closeModal, openModal } from "../modules/ModalManager/modals";
 
 export interface Action {
   actionUrl: string;
@@ -11,9 +11,9 @@ export const execute = async (action: Action): Promise<unknown> => {
   if (url.pathname === "/actions/modal") {
     const resource = url.searchParams.get("resource");
     if (resource && resource !== "close") {
-      currentModal.set(resource);
+      openModal(resource);
     } else {
-      currentModal.set(undefined);
+      closeModal();
     }
 
     return undefined;

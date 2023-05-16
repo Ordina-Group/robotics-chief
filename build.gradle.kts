@@ -98,3 +98,18 @@ task<NpmTask>("buildFrontend") {
 
     outputs.dir("frontend/build")
 }
+
+task<NpmTask>("liveFrontend") {
+    group = "application"
+    dependsOn.add("npmInstall")
+
+    args.addAll("run", "dev")
+
+    inputs.files(fileTree("frontend/src"))
+    inputs.files("frontend/package.json")
+    inputs.files("frontend/package-lock.json")
+    inputs.files("frontend/svelte.config.js")
+    inputs.files("frontend/tsconfig.json")
+
+    outputs.dir("frontend/build")
+}

@@ -15,6 +15,6 @@ suspend fun wifiCheck(settings: SshSettings): StatusLine {
         pending = false,
         message = addresses,
         actionUrl = "/actions/modal?resource=wifi",
-        actionLabel = "Connect to wifi".onlyWhen(!connected),
+        actionLabel = "Show networks",
     )
 }

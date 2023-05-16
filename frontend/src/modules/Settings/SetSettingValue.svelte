@@ -1,16 +1,15 @@
 <script lang="ts">
   import { Button, Input, Label } from "flowbite-svelte";
 
-  import { currentModal } from "$lib/modal";
-
   import settings from "./Settings";
+  import { closeModal } from "../ModalManager/modals";
 
   let key: String = "";
   let value: String = "";
 
   const handleSubmit = () => {
     settings.set(key, value);
-    currentModal.set(undefined);
+    closeModal("set_setting");
   };
 </script>
 
