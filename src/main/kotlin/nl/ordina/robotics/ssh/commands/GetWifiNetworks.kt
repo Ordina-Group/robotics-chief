@@ -9,6 +9,7 @@ import nl.ordina.robotics.socket.WifiInfo
 import nl.ordina.robotics.socket.WifiNetworks
 import nl.ordina.robotics.ssh.Cmd
 import nl.ordina.robotics.ssh.runSshCommand
+import nl.ordina.robotics.ssh.withSudo
 import org.apache.sshd.common.SshException
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -17,10 +18,16 @@ private val logger = KotlinLogging.logger {}
 private val networksLineSplitter = Regex("(?<!\\\\):")
 
 suspend fun SocketSession.getWifiNetworks(command: GetWifiNetworks): Message = try {
-    val saved = settings.runSshCommand(Cmd.Networking.listStoredNetworks, timeout = 200.milliseconds).parseStoredNetworks()
-    settings.runSshCommand(Cmd.Networking.listWirelessNetworks, timeout = 200.milliseconds).parseWifiNetworks(saved)
+    val saved = settings.runSshCommand(
+        Cmd.Networking.listStoredNetworks.withSudo(settings.password),
+        timeout = 200.milliseconds,
+    ).parseStoredNetworks()
+    settings.runSshCommand(
+        Cmd.Networking.listWirelessNetworks.withSudo(settings.password),
+        timeout = 200.milliseconds,
+    ).parseWifiNetworks(saved)
 } catch (e: SshException) {
-    logger.error { e }
+    logger.error { e.message }
 
     CommandFailure(
         command = "Command.GetWifiNetworks",
@@ -30,10 +37,12 @@ suspend fun SocketSession.getWifiNetworks(command: GetWifiNetworks): Message = t
 
 fun String.parseStoredNetworks(): List<String> = this
     .split("\n")
+    .filter { it.isNotBlank() }
     .mapNotNull { it.split(networksLineSplitter).firstOrNull() }
 
 fun String.parseWifiNetworks(knownNetworks: List<String>): WifiNetworks = this
     .split("\n")
+    .filter { it.isNotBlank() }
     .map { it.split(networksLineSplitter) }
     .groupBy { it[LinePosition.SSID.index] }
     .filterKeys { it.isNotBlank() }

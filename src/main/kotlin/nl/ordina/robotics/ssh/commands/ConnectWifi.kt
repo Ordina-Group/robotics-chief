@@ -9,6 +9,7 @@ import nl.ordina.robotics.socket.SocketSession
 import nl.ordina.robotics.socket.sendMessage
 import nl.ordina.robotics.ssh.Cmd
 import nl.ordina.robotics.ssh.runSshCommand
+import nl.ordina.robotics.ssh.withSudo
 import org.apache.sshd.common.SshException
 
 suspend fun SocketSession.connectWifi(command: ConnectWifi): Message {
@@ -16,9 +17,13 @@ suspend fun SocketSession.connectWifi(command: ConnectWifi): Message {
 
     return try {
         val output = if (command.password != null) {
-            settings.runSshCommand(Cmd.Networking.connectWifi(command.ssid, command.password))
+            settings.runSshCommand(
+                Cmd.Networking.connectWifi(command.ssid, command.password).withSudo(settings.password),
+            )
         } else {
-            settings.runSshCommand(Cmd.Networking.activateConnection(command.ssid))
+            settings.runSshCommand(
+                Cmd.Networking.activateConnection(command.ssid).withSudo(settings.password),
+            )
         }
 
         if (output.contains("successfully activated with")) {

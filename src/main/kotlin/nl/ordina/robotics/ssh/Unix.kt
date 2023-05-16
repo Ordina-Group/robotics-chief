@@ -27,17 +27,15 @@ object Cmd {
 
     object Networking {
         fun connectWifi(ssid: String, password: String) =
-            "sudo nmcli device wifi connect '$ssid' password '$password'"
+            "nmcli device wifi connect '$ssid' password '$password'"
 
-        fun activateConnection(ssid: String) = "sudo nmcli c up '$ssid'"
+        fun activateConnection(ssid: String) = "nmcli c up '$ssid'"
 
-        fun forgetConnection(ssid: String) = "sudo nmcli c delete '$ssid'"
+        fun forgetConnection(ssid: String) = "nmcli c delete '$ssid'"
 
-        fun stopConnection(ssid: String) = "sudo nmcli c down '$ssid'"
+        const val listStoredNetworks = "nmcli -t connection show"
 
-        const val listStoredNetworks = "sudo nmcli -t connection show"
-
-        const val listWirelessNetworks = "sudo nmcli -t device wifi list"
+        const val listWirelessNetworks = "nmcli -t device wifi list"
 
         const val connectionInfo = "iwconfig wlan0"
 
@@ -63,7 +61,8 @@ object Cmd {
 
         fun subscribeTopic(domainId: Int, topicId: String) = "ROS_DOMAIN_ID=$domainId ros2 topic echo $topicId"
 
-        fun launch(domainId: Int) = "ROS_DOMAIN_ID=$domainId ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &"
+        fun launch(domainId: Int) =
+            "ROS_DOMAIN_ID=$domainId ros2 launch -n robot_app gamepad_launch.py gamepad_type:=playstation &"
     }
 
     object Unix {
@@ -82,3 +81,5 @@ object Cmd {
 }
 
 fun String.ignoreFailure() = "($this || true)"
+
+fun String.withSudo(password: String) = " (echo '$password' | sudo -Si >/dev/null 2>&1); $this"
