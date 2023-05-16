@@ -9,6 +9,7 @@ import nl.ordina.robotics.ssh.commands.listTopics
 import nl.ordina.robotics.ssh.commands.robotConnection
 import nl.ordina.robotics.ssh.commands.scanBluetooth
 import nl.ordina.robotics.ssh.commands.subscribeTopic
+import nl.ordina.robotics.ssh.commands.updateDomain
 import nl.ordina.robotics.ssh.commands.updateHost
 import nl.ordina.robotics.ssh.commands.wifiInfo
 
@@ -16,6 +17,7 @@ suspend fun SocketSession.handleCommand(command: Command) {
     val message = when (command) {
         is CheckRobotConnection -> robotConnection(command)
         is UpdateHost -> updateHost(command)
+        is UpdateDomain -> updateDomain(command)
         is ConnectWifi -> connectWifi(command)
         is ForgetWifi -> forgetWifi(command)
         is GetWifiNetworks -> getWifiNetworks(command)

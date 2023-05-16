@@ -12,6 +12,7 @@ export const statusStore = derived(
 export const settingsStore = writable({
   controller: "20:21:06:16:1B:F3",
   host: "192.168.55.1",
+  domainId: 8,
 });
 
 register("Message.Settings").subscribe((message) => {

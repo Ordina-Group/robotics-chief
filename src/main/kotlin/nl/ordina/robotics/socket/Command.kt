@@ -19,6 +19,12 @@ data class UpdateHost(val host: String) : Command {
 }
 
 @Serializable
+@SerialName("Command.UpdateDomain")
+data class UpdateDomain(val domain: Int) : Command {
+    override val name = "Command.UpdateDomain"
+}
+
+@Serializable
 @SerialName("Command.ConnectWifi")
 data class ConnectWifi(val ssid: String, val password: String? = null) : Command {
     override val name = "Command.ConnectWifi"

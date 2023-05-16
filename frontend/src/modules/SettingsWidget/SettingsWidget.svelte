@@ -53,6 +53,20 @@
                 Update host
             </Button>
         </form>
+
+        <form
+            action="#"
+            class="flex flex-col gap-1"
+            on:submit|preventDefault={() => sendCommand({ type: 'Command.UpdateDomain', domain: $settingsStore.domainId })}
+        >
+            <div>
+                <Label for="host">Domain id</Label>
+                <Input bind:value={$settingsStore.domainId} id="domainId" type="number" />
+            </div>
+            <Button type="submit">
+                Update domain
+            </Button>
+        </form>
     </Card>
 
     <Card class="grow" size="l">
