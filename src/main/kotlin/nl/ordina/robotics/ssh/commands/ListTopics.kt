@@ -19,7 +19,13 @@ suspend fun SocketSession.listTopics(): Message {
         runSshCommand(
             Cmd.Ros.sourceBash,
             Cmd.Ros.topicInfo(settings.domainId, it),
-        ).split("/n").first()
+        )
+            .split("/n")
+            .first()
+            .split("\n")
+            .first()
+            .split(": ")
+            .last()
     }
 
     val topics = topicNames.map { id ->
