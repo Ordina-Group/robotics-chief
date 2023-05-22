@@ -1,7 +1,7 @@
 import { derived } from "svelte/store";
 import { register } from "$lib/socket";
 import type { State } from "$lib/state";
-import { ResultType } from "$lib/state";
+import { ResultType, Status } from "$lib/state";
 
 export interface TopicMessage {
   topics: Topic[];
@@ -9,6 +9,7 @@ export interface TopicMessage {
 
 export interface Topic {
   id: string;
+  type: string;
   count: number;
 }
 
@@ -24,11 +25,11 @@ export const topics = derived(
   ],
   ([topics, failure]): State<TopicMessage, string> => {
     if (topics  !== undefined) {
-      return { status: ResultType.Success, result: topics };
+      return { status: Status.Done, type: ResultType.Success, result: topics };
     } else if (failure?.command === "Command.ListTopics") {
-      return { status: ResultType.Failure, result: failure.message };
+      return { status: Status.Done, type: ResultType.Failure, result: failure.message };
     }
 
-    return { status: ResultType.Loading, result: undefined };
+    return { status: Status.Loading, type: ResultType.Empty, result: undefined };
   },
 );
