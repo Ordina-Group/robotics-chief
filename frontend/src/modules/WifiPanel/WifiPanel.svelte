@@ -21,10 +21,10 @@
   let error: string | undefined = undefined;
   let timeout: number;
 
-  const refresh = () => sendCommand({ type: "Command.GetWifiNetworks" });
+  const refresh = () => sendCommand({ type: "GetWifiNetworks" });
 
   const startScan = () => {
-    sendCommand({ type: "Command.GetWifiNetworks" });
+    sendCommand({ type: "GetWifiNetworks" });
     timeout = setInterval(() => {
       refresh();
     }, 1000);

@@ -10,11 +10,11 @@
 
   let loading: boolean = false;
 
-  const refresh = () => sendCommand({ type: "Command.GetWifiNetworks" });
+  const refresh = () => sendCommand({ type: "GetWifiNetworks" });
 
   const connect = () => {
     if (network.known === true) {
-      sendCommand({ type: "Command.ConnectWifi", ssid: network.ssid });
+      sendCommand({ type: "ConnectWifi", ssid: network.ssid });
     } else {
       openModal("connect_wifi", network.ssid)
     }
@@ -23,14 +23,14 @@
   const disconnect = async () => {
       loading = true;
       try {
-        await sendCommand({ type: "Command.DisconnectWifi"  });
+        await sendCommand({ type: "DisconnectWifi"  });
       } finally {
         loading = false;
         refresh();
       }
   };
 
-  const remove = () => sendCommand({ type: "Command.ForgetWifi", ssid: network.ssid });
+  const remove = () => sendCommand({ type: "ForgetWifi", ssid: network.ssid });
 </script>
 
 <TableBodyRow>

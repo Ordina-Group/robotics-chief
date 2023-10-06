@@ -43,7 +43,7 @@
         <form
             action="#"
             class="flex flex-col gap-1"
-            on:submit|preventDefault={() => sendCommand({ type: 'Command.UpdateHost', host: $settingsStore.host })}
+            on:submit|preventDefault={() => sendCommand({ type: 'UpdateHost', host: $settingsStore.host })}
         >
             <div>
                 <Label for="host">Host</Label>
@@ -57,7 +57,7 @@
         <form
             action="#"
             class="flex flex-col gap-1"
-            on:submit|preventDefault={() => sendCommand({ type: 'Command.UpdateDomain', domain: $settingsStore.domainId })}
+            on:submit|preventDefault={() => sendCommand({ type: 'UpdateDomain', domain: $settingsStore.domainId })}
         >
             <div>
                 <Label for="host">Domain id</Label>

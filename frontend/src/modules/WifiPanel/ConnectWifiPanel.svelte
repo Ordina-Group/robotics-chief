@@ -14,17 +14,17 @@
 
   const connect = () => {
     connecting = true;
-    sendCommand({ type: "Command.ConnectWifi", ssid, password });
+    sendCommand({ type: "ConnectWifi", ssid, password });
   };
 
   $: {
-    if ($success?.command === "Command.ConnectWifi") {
+    if ($success?.command === "ConnectWifi") {
       closeModal("connect_wifi");
       success.set(undefined);
-      sendCommand({ type: "Command.GetWifiNetworks" });
+      sendCommand({ type: "GetWifiNetworks" });
     }
 
-    if ($failure?.command === "Command.ConnectWifi") {
+    if ($failure?.command === "ConnectWifi") {
       connecting = false;
       error = $failure.message;
     }

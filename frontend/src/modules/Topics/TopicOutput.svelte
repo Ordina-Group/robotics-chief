@@ -9,10 +9,10 @@
   import PauseIcon from "../../icons/PauseIcon.svelte";
 
   const start = () => {
-    sendCommand({ type: "Command.SubscribeTopic", id: topic.id });
+    sendCommand({ type: "SubscribeTopic", id: topic.id });
   };
   const stop = () => {
-    sendCommand({ type: "Command.UnsubscribeTopic", id: topic.id });
+    sendCommand({ type: "UnsubscribeTopic", id: topic.id });
   };
 
   export let topic: Topic;

@@ -16,7 +16,7 @@
     devices: Device[];
   }
 
-  const [devices, refresh] = withRefeshableData<BluetoothDevices>("Message.BluetoothDevices", "Command.GetBluetoothDevices");
+  const [devices, refresh] = withRefeshableData<BluetoothDevices>("Message.BluetoothDevices", "GetBluetoothDevices");
 
   const controller = derived(
     devices,
@@ -35,7 +35,7 @@
     },
   );
 
-  setInterval(refresh, 1000);
+  // setInterval(refresh, 1000);
 </script>
 
 <Badge large class="whitespace-nowrap">🎮 {$controller}</Badge>

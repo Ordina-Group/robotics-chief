@@ -1,76 +1,77 @@
+import { Client } from '@stomp/stompjs';
+
 import { writable } from "svelte/store";
 import type { Writable } from "svelte/types/runtime/store";
 
 const subscribers: { [k: string]: Writable<any> } = {};
 
-let socket: WebSocket;
-let reconnect: number | undefined;
+let socket: Client;
+
+export type Command = { [k: string]: string | boolean | number } & { type: string };
 
 export const connected = writable(false);
 
-const open = () => {
-  if (reconnect) {
-    clearInterval(reconnect);
-  }
-  reconnect = undefined;
-  connected.set(true);
-}
+const handleMessage = (message: { type: string }) => {
+    const store = subscribers[message.type];
 
-const close = () => {
-  connected.set(false);
-  if (reconnect === undefined) {
-    reconnect = setInterval(() => initializeSocket(), 1000);
-  }
-}
+    if (store !== undefined) {
+        store.set(message);
+    }
 
-const handleMessage = (event: MessageEvent<any>) => {
-  const message = JSON.parse(event.data);
-  const store = subscribers[message.type];
+    if (subscribers["*"] !== undefined) {
+        subscribers["*"].set(message);
+    }
 
-  if (store !== undefined) {
-    store.set(message);
-  }
-
-  if (subscribers["*"] !== undefined) {
-    subscribers["*"].set(message);
-  }
-
-  if (store === undefined && subscribers["*"] === undefined) {
-    console.log(`Discarding ${message}`);
-  }
+    if (store === undefined && subscribers["*"] === undefined) {
+        console.log(`Discarding ${message}`);
+    }
 };
 
-const initializeSocket = () => {
-  if (socket !== undefined && socket.readyState === socket.CONNECTING) {
-    return;
-  }
+const initializeSocket = async () => {
+    if (socket !== undefined && socket.active) {
+        return;
+    }
 
-  if (socket !== undefined) {
-    socket.close();
-    socket.removeEventListener("open", open);
-    socket.removeEventListener("close", close);
-    socket.removeEventListener("message", handleMessage);
-  }
+    if (socket !== undefined) {
+        socket.forceDisconnect();
+    }
 
-  socket = new WebSocket("ws://localhost:8080/subscribe");
+    socket = new Client({
+        brokerURL: 'ws://localhost:8080/connect',
+        reconnectDelay: 5000,
+        onConnect: () => {
+            connected.set(true);
 
-  socket.addEventListener("open", open);
-  socket.addEventListener("close", close);
-  socket.addEventListener("message", handleMessage);
+            socket.subscribe("/robots/3/updates", (message) => {
+                console.log("STATUS UPDATE", message);
+                handleMessage(JSON.parse(message.body));
+            });
+
+            socket.publish({ destination: '/hello', body: 'First Message' });
+        },
+        onDisconnect: () => {
+            connected.set(false);
+        },
+        onWebSocketClose: () => {
+            connected.set(false);
+        }
+    });
+
+    socket.activate();
 };
 
-initializeSocket();
+initializeSocket().catch(console.error);
 
 export const register = <T = any>(type: string, initial: any = undefined): Writable<T> => {
-  subscribers[type] ||= writable(initial);
+    subscribers[type] ||= writable(initial);
 
-  return subscribers[type];
+    return subscribers[type];
 };
 
-export const sendCommand = (command: {}) => {
-  if (socket.readyState === socket.OPEN) {
-    socket.send(JSON.stringify(command));
-  } else {
-    console.error(`Discarding command ${command}, asked too soon`);
-  }
+export const sendCommand = (command: Command) => {
+    if (socket.connected) {
+        socket.publish({ destination: '/command', body: JSON.stringify(command) });
+    } else {
+        // console.error(`Discarding command ${command}, asked too soon`);
+    }
 };

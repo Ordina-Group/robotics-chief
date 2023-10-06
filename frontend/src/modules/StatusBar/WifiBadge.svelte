@@ -1,6 +1,5 @@
 <script lang="ts">
   import { Badge } from "flowbite-svelte";
-  import { onDestroy } from "svelte";
   import { derived } from "svelte/store";
 
   import { withRefeshableData } from "$lib/withRefeshableData";
@@ -13,7 +12,7 @@
     known: boolean;
   }
 
-  const [wifiSignal, refresh] = withRefeshableData<WifiInfo>("Message.WifiInfo", "Command.GetWifiInfo");
+  const [wifiSignal, refresh] = withRefeshableData<WifiInfo>("Message.WifiInfo", "GetWifiInfo");
 
   const wifi = derived(
     wifiSignal,
@@ -26,9 +25,9 @@
     },
   );
 
-  const intervalID = setInterval(refresh, 1000);
+  // const intervalID = setInterval(refresh, 1000);
 
-  onDestroy(() => clearInterval(intervalID));
+  // onDestroy(() => clearInterval(intervalID));
 </script>
 
 <Badge large class="whitespace-nowrap">🛜 {$wifi}</Badge>
