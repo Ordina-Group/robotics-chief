@@ -1,13 +1,12 @@
 package nl.ordina.robotics.server.robot
 
-import nl.ordina.robotics.server.ssh.SshSettings
 import org.springframework.stereotype.Repository
 
 @Repository
 class RobotRepository {
     private val robots: MutableList<Robot> = mutableListOf()
 
-    fun create(id: String, settings: SshSettings) {
+    fun create(id: String, settings: Settings) {
         require(get(id) == null) {
             "Robot with id $id already exists"
         }

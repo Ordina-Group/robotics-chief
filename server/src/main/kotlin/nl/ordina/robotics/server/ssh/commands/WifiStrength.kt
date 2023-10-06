@@ -6,7 +6,7 @@ import nl.ordina.robotics.server.socket.GetWifiInfo
 import nl.ordina.robotics.server.socket.Message
 import nl.ordina.robotics.server.socket.WifiInfo
 import nl.ordina.robotics.server.ssh.Cmd
-import nl.ordina.robotics.server.ssh.CommandExecutor
+import nl.ordina.robotics.server.robot.CommandExecutor
 import org.apache.sshd.common.SshException
 
 suspend fun Robot.wifiInfo(executor: CommandExecutor, command: GetWifiInfo): Message = try {

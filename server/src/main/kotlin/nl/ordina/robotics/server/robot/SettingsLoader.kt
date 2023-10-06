@@ -1,7 +1,6 @@
-package nl.ordina.robotics.server.ssh
+package nl.ordina.robotics.server.robot
 
 import jakarta.annotation.PostConstruct
-import nl.ordina.robotics.server.robot.RobotRepository
 import org.springframework.stereotype.Service
 
 @Service
@@ -11,8 +10,6 @@ class SettingsLoader(
 ) {
     @PostConstruct
     fun initRobots() {
-        println("TEST: ${settingsRepository.all()}")
-
         settingsRepository.all().forEach {
             robotRepository.create(it.id, it)
         }

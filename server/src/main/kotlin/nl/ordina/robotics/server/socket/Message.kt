@@ -1,6 +1,6 @@
 package nl.ordina.robotics.server.socket
 
-import nl.ordina.robotics.server.ssh.SshSettings
+import nl.ordina.robotics.server.robot.Settings
 
 sealed interface Message {
     val message: String
@@ -61,7 +61,7 @@ data class TopicMessage(val topic: String, override val message: String) : Messa
     val type = "Message.TopicMessage"
 }
 
-data class Settings(val value: SshSettings) : Message {
+data class Settings(val value: Settings) : Message {
     val type = "Message.Settings"
 
     override val message = "ssh settings"

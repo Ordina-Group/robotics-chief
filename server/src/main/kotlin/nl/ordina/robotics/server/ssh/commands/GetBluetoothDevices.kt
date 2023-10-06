@@ -6,7 +6,7 @@ import nl.ordina.robotics.server.socket.CommandFailure
 import nl.ordina.robotics.server.socket.Device
 import nl.ordina.robotics.server.socket.Message
 import nl.ordina.robotics.server.ssh.Cmd
-import nl.ordina.robotics.server.ssh.CommandExecutor
+import nl.ordina.robotics.server.robot.CommandExecutor
 
 suspend fun Robot.getBluetoothDevices(executor: CommandExecutor): Message = try {
     val pairedDevices = executor.runSshCommand(id, Cmd.Bluetooth.paired)

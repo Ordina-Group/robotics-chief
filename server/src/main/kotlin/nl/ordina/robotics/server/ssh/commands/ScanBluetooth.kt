@@ -6,7 +6,7 @@ import nl.ordina.robotics.server.socket.CommandSuccess
 import nl.ordina.robotics.server.socket.Message
 import nl.ordina.robotics.server.socket.ScanBluetooth
 import nl.ordina.robotics.server.ssh.Cmd
-import nl.ordina.robotics.server.ssh.CommandExecutor
+import nl.ordina.robotics.server.robot.CommandExecutor
 import kotlin.time.Duration.Companion.milliseconds
 
 suspend fun Robot.scanBluetooth(executor: CommandExecutor, command: ScanBluetooth): Message = try {

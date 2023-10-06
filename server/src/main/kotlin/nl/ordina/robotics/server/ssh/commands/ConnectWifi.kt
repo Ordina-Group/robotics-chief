@@ -6,7 +6,7 @@ import nl.ordina.robotics.server.socket.CommandSuccess
 import nl.ordina.robotics.server.socket.ConnectWifi
 import nl.ordina.robotics.server.socket.Message
 import nl.ordina.robotics.server.ssh.Cmd
-import nl.ordina.robotics.server.ssh.CommandExecutor
+import nl.ordina.robotics.server.robot.CommandExecutor
 import nl.ordina.robotics.server.ssh.withSudo
 import org.apache.sshd.common.SshException
 

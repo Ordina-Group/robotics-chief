@@ -8,7 +8,7 @@ import nl.ordina.robotics.server.socket.Message
 import nl.ordina.robotics.server.socket.WifiInfo
 import nl.ordina.robotics.server.socket.WifiNetworks
 import nl.ordina.robotics.server.ssh.Cmd
-import nl.ordina.robotics.server.ssh.CommandExecutor
+import nl.ordina.robotics.server.robot.CommandExecutor
 import nl.ordina.robotics.server.ssh.withSudo
 import org.apache.sshd.common.SshException
 import kotlin.time.Duration.Companion.milliseconds

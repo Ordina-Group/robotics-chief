@@ -3,7 +3,7 @@ package nl.ordina.robotics.server.ssh.commands
 import nl.ordina.robotics.server.robot.Robot
 import nl.ordina.robotics.server.socket.Message
 import nl.ordina.robotics.server.socket.SubscribeTopic
-import nl.ordina.robotics.server.ssh.CommandExecutor
+import nl.ordina.robotics.server.robot.CommandExecutor
 
 suspend fun Robot.subscribeTopic(executor: CommandExecutor, command: SubscribeTopic): Message? {
 //    subscriptions[command.id]?.cancel()

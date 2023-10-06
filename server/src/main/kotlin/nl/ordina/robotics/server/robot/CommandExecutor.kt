@@ -1,10 +1,8 @@
-package nl.ordina.robotics.server.ssh
+package nl.ordina.robotics.server.robot
 
 import mu.KotlinLogging
-import nl.ordina.robotics.server.robot.RobotId
-import nl.ordina.robotics.server.robot.RobotRepository
-import nl.ordina.robotics.server.robot.RobotStateService
 import nl.ordina.robotics.server.socket.RobotConnection
+import nl.ordina.robotics.server.ssh.Cmd
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import kotlin.time.Duration
@@ -14,7 +12,7 @@ class CommandExecutor(
     @Autowired
     val robotRepository: RobotRepository,
     @Autowired
-    val sshSession: SshSession,
+    val transport: RobotTransport,
     @Autowired
     private val robotStateService: RobotStateService,
 ) {
@@ -22,16 +20,16 @@ class CommandExecutor(
 
     val connected: Boolean
         get() {
-            if (!sshSession.connected) {
-                sshSession.tryConnect()
-                if (sshSession.connected) {
+            if (!transport.connected) {
+                transport.tryConnect()
+                if (transport.connected) {
                     robotStateService.updateRobotState(RobotId("3"), RobotConnection(true))
                 } else {
                     logger.warn { "Failed to connect" }
                 }
             }
 
-            return sshSession.connected
+            return transport.connected
         }
 
     suspend fun runInWorkDir(
@@ -58,11 +56,11 @@ class CommandExecutor(
         runSshCommand(*command, separator = separator, timeout = timeout ?: this.timeout)
     }
 
-    private suspend fun SshSettings.runSshCommand(
+    private suspend fun Settings.runSshCommand(
         vararg command: String,
         separator: String = Cmd.Unix.And,
         timeout: Duration = this.timeout,
-    ): String = sshSession.withSession(this) { session ->
-        session.runCommand(command.joinToString(separator), timeout)
+    ): String = transport.withSession(this) { runCommand ->
+        runCommand(command.joinToString(separator), timeout)
     }
 }

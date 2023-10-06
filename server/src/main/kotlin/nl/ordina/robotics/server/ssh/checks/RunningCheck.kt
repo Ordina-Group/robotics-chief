@@ -3,7 +3,7 @@ package nl.ordina.robotics.server.ssh.checks
 import nl.ordina.robotics.server.robot.Robot
 import nl.ordina.robotics.server.socket.StatusLine
 import nl.ordina.robotics.server.ssh.Cmd
-import nl.ordina.robotics.server.ssh.CommandExecutor
+import nl.ordina.robotics.server.robot.CommandExecutor
 
 suspend fun Robot.runningCheck(executor: CommandExecutor): StatusLine {
     val running = executor.runSshCommand(id, Cmd.Ros.running)

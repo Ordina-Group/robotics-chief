@@ -1,4 +1,4 @@
-package nl.ordina.robotics.server.ssh
+package nl.ordina.robotics.server.robot
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -9,7 +9,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Serializable
 @Service
-class SshSettings {
+class Settings {
     val id: String = "3"
     val username: String = "jetson"
     val password: String = "jetson"

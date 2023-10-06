@@ -37,7 +37,6 @@ class HandleChiefSocket2 {
 suspend fun SocketSession.handleChiefSocket() {
     sendMessage(Info("Chief says hi!"))
 
-    sendMessage(Settings(settings))
 }
 //    val broadcaster = session.launch(Dispatchers.IO) {
 //        var lastValue: Message? = null

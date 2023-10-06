@@ -1,10 +1,7 @@
 package nl.ordina.robotics.server.socket
 
 import nl.ordina.robotics.server.robot.Robot
-import nl.ordina.robotics.server.ssh.Cmd.Networking.connectWifi
-import nl.ordina.robotics.server.ssh.Cmd.Ros.listTopics
-import nl.ordina.robotics.server.ssh.Cmd.Ros.subscribeTopic
-import nl.ordina.robotics.server.ssh.CommandExecutor
+import nl.ordina.robotics.server.robot.CommandExecutor
 import nl.ordina.robotics.server.ssh.commands.connectBluetooth
 import nl.ordina.robotics.server.ssh.commands.connectWifi
 import nl.ordina.robotics.server.ssh.commands.forgetWifi

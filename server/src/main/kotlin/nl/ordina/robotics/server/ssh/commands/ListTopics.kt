@@ -5,7 +5,7 @@ import nl.ordina.robotics.server.socket.Message
 import nl.ordina.robotics.server.socket.Topic
 import nl.ordina.robotics.server.socket.Topics
 import nl.ordina.robotics.server.ssh.Cmd
-import nl.ordina.robotics.server.ssh.CommandExecutor
+import nl.ordina.robotics.server.robot.CommandExecutor
 
 suspend fun Robot.listTopics(executor: CommandExecutor): Message {
     val topicNames = executor.runSshCommand(

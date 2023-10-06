@@ -5,7 +5,7 @@ import nl.ordina.robotics.server.socket.CheckRobotConnection
 import nl.ordina.robotics.server.socket.Message
 import nl.ordina.robotics.server.socket.RobotConnection
 import nl.ordina.robotics.server.ssh.Cmd
-import nl.ordina.robotics.server.ssh.CommandExecutor
+import nl.ordina.robotics.server.robot.CommandExecutor
 import org.apache.sshd.common.SshException
 
 suspend fun Robot.robotConnection(executor: CommandExecutor, command: CheckRobotConnection): Message = try {

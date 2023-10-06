@@ -4,6 +4,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import mu.KotlinLogging
 import net.harawata.appdirs.AppDirsFactory
+import nl.ordina.robotics.server.robot.Settings
 import java.io.File
 
 object SshSettingsLoader {
@@ -19,7 +20,7 @@ object SshSettingsLoader {
 
     private val configFile = File(configDir, "settings.json")
 
-    fun save(value: SshSettings) {
+    fun save(value: Settings) {
         logger.info { "Saving settings" }
         logger.debug { "Persisting settings to ${configFile.absolutePath}" }
         try {
@@ -30,12 +31,12 @@ object SshSettingsLoader {
         }
     }
 
-    fun load(): SshSettings =
+    fun load(): Settings =
         if (configFile.exists()) {
             logger.debug { "Loading settings from filesystem" }
-            json.decodeFromString<SshSettings>(configFile.readText())
+            json.decodeFromString<Settings>(configFile.readText())
         } else {
             logger.debug { "Using default settings" }
-            SshSettings()
+            Settings()
         }
 }

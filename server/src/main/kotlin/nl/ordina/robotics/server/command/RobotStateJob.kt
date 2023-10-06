@@ -8,7 +8,7 @@ import nl.ordina.robotics.server.robot.RobotRepository
 import nl.ordina.robotics.server.robot.RobotStateService
 import nl.ordina.robotics.server.socket.Message
 import nl.ordina.robotics.server.socket.RobotConnection
-import nl.ordina.robotics.server.ssh.CommandExecutor
+import nl.ordina.robotics.server.robot.CommandExecutor
 import nl.ordina.robotics.server.ssh.checks.createSshStatusTable
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
