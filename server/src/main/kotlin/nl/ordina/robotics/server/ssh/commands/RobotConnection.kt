@@ -9,7 +9,7 @@ import nl.ordina.robotics.server.robot.CommandExecutor
 import org.apache.sshd.common.SshException
 
 suspend fun Robot.robotConnection(executor: CommandExecutor, command: CheckRobotConnection): Message = try {
-    executor.runSshCommand(id, Cmd.Unix.userInfo)
+    executor.executeCommand(id, Cmd.Unix.userInfo)
     RobotConnection(true)
 } catch (e: SshException) {
     RobotConnection(false)

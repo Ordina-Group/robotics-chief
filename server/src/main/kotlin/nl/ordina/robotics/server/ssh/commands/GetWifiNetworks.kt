@@ -18,12 +18,12 @@ private val logger = KotlinLogging.logger {}
 private val networksLineSplitter = Regex("(?<!\\\\):")
 
 suspend fun Robot.getWifiNetworks(executor: CommandExecutor, command: GetWifiNetworks): Message = try {
-    val saved = executor.runSshCommand(
+    val saved = executor.executeCommand(
         id,
         Cmd.Networking.listStoredNetworks.withSudo(settings.password),
         timeout = 200.milliseconds,
     ).parseStoredNetworks()
-    executor.runSshCommand(
+    executor.executeCommand(
         id,
         Cmd.Networking.listWirelessNetworks.withSudo(settings.password),
         timeout = 200.milliseconds,

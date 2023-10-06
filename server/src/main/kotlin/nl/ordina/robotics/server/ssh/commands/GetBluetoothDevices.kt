@@ -9,18 +9,18 @@ import nl.ordina.robotics.server.ssh.Cmd
 import nl.ordina.robotics.server.robot.CommandExecutor
 
 suspend fun Robot.getBluetoothDevices(executor: CommandExecutor): Message = try {
-    val pairedDevices = executor.runSshCommand(id, Cmd.Bluetooth.paired)
+    val pairedDevices = executor.executeCommand(id, Cmd.Bluetooth.paired)
         .split("\n")
         .filter { it.isNotEmpty() }
         .map { it.split(' ')[1] }
 
-    val devices = executor.runSshCommand(id, Cmd.Bluetooth.list)
+    val devices = executor.executeCommand(id, Cmd.Bluetooth.list)
         .split("\n")
         .map {
             val (_, mac, name) = it.split(" ")
             val paired = pairedDevices.contains(mac)
             val connected = if (paired) {
-                executor.runSshCommand(id, Cmd.Bluetooth.info(mac)).contains("Connected: yes")
+                executor.executeCommand(id, Cmd.Bluetooth.info(mac)).contains("Connected: yes")
             } else {
                 false
             }

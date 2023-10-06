@@ -22,7 +22,7 @@ class CommandController(
 
     @PostMapping("/robot/{robotId}/setupenv")
     suspend fun setupEnv(@PathVariable robotId: String): ResponseEntity<Message> {
-        val output = executor.runSshCommand(
+        val output = executor.executeCommand(
             RobotId(robotId),
             Cmd.Unix.addToBashRc(Cmd.Ros.sourceBash),
         )
@@ -36,7 +36,7 @@ class CommandController(
 
     @PostMapping("/robot/{robotId}/clone")
     suspend fun clone(@PathVariable robotId: String): ResponseEntity<Message> {
-        val output = executor.runSshCommand(
+        val output = executor.executeCommand(
             RobotId(robotId),
 
             Cmd.Git.clone(
@@ -54,7 +54,7 @@ class CommandController(
 
     @PostMapping("/robot/{robotId}/pull")
     suspend fun pull(@PathVariable robotId: String): ResponseEntity<Message> {
-        val output = executor.runSshCommand(
+        val output = executor.executeCommand(
             RobotId(robotId),
             Cmd.Git.pull,
         )
@@ -68,7 +68,7 @@ class CommandController(
 
     @PostMapping("/robot/{robotId}/build")
     suspend fun build(@PathVariable robotId: String): ResponseEntity<Message> {
-        val output = executor.runInWorkDir(
+        val output = executor.executeInWorkDir(
             RobotId(robotId),
             Cmd.Ros.buildInstall,
             Cmd.Ros.sourceLocalSetup,
@@ -86,7 +86,7 @@ class CommandController(
         @PathVariable robotId: String,
         @PathVariable controllerId: String,
     ): ResponseEntity<Message> {
-        val output = executor.runSshCommand(RobotId(robotId), Cmd.Bluetooth.connect(controllerId))
+        val output = executor.executeCommand(RobotId(robotId), Cmd.Bluetooth.connect(controllerId))
 
         return respondCommand(
             command = "Command.BluetoothConnect",
@@ -100,7 +100,7 @@ class CommandController(
         @PathVariable robotId: String,
         @PathVariable controllerId: String,
     ): ResponseEntity<Message> {
-        val output = executor.runSshCommand(RobotId(robotId), Cmd.Bluetooth.disconnect(controllerId))
+        val output = executor.executeCommand(RobotId(robotId), Cmd.Bluetooth.disconnect(controllerId))
 
         return respondCommand(
             command = "Command.BluetoothDisconnect",
@@ -114,7 +114,7 @@ class CommandController(
         @PathVariable robotId: String,
         @PathVariable number: String,
     ): ResponseEntity<Message> {
-        val output = executor.runInWorkDir(
+        val output = executor.executeInWorkDir(
             RobotId(robotId),
             Cmd.Ros.stop.ignoreFailure(),
             Cmd.Ros.sourceBash,
@@ -134,7 +134,7 @@ class CommandController(
         @PathVariable robotId: String,
         @PathVariable number: String,
     ): ResponseEntity<Message> {
-        val output = executor.runInWorkDir(
+        val output = executor.executeInWorkDir(
             RobotId(robotId),
             Cmd.Ros.sourceBash,
             Cmd.Ros.sourceLocalSetup,
@@ -153,7 +153,7 @@ class CommandController(
         @PathVariable robotId: String,
         @PathVariable command: String,
     ): ResponseEntity<Message> {
-        val output = executor.runSshCommand(RobotId(robotId), command)
+        val output = executor.executeCommand(RobotId(robotId), command)
 
         return respondCommand(
             command = "Command.Exec",

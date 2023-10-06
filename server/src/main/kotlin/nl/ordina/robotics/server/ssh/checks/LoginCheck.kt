@@ -6,7 +6,7 @@ import nl.ordina.robotics.server.ssh.Cmd
 import nl.ordina.robotics.server.robot.CommandExecutor
 
 suspend fun Robot.loginCheck(executor: CommandExecutor): StatusLine {
-    val user = executor.runSshCommand(id, Cmd.Unix.userInfo)
+    val user = executor.executeCommand(id, Cmd.Unix.userInfo)
 
     return StatusLine(
         name = "Login",

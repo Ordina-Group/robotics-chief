@@ -15,12 +15,12 @@ suspend fun Robot.connectWifi(executor: CommandExecutor, command: ConnectWifi): 
 
     return try {
         val output = if (command.password != null) {
-            executor.runSshCommand(
+            executor.executeCommand(
                 id,
                 Cmd.Networking.connectWifi(command.ssid, command.password).withSudo(settings.password),
             )
         } else {
-            executor.runSshCommand(
+            executor.executeCommand(
                 id,
                 Cmd.Networking.activateConnection(command.ssid).withSudo(settings.password),
             )

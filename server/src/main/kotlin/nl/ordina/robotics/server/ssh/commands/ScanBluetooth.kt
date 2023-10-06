@@ -10,7 +10,7 @@ import nl.ordina.robotics.server.robot.CommandExecutor
 import kotlin.time.Duration.Companion.milliseconds
 
 suspend fun Robot.scanBluetooth(executor: CommandExecutor, command: ScanBluetooth): Message = try {
-    executor.runSshCommand(id, Cmd.Bluetooth.scan, timeout = 200.milliseconds)
+    executor.executeCommand(id, Cmd.Bluetooth.scan, timeout = 200.milliseconds)
     CommandSuccess(
         command = "Command.ScanBluetooth",
         message = "Started scan.",

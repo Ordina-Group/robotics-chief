@@ -8,7 +8,7 @@ import nl.ordina.robotics.server.ssh.Cmd
 import nl.ordina.robotics.server.robot.CommandExecutor
 
 suspend fun Robot.listTopics(executor: CommandExecutor): Message {
-    val topicNames = executor.runSshCommand(
+    val topicNames = executor.executeCommand(
         id,
         Cmd.Ros.sourceBash,
         Cmd.Ros.listTopics(settings.domainId),
@@ -17,7 +17,7 @@ suspend fun Robot.listTopics(executor: CommandExecutor): Message {
         .filter { it.startsWith('/') }
 
     val topicInfos = topicNames.associateWith {
-        executor.runSshCommand(
+        executor.executeCommand(
             id,
             Cmd.Ros.sourceBash,
             Cmd.Ros.topicInfo(settings.domainId, it),

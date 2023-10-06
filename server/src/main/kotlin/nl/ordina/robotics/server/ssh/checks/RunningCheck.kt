@@ -6,7 +6,7 @@ import nl.ordina.robotics.server.ssh.Cmd
 import nl.ordina.robotics.server.robot.CommandExecutor
 
 suspend fun Robot.runningCheck(executor: CommandExecutor): StatusLine {
-    val running = executor.runSshCommand(id, Cmd.Ros.running)
+    val running = executor.executeCommand(id, Cmd.Ros.running)
     val runningParts = running.isNotEmpty()
     val runningMainProcess = running.contains(Cmd.Ros.mainCmdRunning)
     val runningMainAndController = runningMainProcess && running.split("\n").size >= 2

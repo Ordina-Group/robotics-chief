@@ -6,9 +6,9 @@ import nl.ordina.robotics.server.ssh.Cmd
 import nl.ordina.robotics.server.robot.CommandExecutor
 
 suspend fun Robot.cloneCheck(executor: CommandExecutor): StatusLine {
-    val dir = executor.runSshCommand(id, Cmd.Unix.list(settings.workDir))
+    val dir = executor.executeCommand(id, Cmd.Unix.list(settings.workDir))
     val projectCloned = !dir.contains("No such file or directory")
-    val projectCloning = executor.runInWorkDir(id, Cmd.Git.status).contains("No commits yet")
+    val projectCloning = executor.executeInWorkDir(id, Cmd.Git.status).contains("No commits yet")
 
     return StatusLine(
         name = "Cloned",

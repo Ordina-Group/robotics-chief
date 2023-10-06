@@ -6,7 +6,7 @@ import nl.ordina.robotics.server.ssh.Cmd
 import nl.ordina.robotics.server.robot.CommandExecutor
 
 suspend fun Robot.controllerCheck(executor: CommandExecutor): StatusLine {
-    val controllers = executor.runSshCommand(id, Cmd.Bluetooth.paired)
+    val controllers = executor.executeCommand(id, Cmd.Bluetooth.paired)
 
     return StatusLine(
         name = "Controller",

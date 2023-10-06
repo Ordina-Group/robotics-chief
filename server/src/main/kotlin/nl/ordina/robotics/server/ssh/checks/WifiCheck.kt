@@ -6,7 +6,7 @@ import nl.ordina.robotics.server.ssh.Cmd
 import nl.ordina.robotics.server.robot.CommandExecutor
 
 suspend fun Robot.wifiCheck(executor: CommandExecutor): StatusLine {
-    val addresses = executor.runSshCommand(id, Cmd.Networking.ipAddresses)
+    val addresses = executor.executeCommand(id, Cmd.Networking.ipAddresses)
     val connected = addresses.split('\n').size > 3
 
     return StatusLine(

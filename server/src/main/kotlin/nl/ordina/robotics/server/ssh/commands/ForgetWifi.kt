@@ -14,7 +14,7 @@ suspend fun Robot.forgetWifi(executor: CommandExecutor, command: ForgetWifi): Me
 //    sendMessage(Info("Forgetting wireless network ${command.ssid}..."))
 
     return try {
-        val output = executor.runSshCommand(id, Cmd.Networking.forgetConnection(command.ssid).withSudo(settings.password))
+        val output = executor.executeCommand(id, Cmd.Networking.forgetConnection(command.ssid).withSudo(settings.password))
 
         if (output.contains("successfully deleted")) {
             CommandSuccess(

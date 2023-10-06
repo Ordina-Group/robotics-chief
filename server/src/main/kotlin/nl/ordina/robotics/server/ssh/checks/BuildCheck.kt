@@ -6,9 +6,9 @@ import nl.ordina.robotics.server.ssh.Cmd
 import nl.ordina.robotics.server.robot.CommandExecutor
 
 suspend fun Robot.buildCheck(executor: CommandExecutor): StatusLine {
-    val projectBuilding = executor.runSshCommand(id, "pgrep -f /usr/bin/colcon").isNotEmpty()
+    val projectBuilding = executor.executeCommand(id, "pgrep -f /usr/bin/colcon").isNotEmpty()
     val projectBuilt = !projectBuilding && !executor
-        .runSshCommand(id, Cmd.Unix.list("${settings.workDir}/build"))
+        .executeCommand(id, Cmd.Unix.list("${settings.workDir}/build"))
         .contains("No such file or directory")
 
     return StatusLine(

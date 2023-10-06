@@ -32,14 +32,14 @@ class CommandExecutor(
             return transport.connected
         }
 
-    suspend fun runInWorkDir(
+    suspend fun executeInWorkDir(
         robotId: RobotId,
         vararg command: String,
         separator: String = Cmd.Unix.And,
         timeout: Duration? = null,
     ): String =
         with(robotRepository.get(robotId.value)!!.settings) {
-            runSshCommand(
+            executeCommand(
                 Cmd.Unix.cd(workDir),
                 *command,
                 separator = separator,
@@ -47,16 +47,16 @@ class CommandExecutor(
             )
         }
 
-    suspend fun runSshCommand(
+    suspend fun executeCommand(
         robotId: RobotId,
         vararg command: String,
         separator: String = Cmd.Unix.And,
         timeout: Duration? = null,
     ): String = with(robotRepository.get(robotId.value)!!.settings) {
-        runSshCommand(*command, separator = separator, timeout = timeout ?: this.timeout)
+        executeCommand(*command, separator = separator, timeout = timeout ?: this.timeout)
     }
 
-    private suspend fun Settings.runSshCommand(
+    private suspend fun Settings.executeCommand(
         vararg command: String,
         separator: String = Cmd.Unix.And,
         timeout: Duration = this.timeout,
