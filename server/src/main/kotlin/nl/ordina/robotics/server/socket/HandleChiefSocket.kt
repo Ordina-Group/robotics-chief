@@ -1,12 +1,7 @@
 package nl.ordina.robotics.server.socket
 
-import org.springframework.messaging.Message
-import org.springframework.messaging.handler.annotation.MessageMapping
-import org.springframework.messaging.handler.annotation.SendTo
-import org.springframework.stereotype.Controller
-
-//@Service
-//class HandleChiefSocket : WebSocketHandler {
+// @Service
+// class HandleChiefSocket : WebSocketHandler {
 //    private val logger = KotlinLogging.logger {}
 //
 //    override fun handle(session: WebSocketSession): Mono<Void?> {
@@ -23,20 +18,19 @@ import org.springframework.stereotype.Controller
 //            }
 //            .then()
 //    }
-//}
+// }
 
-@Controller
-class HandleChiefSocket2 {
-    @MessageMapping("/hello")
-    @SendTo("/topic/greetings")
-    fun handle(message: Message<ByteArray>) {
-        println("Received ${message.payload}")
-    }
-}
+// @Controller
+// class HandleChiefSocket2 {
+//    @MessageMapping("/hello")
+//    @SendTo("/topic/greetings")
+//    fun handle(message: Message<ByteArray>) {
+//        println("Received ${message.payload}")
+//    }
+// }
 
 suspend fun SocketSession.handleChiefSocket() {
     sendMessage(Info("Chief says hi!"))
-
 }
 //    val broadcaster = session.launch(Dispatchers.IO) {
 //        var lastValue: Message? = null

@@ -1,17 +1,16 @@
 package nl.ordina.robotics.server.command
 
-import kotlinx.coroutines.runBlocking
 import mu.KotlinLogging
+import nl.ordina.robotics.server.robot.CommandExecutor
 import nl.ordina.robotics.server.robot.Robot
 import nl.ordina.robotics.server.robot.RobotId
 import nl.ordina.robotics.server.robot.RobotRepository
 import nl.ordina.robotics.server.robot.RobotStateService
 import nl.ordina.robotics.server.socket.Message
 import nl.ordina.robotics.server.socket.RobotConnection
-import nl.ordina.robotics.server.robot.CommandExecutor
+import nl.ordina.robotics.server.ssh.Cmd.Ros.launch
 import nl.ordina.robotics.server.ssh.checks.createSshStatusTable
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 
 @Component
@@ -27,8 +26,8 @@ class RobotStateJob(
 
     var previousStates = mutableMapOf<RobotId, Message?>()
 
-    @Scheduled(fixedRate = 2000)
-    fun updateRobots() = runBlocking {
+    //    @Scheduled(fixedRate = 2000)
+    suspend fun updateRobots() {
         val robots = robotRepository.all()
 
         logger.info { "Updating ${robots.size} robots" }
