@@ -1,9 +1,9 @@
 package nl.ordina.robotics.server.ssh.checks
 
+import nl.ordina.robotics.server.robot.CommandExecutor
 import nl.ordina.robotics.server.robot.Robot
 import nl.ordina.robotics.server.socket.StatusLine
 import nl.ordina.robotics.server.ssh.Cmd
-import nl.ordina.robotics.server.robot.CommandExecutor
 
 suspend fun Robot.revisionCheck(executor: CommandExecutor): StatusLine {
     val dir = executor.executeCommand(id, Cmd.Unix.list(settings.workDir))

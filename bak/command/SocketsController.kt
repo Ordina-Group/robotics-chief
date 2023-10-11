@@ -2,7 +2,7 @@ package nl.ordina.robotics.server.command
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import nl.ordina.robotics.server.messaging.Envelope
 import nl.ordina.robotics.server.messaging.MessageHandler
 import nl.ordina.robotics.server.robot.CommandExecutor

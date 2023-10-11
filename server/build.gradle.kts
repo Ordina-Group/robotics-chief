@@ -1,18 +1,22 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val vertxVersion = "4.4.5"
 val coroutinesVersion = "1.7.3"
 val kotlin_logging_version: String by project
 
 plugins {
-    id("org.springframework.boot") version "3.1.4"
-    id("io.spring.dependency-management") version "1.1.3"
-    kotlin("jvm") version "1.8.20"
-    kotlin("plugin.spring") version "1.8.20"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.20"
+    kotlin("jvm") version "1.9.10"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.10"
+
+    application
 }
 
-group = "nl.ordina"
+group = "nl.ordina.robotics"
 version = "0.0.1-SNAPSHOT"
+
+application {
+    mainClass.set("nl.ordina.robotics.server.ApplicationKt")
+}
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -23,23 +27,21 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("org.springframework.boot:spring-boot-starter-integration")
-    implementation("jakarta.websocket:jakarta.websocket-api")
-    implementation("jakarta.websocket:jakarta.websocket-client-api")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
+    implementation("io.vertx:vertx-core")
+    implementation("io.vertx:vertx-web")
+    implementation("io.vertx:vertx-config")
+    implementation("io.vertx:vertx-stomp")
+    implementation("io.vertx:vertx-lang-kotlin")
+    implementation("io.vertx:vertx-lang-kotlin-coroutines")
+
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$coroutinesVersion")
 
-    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-
-    implementation("io.github.microutils:kotlin-logging:$kotlin_logging_version")
+    implementation("ch.qos.logback:logback-classic:1.4.11")
+    implementation("io.github.oshai:kotlin-logging:$kotlin_logging_version")
 
     implementation("net.harawata:appdirs:1.2.1")
 
@@ -50,13 +52,8 @@ dependencies {
 
     implementation(project(":frontend"))
 
-//    developmentOnly("org.springframework.boot:spring-boot-devtools")
-
-    runtimeOnly("com.h2database:h2")
-    runtimeOnly("io.r2dbc:r2dbc-h2")
-
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("io.projectreactor:reactor-test")
+    testImplementation("io.vertx:vertx-junit5")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
 }
 
 tasks.withType<KotlinCompile> {

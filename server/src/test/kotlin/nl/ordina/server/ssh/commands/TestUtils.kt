@@ -1,19 +1,10 @@
 package nl.ordina.server.ssh.commands
 
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.websocket.DefaultClientWebSocketSession
-import io.ktor.client.plugins.websocket.WebSockets
-import io.ktor.client.plugins.websocket.webSocket
-import io.ktor.server.testing.ApplicationTestBuilder
-import io.ktor.server.testing.testApplication
-import io.ktor.websocket.Frame
-import io.ktor.websocket.readText
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import nl.ordina.robotics.module
-import nl.ordina.robotics.socket.Command
-import nl.ordina.robotics.socket.Message
+import nl.ordina.robotics.server.socket.Command
+import nl.ordina.robotics.server.socket.Message
 
 fun Message.toJson(): String = Json.encodeToString(this)
 

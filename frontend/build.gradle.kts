@@ -1,7 +1,7 @@
 import com.github.gradle.node.npm.task.NpmTask
 
 plugins {
-    kotlin("jvm") version "1.8.20"
+    kotlin("jvm") version "1.9.10"
     id("com.github.node-gradle.node") version "4.0.0"
 }
 
@@ -58,5 +58,5 @@ task<NpmTask>("liveFrontend") {
     inputs.files("svelte.config.js")
     inputs.files("tsconfig.json")
 
-    outputs.dir("build/resources/static")
+    outputs.dir("build/resources/web")
 }

@@ -1,6 +1,6 @@
 package nl.ordina.robotics.server.messaging
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import nl.ordina.robotics.server.socket.Message
 import org.springframework.stereotype.Service
 

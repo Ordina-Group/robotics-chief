@@ -1,20 +1,15 @@
 package nl.ordina.robotics.server.ssh
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import nl.ordina.robotics.server.robot.CommandRunner
 import nl.ordina.robotics.server.robot.RobotTransport
 import nl.ordina.robotics.server.robot.Settings
 import org.apache.sshd.client.SshClient
 import org.apache.sshd.client.session.ClientSession
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Profile
-import org.springframework.stereotype.Service
 import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 
-@Service
-@Profile("!test")
-class SshSession(@Autowired val settings: Settings) : RobotTransport {
+class SshSession(val settings: Settings) : RobotTransport {
     private val logger = KotlinLogging.logger {}
     private val client = SshClient.setUpDefaultClient()
 

@@ -1,8 +1,8 @@
 package nl.ordina.robotics.server.ssh.checks
 
+import nl.ordina.robotics.server.robot.CommandExecutor
 import nl.ordina.robotics.server.robot.Robot
 import nl.ordina.robotics.server.socket.StatusTable
-import nl.ordina.robotics.server.robot.CommandExecutor
 
 suspend fun createSshStatusTable(robot: Robot, executor: CommandExecutor): StatusTable = StatusTable(
     listOf(

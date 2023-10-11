@@ -1,19 +1,13 @@
 package nl.ordina.robotics.server.robot
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import nl.ordina.robotics.server.socket.RobotConnection
 import nl.ordina.robotics.server.ssh.Cmd
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Service
 import kotlin.time.Duration
 
-@Service
 class CommandExecutor(
-    @Autowired
     val robotRepository: RobotRepository,
-    @Autowired
     val transport: RobotTransport,
-    @Autowired
     private val robotStateService: RobotStateService,
 ) {
     private val logger = KotlinLogging.logger {}

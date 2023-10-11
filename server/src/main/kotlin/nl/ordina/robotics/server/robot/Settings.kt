@@ -3,12 +3,10 @@ package nl.ordina.robotics.server.robot
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import org.apache.sshd.client.session.ClientSession
-import org.springframework.stereotype.Service
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
 @Serializable
-@Service
 class Settings {
     val id: String = "3"
     val username: String = "jetson"

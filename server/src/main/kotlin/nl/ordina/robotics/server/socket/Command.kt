@@ -1,11 +1,9 @@
 package nl.ordina.robotics.server.socket
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 sealed interface Command {
     val name: String
 }

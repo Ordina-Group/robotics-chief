@@ -1,6 +1,6 @@
 package nl.ordina.robotics.server.ssh.commands
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import nl.ordina.robotics.server.robot.Robot
 import nl.ordina.robotics.server.socket.CommandFailure
 import nl.ordina.robotics.server.socket.GetWifiNetworks

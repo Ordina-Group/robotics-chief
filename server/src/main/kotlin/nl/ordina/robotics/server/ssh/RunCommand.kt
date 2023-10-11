@@ -2,7 +2,7 @@ package nl.ordina.robotics.server.ssh
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.apache.sshd.client.channel.ClientChannelEvent
 import org.apache.sshd.client.session.ClientSession
 import java.io.ByteArrayOutputStream

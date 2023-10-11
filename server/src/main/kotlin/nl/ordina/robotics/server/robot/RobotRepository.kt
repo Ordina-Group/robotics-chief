@@ -1,8 +1,5 @@
 package nl.ordina.robotics.server.robot
 
-import org.springframework.stereotype.Repository
-
-@Repository
 class RobotRepository {
     private val robots: MutableList<Robot> = mutableListOf()
 

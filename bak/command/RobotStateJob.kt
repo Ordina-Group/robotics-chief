@@ -1,6 +1,6 @@
 package nl.ordina.robotics.server.command
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import nl.ordina.robotics.server.robot.CommandExecutor
 import nl.ordina.robotics.server.robot.Robot
 import nl.ordina.robotics.server.robot.RobotId
@@ -10,8 +10,6 @@ import nl.ordina.robotics.server.socket.Message
 import nl.ordina.robotics.server.socket.RobotConnection
 import nl.ordina.robotics.server.ssh.Cmd.Ros.launch
 import nl.ordina.robotics.server.ssh.checks.createSshStatusTable
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
 
 @Component
 class RobotStateJob(
