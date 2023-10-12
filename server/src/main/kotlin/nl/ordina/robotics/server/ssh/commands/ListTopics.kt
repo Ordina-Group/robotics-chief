@@ -1,11 +1,11 @@
 package nl.ordina.robotics.server.ssh.commands
 
+import nl.ordina.robotics.server.robot.CommandExecutor
 import nl.ordina.robotics.server.robot.Robot
 import nl.ordina.robotics.server.socket.Message
 import nl.ordina.robotics.server.socket.Topic
 import nl.ordina.robotics.server.socket.Topics
 import nl.ordina.robotics.server.ssh.Cmd
-import nl.ordina.robotics.server.robot.CommandExecutor
 
 suspend fun Robot.listTopics(executor: CommandExecutor): Message {
     val topicNames = executor.executeCommand(

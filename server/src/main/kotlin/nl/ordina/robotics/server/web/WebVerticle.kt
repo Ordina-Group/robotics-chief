@@ -55,7 +55,7 @@ class WebVerticle : CoroutineVerticle() {
         )
 
         val router = hostStaticContent(config)
-        val stompServer = exposeSTOMPServer(config)
+        val stompServer = createSTOMPServer(config)
 
         server
             .requestHandler(router)
@@ -63,7 +63,7 @@ class WebVerticle : CoroutineVerticle() {
             .listen(config.getInteger("server.port", 8080))
     }
 
-    private fun exposeSTOMPServer(config: JsonObject): StompServer {
+    private fun createSTOMPServer(config: JsonObject): StompServer {
         val options = StompServerOptions()
             .setPort(-1)
             .setWebsocketBridge(true)
@@ -73,7 +73,7 @@ class WebVerticle : CoroutineVerticle() {
             .create(vertx)
             .bridge(
                 BridgeOptions()
-                    .addInboundPermitted(PermittedOptions().setAddressRegex("/robots/\\d+/updates"))
+                    .addInboundPermitted(PermittedOptions().setAddressRegex("/robots/\\d+/(updates|commands)"))
                     .addOutboundPermitted(PermittedOptions().setAddressRegex("/robots/\\d+/updates")),
             )
 

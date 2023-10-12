@@ -1,4 +1,4 @@
-package nl.ordina.server.ssh.commands
+package nl.ordina.robotics.server.ssh.commands
 
 import nl.ordina.robotics.socket.WifiInfo
 import kotlin.test.Test

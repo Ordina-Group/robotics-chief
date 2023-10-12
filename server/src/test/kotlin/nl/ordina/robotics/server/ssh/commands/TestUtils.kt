@@ -1,4 +1,4 @@
-package nl.ordina.server.ssh.commands
+package nl.ordina.robotics.server.ssh.commands
 
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString

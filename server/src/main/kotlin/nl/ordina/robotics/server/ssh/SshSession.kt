@@ -1,6 +1,7 @@
 package nl.ordina.robotics.server.ssh
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.vertx.kotlin.coroutines.awaitBlocking
 import nl.ordina.robotics.server.robot.CommandRunner
 import nl.ordina.robotics.server.robot.RobotTransport
 import nl.ordina.robotics.server.robot.Settings
@@ -13,15 +14,14 @@ class SshSession(val settings: Settings) : RobotTransport {
     private val logger = KotlinLogging.logger {}
     private val client = SshClient.setUpDefaultClient()
 
-    override val connected: Boolean
-        get() {
-            val current = settings.current
+    override suspend fun connected(): Boolean {
+        val current = settings.current
 
-            return client != null && current != null && !current.isClosed && client.isStarted && client.isOpen
-        }
+        return client != null && current != null && !current.isClosed && client.isStarted && client.isOpen
+    }
 
-    override fun tryConnect() {
-        if (!connected) {
+    override suspend fun tryConnect() {
+        if (!connected()) {
             logger.info { "Trying to connect via SSH" }
             try {
                 settings.initialize()
@@ -36,7 +36,7 @@ class SshSession(val settings: Settings) : RobotTransport {
         block: suspend (runCommand: CommandRunner) -> T,
     ): T {
         val settings = settings ?: SshSettingsLoader.load()
-        val session = settings.current ?: settings.initialize()
+        val session = settings.current?.validOrNull() ?: settings.initialize()
 
         try {
             val test: CommandRunner = { cmd: String, timeout: Duration -> session.runCommand(cmd, timeout) }
@@ -48,7 +48,14 @@ class SshSession(val settings: Settings) : RobotTransport {
         }
     }
 
-    private fun Settings.initialize(): ClientSession {
+    private fun ClientSession.validOrNull(): ClientSession? =
+        if (sessionState.contains(ClientSession.ClientSessionEvent.CLOSED)) {
+            null
+        } else {
+            this
+        }
+
+    private suspend fun Settings.initialize(): ClientSession = awaitBlocking {
         client.start()
         val connection = client.connect(
             username,
@@ -64,6 +71,6 @@ class SshSession(val settings: Settings) : RobotTransport {
 
         current = session
 
-        return session
+        session
     }
 }

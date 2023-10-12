@@ -1,26 +1,49 @@
 package nl.ordina.robotics.server
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk
 import io.vertx.core.Vertx
-import io.vertx.core.json.JsonObject
+import io.vertx.core.VertxOptions
+import io.vertx.tracing.opentelemetry.OpenTelemetryOptions
+import nl.ordina.robotics.server.robot.RobotDeploymentVerticle
 import nl.ordina.robotics.server.web.WebVerticle
-import kotlin.random.Random
+import java.util.Properties
 
-val logger = KotlinLogging.logger {}
+private val logger = KotlinLogging.logger {}
 
 fun main() {
     logger.info { "Starting server" }
+    loadProperties()
 
-    Vertx.vertx().apply {
-        val eb = eventBus()
-
-        deployVerticle(WebVerticle())
-
-        setPeriodic(1000) {
-            eb.publish(
-                "/robots/3/updates",
-                JsonObject().put("message", "Hello from EventBus ${Random.nextInt(10_000)}"),
-            )
+    val globalOtel = AutoConfiguredOpenTelemetrySdk
+        .builder()
+        .addSpanExporterCustomizer { t, u ->
+            println("Foobar $t, $u")
+            t
         }
+        .setResultAsGlobal()
+        .build()
+
+    val options = VertxOptions()
+        .setTracingOptions(
+            OpenTelemetryOptions(globalOtel.openTelemetrySdk),
+        )
+
+    Vertx.vertx(options).apply {
+        deployVerticle(WebVerticle())
+        deployVerticle(RobotDeploymentVerticle())
     }
 }
+
+private fun loadProperties(filename: String = "application.properties") = object {}
+    .javaClass
+    .classLoader
+    .getResourceAsStream(filename)
+    .use { inputStream ->
+        Properties().apply {
+            load(inputStream)
+        }
+    }
+    .map { (key, value) ->
+        System.setProperty(key.toString(), value.toString())
+    }

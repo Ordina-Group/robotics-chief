@@ -2,6 +2,7 @@ package nl.ordina.robotics.server.socket
 
 import nl.ordina.robotics.server.robot.CommandExecutor
 import nl.ordina.robotics.server.robot.Robot
+import nl.ordina.robotics.server.ssh.checks.createSshStatusTable
 import nl.ordina.robotics.server.ssh.commands.connectBluetooth
 import nl.ordina.robotics.server.ssh.commands.connectWifi
 import nl.ordina.robotics.server.ssh.commands.forgetWifi
@@ -15,9 +16,10 @@ import nl.ordina.robotics.server.ssh.commands.wifiInfo
 
 suspend fun Robot.handleCommand(executor: CommandExecutor, command: Command): Message? {
     return when (command) {
+        is CreateStatusTable -> createSshStatusTable(this, executor)
         is CheckRobotConnection -> robotConnection(executor, command)
-        is UpdateHost -> TODO() // updateHost(executor, command)
-        is UpdateDomain -> TODO() // updateDomain(executor, command)
+        is UpdateHost -> Info("UpdateHost not implemented yet") // updateHost(executor, command)
+        is UpdateDomain -> Info("UpdateHost not implemented yet") // updateDomain(executor, command)
         is ConnectWifi -> connectWifi(executor, command)
         is ForgetWifi -> forgetWifi(executor, command)
         is GetWifiNetworks -> getWifiNetworks(executor, command)

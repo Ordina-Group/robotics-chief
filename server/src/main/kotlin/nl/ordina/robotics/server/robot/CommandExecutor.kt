@@ -1,30 +1,28 @@
 package nl.ordina.robotics.server.robot
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import nl.ordina.robotics.server.socket.RobotConnection
 import nl.ordina.robotics.server.ssh.Cmd
 import kotlin.time.Duration
 
 class CommandExecutor(
-    val robotRepository: RobotRepository,
-    val transport: RobotTransport,
-    private val robotStateService: RobotStateService,
+    private val robotRepository: RobotRepository,
+    private val transport: RobotTransport,
+//    private val robotStateService: RobotStateService,
 ) {
     private val logger = KotlinLogging.logger {}
 
-    val connected: Boolean
-        get() {
-            if (!transport.connected) {
-                transport.tryConnect()
-                if (transport.connected) {
-                    robotStateService.updateRobotState(RobotId("3"), RobotConnection(true))
-                } else {
-                    logger.warn { "Failed to connect" }
-                }
+    suspend fun connected(): Boolean {
+        if (!transport.connected()) {
+            transport.tryConnect()
+            if (transport.connected()) {
+//                robotStateService.updateRobotState(RobotConnection(true))
+            } else {
+                logger.warn { "Failed to connect" }
             }
-
-            return transport.connected
         }
+
+        return transport.connected()
+    }
 
     suspend fun executeInWorkDir(
         robotId: RobotId,

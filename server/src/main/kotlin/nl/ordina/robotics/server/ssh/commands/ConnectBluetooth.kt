@@ -1,12 +1,12 @@
 package nl.ordina.robotics.server.ssh.commands
 
+import nl.ordina.robotics.server.robot.CommandExecutor
 import nl.ordina.robotics.server.robot.Robot
 import nl.ordina.robotics.server.socket.BluetoothConnect
 import nl.ordina.robotics.server.socket.CommandFailure
 import nl.ordina.robotics.server.socket.CommandSuccess
 import nl.ordina.robotics.server.socket.Message
 import nl.ordina.robotics.server.ssh.Cmd
-import nl.ordina.robotics.server.robot.CommandExecutor
 
 suspend fun Robot.connectBluetooth(executor: CommandExecutor, command: BluetoothConnect): Message = try {
     executor.executeCommand(id, Cmd.Bluetooth.connect(command.mac))

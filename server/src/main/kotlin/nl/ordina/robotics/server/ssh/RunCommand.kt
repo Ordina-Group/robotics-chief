@@ -1,8 +1,7 @@
 package nl.ordina.robotics.server.ssh
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.vertx.kotlin.coroutines.awaitBlocking
 import org.apache.sshd.client.channel.ClientChannelEvent
 import org.apache.sshd.client.session.ClientSession
 import java.io.ByteArrayOutputStream
@@ -13,7 +12,7 @@ import kotlin.time.toJavaDuration
 
 private val logger = KotlinLogging.logger {}
 
-suspend fun ClientSession.runCommand(command: String, timeout: Duration): String = withContext(Dispatchers.IO) {
+suspend fun ClientSession.runCommand(command: String, timeout: Duration): String = awaitBlocking {
     try {
         val channel = createExecChannel(command)
 

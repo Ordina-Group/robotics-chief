@@ -1,6 +1,7 @@
 package nl.ordina.robotics.server.ssh.commands
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import nl.ordina.robotics.server.robot.CommandExecutor
 import nl.ordina.robotics.server.robot.Robot
 import nl.ordina.robotics.server.socket.CommandFailure
 import nl.ordina.robotics.server.socket.GetWifiNetworks
@@ -8,7 +9,6 @@ import nl.ordina.robotics.server.socket.Message
 import nl.ordina.robotics.server.socket.WifiInfo
 import nl.ordina.robotics.server.socket.WifiNetworks
 import nl.ordina.robotics.server.ssh.Cmd
-import nl.ordina.robotics.server.robot.CommandExecutor
 import nl.ordina.robotics.server.ssh.withSudo
 import org.apache.sshd.common.SshException
 import kotlin.time.Duration.Companion.milliseconds

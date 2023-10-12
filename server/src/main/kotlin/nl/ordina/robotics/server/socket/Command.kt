@@ -13,6 +13,12 @@ sealed interface Command {
 data class CheckRobotConnection(override val name: String = "Command.CheckRobotConnection") : Command
 
 @Serializable
+@SerialName("Command.CreateStatusTable")
+data object CreateStatusTable : Command {
+    override val name: String = "Command.CreateStatusTable"
+}
+
+@Serializable
 @SerialName("Command.UpdateHost")
 data class UpdateHost(val host: String) : Command {
     override val name = "UpdateHost"

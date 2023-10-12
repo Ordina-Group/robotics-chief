@@ -71,7 +71,7 @@ export const register = <T = any>(type: string, initial: any = undefined): Writa
 
 export const sendCommand = (command: Command) => {
     if (socket.connected) {
-        socket.publish({ destination: '/command', body: JSON.stringify(command) });
+        socket.publish({ destination: '/robots/3/commands', body: JSON.stringify(command) });
     } else {
         console.error(`Discarding command ${command}, asked too soon`);
     }

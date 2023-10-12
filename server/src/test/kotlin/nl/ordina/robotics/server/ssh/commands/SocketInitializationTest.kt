@@ -1,4 +1,4 @@
-package nl.ordina.server.ssh.commands
+package nl.ordina.robotics.server.ssh.commands
 
 import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.websocket.Frame

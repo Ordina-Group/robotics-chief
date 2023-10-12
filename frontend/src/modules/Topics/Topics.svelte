@@ -10,7 +10,7 @@
   let countStyle = "inline-flex justify-center items-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300";
   export let selected: string;
 
-  const [topics, refresh] = withRefeshableData<TopicMessage>("Message.Topics", "ListTopics");
+  const [topics, refresh] = withRefeshableData<TopicMessage>("Message.Topics", "Command.ListTopics");
 </script>
 
 <div class="flex gap-1">

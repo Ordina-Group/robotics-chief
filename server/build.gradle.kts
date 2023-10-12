@@ -27,20 +27,31 @@ repositories {
 }
 
 dependencies {
+    implementation(kotlin("reflect"))
+
     implementation(platform("io.vertx:vertx-stack-depchain:$vertxVersion"))
     implementation("io.vertx:vertx-core")
     implementation("io.vertx:vertx-web")
     implementation("io.vertx:vertx-config")
     implementation("io.vertx:vertx-stomp")
+    implementation("io.vertx:vertx-opentelemetry")
     implementation("io.vertx:vertx-lang-kotlin")
     implementation("io.vertx:vertx-lang-kotlin-coroutines")
+
+    implementation(platform("io.opentelemetry:opentelemetry-bom:1.31.0"))
+    implementation("io.opentelemetry:opentelemetry-api")
+    implementation("io.opentelemetry:opentelemetry-exporter-otlp")
+    implementation("io.opentelemetry:opentelemetry-extension-kotlin")
+    implementation("io.opentelemetry:opentelemetry-sdk-extension-autoconfigure")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:$coroutinesVersion")
 
+    implementation("org.apache.commons:commons-configuration2:2.9.0")
     implementation("ch.qos.logback:logback-classic:1.4.11")
+    implementation("org.slf4j:jul-to-slf4j:2.0.9")
     implementation("io.github.oshai:kotlin-logging:$kotlin_logging_version")
 
     implementation("net.harawata:appdirs:1.2.1")
@@ -49,6 +60,7 @@ dependencies {
     implementation("org.apache.sshd:sshd-common:2.9.2")
     implementation("org.apache.sshd:sshd-contrib:2.9.2")
     implementation("org.apache.sshd:sshd-sftp:2.9.2")
+    implementation("net.i2p.crypto:eddsa:0.3.0")
 
     implementation(project(":frontend"))
 

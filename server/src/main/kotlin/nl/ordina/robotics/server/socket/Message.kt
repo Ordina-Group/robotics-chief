@@ -1,37 +1,48 @@
 package nl.ordina.robotics.server.socket
 
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import nl.ordina.robotics.server.robot.Settings
 
+@Serializable
 sealed interface Message {
     val message: String
 }
 
-data class Info(override val message: String) : Message {
-    val type = "Message.Info"
-}
+@Serializable
+@SerialName("Message.Info")
+data class Info(override val message: String) : Message
 
-data class CommandSuccess(val command: String, override val message: String) : Message {
-    val type = "Message.CommandSuccess"
-}
+@Serializable
+@SerialName("Message.CommandSuccess")
+data class CommandSuccess(
+    val command: String,
+    override val message: String,
+) : Message
 
-data class CommandFailure(val command: String, override val message: String) : Message {
-    val type = "Message.CommandFailure"
-}
+@Serializable
+@SerialName("Message.CommandFailure")
+data class CommandFailure(
+    val command: String,
+    override val message: String,
+) : Message
 
+@Serializable
+@SerialName("Message.RobotConnection")
 data class RobotConnection(val connected: Boolean) : Message {
-    val type = "Message.RobotConnection"
-
     override val message: String = "$connected"
 }
 
+@Serializable
+@SerialName("Message.WifiNetworks")
 data class WifiNetworks(
     val networks: List<WifiInfo>,
 ) : Message {
-    val type = "Message.WifiNetworks"
-
     override val message: String = "${networks.size} wireless networks"
 }
 
+@Serializable
+@SerialName("Message.WifiInfo")
 data class WifiInfo(
     val ssid: String,
     val signal: String,
@@ -40,33 +51,32 @@ data class WifiInfo(
     val protocol: String,
     val known: Boolean,
 ) : Message {
-    val type = "Message.WifiInfo"
-
     override val message: String = "$ssid $signal $rate"
 }
 
+@Serializable
+@SerialName("Message.BluetoothDevices")
 data class BluetoothDevices(val devices: List<Device>) : Message {
-    val type = "Message.BluetoothDevices"
-
     override val message = "Bluetooth scan update"
 }
 
+@Serializable
+@SerialName("Message.Topics")
 data class Topics(val topics: List<Topic>) : Message {
-    val type = "Message.Topics"
-
     override val message = "Topics"
 }
 
-data class TopicMessage(val topic: String, override val message: String) : Message {
-    val type = "Message.TopicMessage"
-}
+@Serializable
+@SerialName("Message.TopicMessage")
+data class TopicMessage(val topic: String, override val message: String) : Message
 
+@Serializable
+@SerialName("Message.Settings")
 data class Settings(val value: Settings) : Message {
-    val type = "Message.Settings"
-
     override val message = "ssh settings"
 }
 
+@Serializable
 data class Device(
     val name: String,
     val mac: String,
@@ -74,22 +84,23 @@ data class Device(
     val connected: Boolean,
 )
 
+@Serializable
 data class Topic(
     val id: String,
     val type: String,
     val count: Int,
 )
 
+@Serializable
+@SerialName("Message.StatusTable")
 data class StatusTable(
     val items: List<StatusLine>,
 ) : Message {
-    val type: String
-        get() = "Message.StatusTable"
-
     override val message: String
         get() = "Status"
 }
 
+@Serializable
 data class StatusLine(
     val name: String,
     val success: Boolean,

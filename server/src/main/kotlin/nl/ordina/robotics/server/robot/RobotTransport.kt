@@ -5,9 +5,9 @@ import kotlin.time.Duration
 typealias CommandRunner = suspend (command: String, timeout: Duration) -> String
 
 interface RobotTransport {
-    val connected: Boolean
+    suspend fun connected(): Boolean
 
-    fun tryConnect()
+    suspend fun tryConnect()
 
     suspend fun <T> withSession(
         settings: Settings? = null,
