@@ -1,6 +1,7 @@
 package nl.ordina.robotics.server.ssh
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.vertx.core.eventbus.EventBus
 import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.coroutines.CoroutineVerticle
@@ -35,8 +36,9 @@ class SshConnectionVerticle : CoroutineVerticle() {
 
         initializeRobot()
 
+        logger.debug { "Setting up SSH command listener for robot $id" }
         eb.consumer("/robots/$id/commands/internal") {
-            logger.info { "Received internal command: ${it.body()} from ${it.address()}" }
+            logger.debug { "Received internal command: ${it.body()} from ${it.address()}" }
             val command = Json.decodeFromVertxJsonObject<Command>(it.body())
             eb.publishMessage("/robots/$id/message", Info("Received command: $command"))
 
@@ -51,11 +53,10 @@ class SshConnectionVerticle : CoroutineVerticle() {
                     eb.publishMessage("/robots/$id/message", message)
                 }
             }
-
-            logger.info { "Received command: $command" }
         }
     }
 
+    @WithSpan
     private suspend fun initializeRobot() = try {
         val repository = RobotRepository()
         robot = repository.create(id, Settings())

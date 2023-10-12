@@ -6,10 +6,10 @@
         </encoder>
     </appender>
 
-    <root level="INFO">
+    <root level="WARN">
         <appender-ref ref="STDOUT" />
     </root>
 
-    <logger name="nl.ordina.robotics" level="INFO" />
-    <logger name="io.opentelemetry" level="TRACE" />
+    <logger name="nl.ordina.robotics" level="DEBUG" />
+    <logger name="io.opentelemetry" level="INFO" />
 </configuration>

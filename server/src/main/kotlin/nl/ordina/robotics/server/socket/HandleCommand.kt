@@ -1,5 +1,6 @@
 package nl.ordina.robotics.server.socket
 
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import nl.ordina.robotics.server.robot.CommandExecutor
 import nl.ordina.robotics.server.robot.Robot
 import nl.ordina.robotics.server.ssh.checks.createSshStatusTable
@@ -14,6 +15,7 @@ import nl.ordina.robotics.server.ssh.commands.scanBluetooth
 import nl.ordina.robotics.server.ssh.commands.subscribeTopic
 import nl.ordina.robotics.server.ssh.commands.wifiInfo
 
+@WithSpan
 suspend fun Robot.handleCommand(executor: CommandExecutor, command: Command): Message? {
     return when (command) {
         is CreateStatusTable -> createSshStatusTable(this, executor)

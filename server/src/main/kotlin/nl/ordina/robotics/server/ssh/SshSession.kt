@@ -1,6 +1,7 @@
 package nl.ordina.robotics.server.ssh
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.vertx.kotlin.coroutines.awaitBlocking
 import nl.ordina.robotics.server.robot.CommandRunner
 import nl.ordina.robotics.server.robot.RobotTransport
@@ -38,10 +39,10 @@ class SshSession(val settings: Settings) : RobotTransport {
         val settings = settings ?: SshSettingsLoader.load()
         val session = settings.current?.validOrNull() ?: settings.initialize()
 
-        try {
-            val test: CommandRunner = { cmd: String, timeout: Duration -> session.runCommand(cmd, timeout) }
-
-            return block(test)
+        return try {
+            block { cmd: String, timeout: Duration ->
+                session.runCommand(cmd, timeout)
+            }
         } catch (e: Exception) {
             settings.current = null
             throw e
@@ -56,6 +57,11 @@ class SshSession(val settings: Settings) : RobotTransport {
         }
 
     private suspend fun Settings.initialize(): ClientSession = awaitBlocking {
+        doInitialize()
+    }
+
+    @WithSpan
+    private fun Settings.doInitialize(): ClientSession {
         client.start()
         val connection = client.connect(
             username,
@@ -71,6 +77,8 @@ class SshSession(val settings: Settings) : RobotTransport {
 
         current = session
 
-        session
+        logger.debug { "SSH session for robot $id initialized" }
+
+        return session
     }
 }

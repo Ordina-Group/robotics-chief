@@ -1,7 +1,6 @@
 package nl.ordina.robotics.server
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import io.opentelemetry.sdk.autoconfigure.AutoConfiguredOpenTelemetrySdk
 import io.vertx.core.Vertx
 import io.vertx.core.VertxOptions
 import io.vertx.tracing.opentelemetry.OpenTelemetryOptions
@@ -15,18 +14,10 @@ fun main() {
     logger.info { "Starting server" }
     loadProperties()
 
-    val globalOtel = AutoConfiguredOpenTelemetrySdk
-        .builder()
-        .addSpanExporterCustomizer { t, u ->
-            println("Foobar $t, $u")
-            t
-        }
-        .setResultAsGlobal()
-        .build()
-
     val options = VertxOptions()
         .setTracingOptions(
-            OpenTelemetryOptions(globalOtel.openTelemetrySdk),
+//            OpenTelemetryOptions(globalOtel.openTelemetrySdk),
+            OpenTelemetryOptions(),
         )
 
     Vertx.vertx(options).apply {
