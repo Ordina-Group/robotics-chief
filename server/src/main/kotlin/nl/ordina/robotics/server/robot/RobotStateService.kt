@@ -5,6 +5,7 @@ import io.vertx.core.eventbus.EventBus
 import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import kotlinx.serialization.json.Json
+import nl.ordina.robotics.server.bus.Addresses
 import nl.ordina.robotics.server.socket.Message
 import nl.ordina.robotics.server.socket.publishMessage
 import nl.ordina.robotics.server.support.decodeFromVertxJsonObject
@@ -32,15 +33,15 @@ class RobotStateService : CoroutineVerticle() {
         robotId = config.getString("robot.id")
         eb = vertx.eventBus()
 
-        eb.consumer<JsonObject>("/initial_state") {
-            if (it.body().getString("slice") == "/robots/$robotId/updates") {
+        eb.consumer<JsonObject>(Addresses.initialSlice()) {
+            if (it.body().getString("slice") == Addresses.Robots.updates(robotId)) {
                 for (state in stateMap.values) {
-                    eb.publishMessage("/robots/$robotId/updates", state)
+                    eb.publishMessage(Addresses.Robots.updates(robotId), state)
                 }
             }
         }
 
-        eb.consumer("/robots/$robotId/message") {
+        eb.consumer(Addresses.Robots.message(robotId)) {
             logger.debug { "Received message for $robotId: ${it.body()} from ${it.address()}" }
             val message = Json.decodeFromVertxJsonObject<Message>(it.body())
 
@@ -59,6 +60,6 @@ class RobotStateService : CoroutineVerticle() {
 
         stateMap[state::class] = state
 
-        eb.publishMessage("/robots/$robotId/updates", state)
+        eb.publishMessage(Addresses.Robots.updates(robotId), state)
     }
 }

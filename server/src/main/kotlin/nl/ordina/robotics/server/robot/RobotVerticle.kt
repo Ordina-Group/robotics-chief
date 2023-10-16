@@ -14,6 +14,7 @@ import io.vertx.kotlin.coroutines.setPeriodicAwait
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
+import nl.ordina.robotics.server.bus.Addresses
 import nl.ordina.robotics.server.socket.Command
 import nl.ordina.robotics.server.socket.CreateStatusTable
 import nl.ordina.robotics.server.socket.requestCommand
@@ -37,7 +38,7 @@ class RobotVerticle : CoroutineVerticle() {
 
         eb = vertx.eventBus()
 
-        eb.consumer("/robots/$id/commands") { message ->
+        eb.consumer(Addresses.Robots.commands(id)) { message ->
             handleWebsocketCommand(message)
         }
 
@@ -59,13 +60,13 @@ class RobotVerticle : CoroutineVerticle() {
         logger.info { "Consuming websocket command from ${message.address()}" }
         val command = Json.decodeFromStream<Command>(ByteArrayInputStream(message.body().bytes))
 
-        eb.requestCommand<JsonObject>("/robots/$id/commands/internal", command)
+        eb.requestCommand<JsonObject>(Addresses.Robots.commandsInternal(id), command)
             .onSuccess {
                 if (message.replyAddress() != null) {
                     logger.error { "websockets do have reply addresses" }
                     message.reply(it.body())
                 } else {
-                    eb.publish("/robots/$id/message", it.body())
+                    eb.publish(Addresses.Robots.message(id), it.body())
                 }
             }
             .onFailure {
@@ -76,7 +77,7 @@ class RobotVerticle : CoroutineVerticle() {
     @WithSpan
     private fun updateTable() {
         try {
-            eb.requestCommand<JsonObject>("/robots/$id/commands/internal", CreateStatusTable)
+            eb.requestCommand<JsonObject>(Addresses.Robots.commandsInternal(id), CreateStatusTable)
                 .onSuccess {
                     if (logger.isTraceEnabled()) {
                         logger.trace { "Publish StatusTable with result ${it.body()}" }
@@ -84,7 +85,7 @@ class RobotVerticle : CoroutineVerticle() {
                         logger.debug { "Publish StatusTable" }
                     }
 
-                    eb.publish("/robots/$id/message", it.body())
+                    eb.publish(Addresses.Robots.message(id), it.body())
                 }
         } catch (e: Exception) {
             logger.error(e) { "Failed to update robot state: ${e.message}" }

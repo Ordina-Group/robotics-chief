@@ -8,6 +8,7 @@ import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.vertxFuture
 import kotlinx.serialization.json.Json
+import nl.ordina.robotics.server.bus.Addresses
 import nl.ordina.robotics.server.robot.CommandExecutor
 import nl.ordina.robotics.server.robot.Robot
 import nl.ordina.robotics.server.robot.RobotRepository
@@ -39,7 +40,7 @@ class SshConnectionVerticle : CoroutineVerticle() {
         initializeRobot()
 
         logger.debug { "Setting up SSH command listener for robot $id" }
-        eb.consumer("/robots/$id/commands/internal") {
+        eb.consumer(Addresses.Robots.commandsInternal(id)) {
             handleInternalCommand(it)
         }
     }
@@ -47,7 +48,7 @@ class SshConnectionVerticle : CoroutineVerticle() {
     private fun handleInternalCommand(it: Message<JsonObject>) {
         logger.trace { "RECEIVED: ${it.replyAddress()}" }
         val command = Json.decodeFromVertxJsonObject<Command>(it.body())
-        eb.publishMessage("/robots/$id/message", Info("Received command: $command"))
+        eb.publishMessage(Addresses.Robots.message(id), Info("Received command: $command"))
 
         vertxFuture {
             robot.handleCommand(executor, command)
@@ -63,7 +64,7 @@ class SshConnectionVerticle : CoroutineVerticle() {
                 logger.trace { "REPLYING: ${it.replyAddress()}" }
                 it.replyMessage(message)
             } else {
-                eb.publishMessage("/robots/$id/message", message)
+                eb.publishMessage(Addresses.Robots.message(id), message)
             }
         }.onFailure { exception ->
             val msg = Info("Error: ${exception.message}")
@@ -71,7 +72,7 @@ class SshConnectionVerticle : CoroutineVerticle() {
                 logger.info { "REPLYING: ${it.replyAddress()}" }
                 it.replyMessage(msg)
             } else {
-                eb.publishMessage("/robots/$id/message", msg)
+                eb.publishMessage(Addresses.Robots.message(id), msg)
             }
         }
     }
@@ -93,7 +94,7 @@ class SshConnectionVerticle : CoroutineVerticle() {
 
     private fun publish(message: String) {
         eb.publish(
-            "/robots/$id/updates",
+            Addresses.Robots.updates(id),
             JsonObject().put("message", message),
         )
     }

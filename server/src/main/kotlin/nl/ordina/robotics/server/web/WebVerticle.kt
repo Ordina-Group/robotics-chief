@@ -16,6 +16,7 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.StaticHandler
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.awaitResult
+import nl.ordina.robotics.server.bus.Addresses
 import nl.ordina.robotics.server.socket.logger
 
 class WebVerticle : CoroutineVerticle() {
@@ -95,7 +96,7 @@ class WebVerticle : CoroutineVerticle() {
             val slice = serverFrame.frame().destination
 
             eventBus.request<JsonObject>(
-                "/initial_state",
+                Addresses.initialSlice(),
                 JsonObject.of("slice", slice),
             ).onSuccess {
                 logger.debug { "Sending initial state: $slice}" }
