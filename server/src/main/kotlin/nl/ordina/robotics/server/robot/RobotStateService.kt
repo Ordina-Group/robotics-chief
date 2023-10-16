@@ -34,9 +34,9 @@ class RobotStateService : CoroutineVerticle() {
         eb = vertx.eventBus()
 
         eb.consumer<JsonObject>(Addresses.initialSlice()) {
-            if (it.body().getString("slice") == Addresses.Robots.updates(robotId)) {
+            if (it.body().getString("slice") == Addresses.Boundary.updates(robotId)) {
                 for (state in stateMap.values) {
-                    eb.publishMessage(Addresses.Robots.updates(robotId), state)
+                    eb.publishMessage(Addresses.Boundary.updates(robotId), state)
                 }
             }
         }
@@ -60,6 +60,6 @@ class RobotStateService : CoroutineVerticle() {
 
         stateMap[state::class] = state
 
-        eb.publishMessage(Addresses.Robots.updates(robotId), state)
+        eb.publishMessage(Addresses.Boundary.updates(robotId), state)
     }
 }

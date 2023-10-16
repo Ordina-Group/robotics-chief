@@ -38,7 +38,7 @@ class RobotVerticle : CoroutineVerticle() {
 
         eb = vertx.eventBus()
 
-        eb.consumer(Addresses.Robots.commands(id)) { message ->
+        eb.consumer(Addresses.Boundary.commands(id)) { message ->
             handleWebsocketCommand(message)
         }
 
@@ -60,7 +60,7 @@ class RobotVerticle : CoroutineVerticle() {
         logger.info { "Consuming websocket command from ${message.address()}" }
         val command = Json.decodeFromStream<Command>(ByteArrayInputStream(message.body().bytes))
 
-        eb.requestCommand<JsonObject>(Addresses.Robots.commandsInternal(id), command)
+        eb.requestCommand<JsonObject>(Addresses.Robots.commands(id), command)
             .onSuccess {
                 if (message.replyAddress() != null) {
                     logger.error { "websockets do have reply addresses" }
@@ -77,7 +77,7 @@ class RobotVerticle : CoroutineVerticle() {
     @WithSpan
     private fun updateTable() {
         try {
-            eb.requestCommand<JsonObject>(Addresses.Robots.commandsInternal(id), CreateStatusTable)
+            eb.requestCommand<JsonObject>(Addresses.Robots.commands(id), CreateStatusTable)
                 .onSuccess {
                     if (logger.isTraceEnabled()) {
                         logger.trace { "Publish StatusTable with result ${it.body()}" }

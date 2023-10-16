@@ -3,23 +3,31 @@ package nl.ordina.robotics.server.bus
 object Addresses {
     fun initialSlice() = "/initial_slice"
 
-    object Robots {
-        private const val PREFIX = "/robots"
+    object Boundary {
+        private const val PREFIX = "/boundary"
+
+        fun inboundPermitted() = "$PREFIX/robots/\\d+/(updates|commands)"
+
+        fun outboundPermitted() = "$PREFIX/robots/\\d+/updates"
 
         /**
-         * Inbound external commands for a particular robot.
+         * Commands for a particular robot from outside the boundary.
          */
-        fun commands(robotId: String) = "$PREFIX/$robotId/commands"
+        fun commands(robotId: String) = "$PREFIX/robots/$robotId/commands"
 
         /**
          * Outbound state updates for a particular robot.
          */
-        fun updates(robotId: String) = "$PREFIX/$robotId/updates"
+        fun updates(robotId: String) = "$PREFIX/robots/$robotId/updates"
+    }
+
+    object Robots {
+        private const val PREFIX = "/robots"
 
         /**
-         * Commands to be executed on a particular robot.
+         * Commands for a particular robot.
          */
-        fun commandsInternal(robotId: String) = "$PREFIX/$robotId/commands/internal"
+        fun commands(robotId: String) = "$PREFIX/$robotId/commands"
 
         /**
          * Message for a particular robot.

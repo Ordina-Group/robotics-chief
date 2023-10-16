@@ -40,7 +40,7 @@ class SshConnectionVerticle : CoroutineVerticle() {
         initializeRobot()
 
         logger.debug { "Setting up SSH command listener for robot $id" }
-        eb.consumer(Addresses.Robots.commandsInternal(id)) {
+        eb.consumer(Addresses.Robots.commands(id)) {
             handleInternalCommand(it)
         }
     }
@@ -94,7 +94,7 @@ class SshConnectionVerticle : CoroutineVerticle() {
 
     private fun publish(message: String) {
         eb.publish(
-            Addresses.Robots.updates(id),
+            Addresses.Boundary.updates(id),
             JsonObject().put("message", message),
         )
     }

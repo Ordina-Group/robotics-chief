@@ -43,12 +43,10 @@ const initializeSocket = async () => {
         onConnect: () => {
             connected.set(true);
 
-            socket.subscribe("/robots/3/updates", (message) => {
+            socket.subscribe("/boundary/robots/3/updates", (message) => {
                 console.log("STATUS UPDATE", message);
                 handleMessage(JSON.parse(message.body));
             });
-
-            socket.publish({ destination: '/hello', body: 'First Message' });
         },
         onDisconnect: () => {
             connected.set(false);
@@ -71,7 +69,7 @@ export const register = <T = any>(type: string, initial: any = undefined): Writa
 
 export const sendCommand = (command: Command) => {
     if (socket.connected) {
-        socket.publish({ destination: '/robots/3/commands', body: JSON.stringify(command) });
+        socket.publish({ destination: '/boundary/robots/3/commands', body: JSON.stringify(command) });
     } else {
         console.error(`Discarding command ${command}, asked too soon`);
     }

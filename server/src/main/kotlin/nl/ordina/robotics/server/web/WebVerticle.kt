@@ -78,8 +78,8 @@ class WebVerticle : CoroutineVerticle() {
             .create(vertx)
             .bridge(
                 BridgeOptions()
-                    .addInboundPermitted(PermittedOptions().setAddressRegex("/robots/\\d+/(updates|commands)"))
-                    .addOutboundPermitted(PermittedOptions().setAddressRegex("/robots/\\d+/updates")),
+                    .addInboundPermitted(PermittedOptions().setAddressRegex(Addresses.Boundary.inboundPermitted()))
+                    .addOutboundPermitted(PermittedOptions().setAddressRegex(Addresses.Boundary.outboundPermitted())),
             )
             .subscribeHandler(subscribeHandlerWithInitialStateSupport())
 
