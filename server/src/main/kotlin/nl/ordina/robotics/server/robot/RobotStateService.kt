@@ -44,6 +44,9 @@ class RobotStateService : CoroutineVerticle() {
             logger.debug { "Received message for $robotId: ${it.body()} from ${it.address()}" }
             val message = Json.decodeFromVertxJsonObject<Message>(it.body())
 
+            if (it.replyAddress() != null) {
+                TODO()
+            }
             updateRobotState(message)
         }
     }

@@ -14,7 +14,7 @@ class Settings {
     val host: String = "192.168.55.1"
     val port: Int = 22
     val domainId: Int = 8
-    val timeout: Duration = 500.milliseconds
+    val timeout: Duration = 5000.milliseconds
     val workDir: String = "/home/jetson/robotics-workshop"
 
     @Transient

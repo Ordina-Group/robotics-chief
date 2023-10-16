@@ -1,8 +1,6 @@
 package nl.ordina.robotics.server.robot
 
-import kotlin.time.Duration
-
-typealias CommandRunner = suspend (command: String, timeout: Duration) -> String
+typealias CommandRunner = suspend (command: String) -> String
 
 interface RobotTransport {
     suspend fun connected(): Boolean

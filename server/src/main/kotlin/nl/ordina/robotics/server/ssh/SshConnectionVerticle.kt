@@ -3,6 +3,7 @@ package nl.ordina.robotics.server.ssh
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.vertx.core.eventbus.EventBus
+import io.vertx.core.eventbus.Message
 import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.vertxFuture
@@ -13,6 +14,7 @@ import nl.ordina.robotics.server.robot.RobotRepository
 import nl.ordina.robotics.server.robot.Settings
 import nl.ordina.robotics.server.socket.Command
 import nl.ordina.robotics.server.socket.Info
+import nl.ordina.robotics.server.socket.WifiNetworks
 import nl.ordina.robotics.server.socket.handleCommand
 import nl.ordina.robotics.server.socket.publishMessage
 import nl.ordina.robotics.server.socket.replyMessage
@@ -38,20 +40,38 @@ class SshConnectionVerticle : CoroutineVerticle() {
 
         logger.debug { "Setting up SSH command listener for robot $id" }
         eb.consumer("/robots/$id/commands/internal") {
-            logger.debug { "Received internal command: ${it.body()} from ${it.address()}" }
-            val command = Json.decodeFromVertxJsonObject<Command>(it.body())
-            eb.publishMessage("/robots/$id/message", Info("Received command: $command"))
+            handleInternalCommand(it)
+        }
+    }
 
-            vertxFuture {
-                robot.handleCommand(executor, command)
-            }.onSuccess { message ->
-                if (message == null) return@onSuccess
+    private fun handleInternalCommand(it: Message<JsonObject>) {
+        logger.trace { "RECEIVED: ${it.replyAddress()}" }
+        val command = Json.decodeFromVertxJsonObject<Command>(it.body())
+        eb.publishMessage("/robots/$id/message", Info("Received command: $command"))
 
-                if (it.replyAddress() != null) {
-                    it.replyMessage(message)
-                } else {
-                    eb.publishMessage("/robots/$id/message", message)
+        vertxFuture {
+            robot.handleCommand(executor, command)
+                .also { msg ->
+                    if (msg is WifiNetworks && msg.networks.size > 1) {
+                        logger.warn { "Multiple networks found: ${msg.networks}" }
+                    }
                 }
+        }.onSuccess { message ->
+            if (message == null) return@onSuccess
+
+            if (it.replyAddress() != null) {
+                logger.trace { "REPLYING: ${it.replyAddress()}" }
+                it.replyMessage(message)
+            } else {
+                eb.publishMessage("/robots/$id/message", message)
+            }
+        }.onFailure { exception ->
+            val msg = Info("Error: ${exception.message}")
+            if (it.replyAddress() != null) {
+                logger.info { "REPLYING: ${it.replyAddress()}" }
+                it.replyMessage(msg)
+            } else {
+                eb.publishMessage("/robots/$id/message", msg)
             }
         }
     }

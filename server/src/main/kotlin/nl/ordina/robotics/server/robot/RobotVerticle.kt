@@ -6,12 +6,11 @@ import io.vertx.core.DeploymentOptions
 import io.vertx.core.Future
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.eventbus.EventBus
+import io.vertx.core.eventbus.Message
 import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.core.json.get
 import io.vertx.kotlin.coroutines.CoroutineVerticle
-import io.vertx.kotlin.coroutines.awaitResult
 import io.vertx.kotlin.coroutines.setPeriodicAwait
-import kotlinx.coroutines.awaitAll
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
@@ -30,7 +29,6 @@ class RobotVerticle : CoroutineVerticle() {
     private lateinit var eb: EventBus
     private lateinit var id: String
 
-    @OptIn(ExperimentalSerializationApi::class)
     override suspend fun start() {
         val config = vertx.loadConfig()
         id = config.getString("robot.id")
@@ -39,14 +37,8 @@ class RobotVerticle : CoroutineVerticle() {
 
         eb = vertx.eventBus()
 
-        eb.consumer<Buffer>("/robots/$id/commands") {
-            logger.info { "Consuming websocket command from ${it.address()}" }
-            val command = Json.decodeFromStream<Command>(ByteArrayInputStream(it.body().bytes))
-
-            eb.requestCommand<String>("/robots/$id/commands/internal", command)
-                .onSuccess {
-                    logger.info { "Successfully executed command $command with result ${it.body()}" }
-                }
+        eb.consumer("/robots/$id/commands") { message ->
+            handleWebsocketCommand(message)
         }
 
         val ss = deployStateService()
@@ -60,6 +52,25 @@ class RobotVerticle : CoroutineVerticle() {
         vertx.setPeriodicAwait(10_000) {
             updateTable()
         }
+    }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    private fun handleWebsocketCommand(message: Message<Buffer>) {
+        logger.info { "Consuming websocket command from ${message.address()}" }
+        val command = Json.decodeFromStream<Command>(ByteArrayInputStream(message.body().bytes))
+
+        eb.requestCommand<JsonObject>("/robots/$id/commands/internal", command)
+            .onSuccess {
+                if (message.replyAddress() != null) {
+                    logger.error { "websockets do have reply addresses" }
+                    message.reply(it.body())
+                } else {
+                    eb.publish("/robots/$id/message", it.body())
+                }
+            }
+            .onFailure {
+                logger.error { "Failed to execute command: ${it.message}" }
+            }
     }
 
     @WithSpan

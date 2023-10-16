@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button, Chevron, Dropdown, DropdownItem, P } from "flowbite-svelte";
+  import { Button, ArrowKeyDown, Dropdown, DropdownItem, P } from "flowbite-svelte";
 
   import type { Topic } from "$lib/topics";
   import { onDestroy, onMount } from "svelte";
@@ -47,7 +47,7 @@
         <h3 class="text-2xl">{topic?.id}</h3>
         <div class="flex gap-1">
             <Button>
-                <Chevron>{messages.length} Items</Chevron>
+                <ArrowKeyDown>{messages.length} Items</ArrowKeyDown>
             </Button>
             <Dropdown>
                 <DropdownItem on:click={resize(10)}>10</DropdownItem>

@@ -21,7 +21,7 @@
     if ($success?.command === "ConnectWifi") {
       closeModal("connect_wifi");
       success.set(undefined);
-      sendCommand({ type: "GetWifiNetworks" });
+      sendCommand({ type: "Command.GetWifiNetworks" });
     }
 
     if ($failure?.command === "ConnectWifi") {

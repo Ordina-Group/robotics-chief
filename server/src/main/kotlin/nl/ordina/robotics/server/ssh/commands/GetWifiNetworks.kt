@@ -21,13 +21,14 @@ suspend fun Robot.getWifiNetworks(executor: CommandExecutor, command: GetWifiNet
     val saved = executor.executeCommand(
         id,
         Cmd.Networking.listStoredNetworks.withSudo(settings.password),
-        timeout = 200.milliseconds,
+        timeout = 500.milliseconds,
     ).parseStoredNetworks()
     executor.executeCommand(
         id,
         Cmd.Networking.listWirelessNetworks.withSudo(settings.password),
-        timeout = 200.milliseconds,
+        timeout = 500.milliseconds,
     ).parseWifiNetworks(saved)
+        .also { logger.error { "Found ${it.networks.size} networks" } }
 } catch (e: SshException) {
     logger.error { e.message }
 

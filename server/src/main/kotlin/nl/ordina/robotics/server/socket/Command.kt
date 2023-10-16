@@ -44,7 +44,7 @@ data class ForgetWifi(val ssid: String) : Command {
 
 @Serializable
 @SerialName("Command.GetWifiNetworks")
-object GetWifiNetworks : Command {
+data object GetWifiNetworks : Command {
     override val name = "GetWifiNetworks"
 }
 

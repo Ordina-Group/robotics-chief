@@ -8,7 +8,6 @@ import nl.ordina.robotics.server.robot.RobotTransport
 import nl.ordina.robotics.server.robot.Settings
 import org.apache.sshd.client.SshClient
 import org.apache.sshd.client.session.ClientSession
-import kotlin.time.Duration
 import kotlin.time.toJavaDuration
 
 class SshSession(val settings: Settings) : RobotTransport {
@@ -40,8 +39,8 @@ class SshSession(val settings: Settings) : RobotTransport {
         val session = settings.current?.validOrNull() ?: settings.initialize()
 
         return try {
-            block { cmd: String, timeout: Duration ->
-                session.runCommand(cmd, timeout)
+            block { cmd: String ->
+                session.runCommand(cmd)
             }
         } catch (e: Exception) {
             settings.current = null

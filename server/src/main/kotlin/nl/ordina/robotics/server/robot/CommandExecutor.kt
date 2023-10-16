@@ -7,7 +7,6 @@ import kotlin.time.Duration
 class CommandExecutor(
     private val robotRepository: RobotRepository,
     private val transport: RobotTransport,
-//    private val robotStateService: RobotStateService,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -15,7 +14,7 @@ class CommandExecutor(
         if (!transport.connected()) {
             transport.tryConnect()
             if (transport.connected()) {
-//                robotStateService.updateRobotState(RobotConnection(true))
+//                updateConnectionState(true)
             } else {
                 logger.warn { "Failed to connect" }
             }
@@ -35,7 +34,6 @@ class CommandExecutor(
                 Cmd.Unix.cd(workDir),
                 *command,
                 separator = separator,
-                timeout = timeout ?: this.timeout,
             )
         }
 
@@ -45,14 +43,13 @@ class CommandExecutor(
         separator: String = Cmd.Unix.And,
         timeout: Duration? = null,
     ): String = with(robotRepository.get(robotId.value)!!.settings) {
-        executeCommand(*command, separator = separator, timeout = timeout ?: this.timeout)
+        executeCommand(*command, separator = separator)
     }
 
     private suspend fun Settings.executeCommand(
         vararg command: String,
         separator: String = Cmd.Unix.And,
-        timeout: Duration = this.timeout,
     ): String = transport.withSession(this) { runCommand ->
-        runCommand(command.joinToString(separator), timeout)
+        runCommand(command.joinToString(separator))
     }
 }

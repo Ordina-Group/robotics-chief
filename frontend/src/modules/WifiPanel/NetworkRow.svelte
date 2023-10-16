@@ -10,7 +10,7 @@
 
   let loading: boolean = false;
 
-  const refresh = () => sendCommand({ type: "GetWifiNetworks" });
+  const refresh = () => sendCommand({ type: "Command.GetWifiNetworks" });
 
   const connect = () => {
     if (network.known === true) {
