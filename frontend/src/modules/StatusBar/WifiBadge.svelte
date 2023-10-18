@@ -18,7 +18,7 @@
     wifiSignal,
     (message) => {
       if (message.status === Status.Loading) {
-        return "checking";
+        return "Checking";
       } else if (message.type === ResultType.Success) {
         return `${message.result.ssid} ${message.result.signal} ${message.result.rate}`;
       }
@@ -30,4 +30,4 @@
   // onDestroy(() => clearInterval(intervalID));
 </script>
 
-<Badge large class="whitespace-nowrap">🛜 {$wifi}</Badge>
+<Badge large color="dark" class="whitespace-nowrap">🛜 {$wifi}</Badge>

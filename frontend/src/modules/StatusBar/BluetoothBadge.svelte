@@ -22,7 +22,7 @@
     devices,
     (message) => {
       if (message.status === Status.Loading) {
-        return "checking";
+        return "Checking";
       } else if (message.type === ResultType.Success) {
         const mac = message.result.devices.find((d) => d.connected === true)?.mac;
 
@@ -38,4 +38,4 @@
   // setInterval(refresh, 1000);
 </script>
 
-<Badge large class="whitespace-nowrap">🎮 {$controller}</Badge>
+<Badge large color="dark" class="whitespace-nowrap">🎮 {$controller}</Badge>

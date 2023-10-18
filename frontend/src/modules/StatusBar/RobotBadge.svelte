@@ -25,7 +25,7 @@
   );
 </script>
 
-<Badge large class="whitespace-nowrap" id="robot-connection">
+<Badge large color="dark" class="whitespace-nowrap" id="robot-connection">
     {#if $robotConnected === true}
         🟢
     {:else if $robotConnected === undefined}

@@ -3,7 +3,7 @@
   import { connected } from "$lib/socket";
 </script>
 
-<Badge large class="whitespace-nowrap" id="chief-connection">
+<Badge large color="dark" class="whitespace-nowrap" id="chief-connection">
     {#if $connected}
         🟢
     {:else}
