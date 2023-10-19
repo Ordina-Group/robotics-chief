@@ -12,9 +12,7 @@ import io.vertx.kotlin.core.json.get
 import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.coroutines.setPeriodicAwait
-import io.vertx.kotlin.coroutines.toReceiveChannel
 import io.vertx.kotlin.coroutines.vertxFuture
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
@@ -76,8 +74,8 @@ class RobotVerticle : CoroutineVerticle() {
     @OptIn(ExperimentalSerializationApi::class)
     private suspend fun handleWebsocketCommand(message: Message<Buffer>) {
         try {
-            logger.info { "Consuming websocket command from ${message.address()}" }
             val command = Json.decodeFromStream<Command>(ByteArrayInputStream(message.body().bytes))
+            logger.debug { "[ROBOT $id] Command: $command" }
 
             if (command is SubscribeTopic) {
                 handleTopicSubscribe(command.id)
@@ -97,6 +95,7 @@ class RobotVerticle : CoroutineVerticle() {
                 logger.error { "websockets do have reply addresses" }
                 message.reply(it.body())
             } else {
+                logger.debug { "[ROBOT $id] Answer for $command: ${it.body()}" }
                 eb.publish(Addresses.Robots.message(id), it.body())
             }
         } catch (e: Exception) {

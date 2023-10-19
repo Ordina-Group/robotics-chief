@@ -27,7 +27,7 @@ class CliVerticleTest {
 
         // Set up network
         eb.consumer(Addresses.Network.executeInstruction("3")) {
-            val instructionSet = Json.decodeFromVertxJsonObject<InstructionSet>(it.body())
+            val instructionSet = Json.decodeFromVertxJsonObject<Script>(it.body())
             assert(instructionSet.instructions.size == 2)
             it.reply(JsonObject().put("network", "response"))
         }

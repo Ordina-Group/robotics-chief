@@ -46,7 +46,7 @@ data object GetWifiNetworks : Command {
 
 @Serializable
 @SerialName("Command.GetWifiInfo")
-data class GetWifiInfo(override val name: String = "Command.GetWifiInfo") : Command
+data class GetWifiInfo(override val name: String = "GetWifiInfo") : Command
 
 @Serializable
 @SerialName("Command.ScanBluetooth")
@@ -58,6 +58,12 @@ data class ScanBluetooth(val scan: Boolean) : Command {
 @SerialName("Command.BluetoothConnect")
 data class BluetoothConnect(val mac: String) : Command {
     override val name = "BluetoothConnect"
+}
+
+@Serializable
+@SerialName("Command.BluetoothDisconnect")
+data class BluetoothDisconnect(val mac: String) : Command {
+    override val name = "BluetoothDisconnect"
 }
 
 @Serializable
@@ -82,4 +88,16 @@ data class SubscribeTopic(val id: String) : Command {
 @SerialName("Command.UnsubscribeTopic")
 data class UnsubscribeTopic(val id: String) : Command {
     override val name = "UnsubscribeTopic"
+}
+
+@Serializable
+@SerialName("Command.LaunchApp")
+data class LaunchApp(val restart: Boolean = false) : Command {
+    override val name = "LaunchApp"
+}
+
+@Serializable
+@SerialName("Command.ClientAction")
+data class ClientAction(val actionUrl: String? = null) : Command {
+    override val name: String = "ClientAction"
 }

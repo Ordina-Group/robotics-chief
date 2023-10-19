@@ -5,23 +5,28 @@ import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.vertx.kotlin.coroutines.awaitBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.withTimeout
 import nl.ordina.robotics.server.transport.cli.InstructionResult
 import org.apache.sshd.client.session.ClientSession
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
 import java.rmi.RemoteException
+import kotlin.time.Duration.Companion.seconds
 
 private val logger = KotlinLogging.logger {}
 
-suspend fun ClientSession.runCommand(command: String): InstructionResult = awaitBlocking {
-    execCommand(command)
+suspend fun ClientSession.runCommand(command: String): InstructionResult = withTimeout(30.seconds) {
+    awaitBlocking {
+        execCommand(command)
+    }
 }
 
 @WithSpan
 private fun ClientSession.execCommand(command: String): InstructionResult = try {
-    InstructionResult(executeRemoteCommand(command).trimEnd())
+    val output = executeRemoteCommand(command).trimEnd()
+    InstructionResult(output)
 } catch (e: RemoteException) {
-    logger.error { "Error running SSH command: ${e.detail.message}" }
+    logger.debug { "Error running SSH command '$command': ${e.detail.message}" }
     InstructionResult(null, error = e.detail.message?.trimEnd() ?: "Unknown error")
 }
 

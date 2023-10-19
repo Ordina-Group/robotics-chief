@@ -7,6 +7,7 @@ import io.vertx.kotlin.coroutines.await
 import io.vertx.kotlin.coroutines.vertxFuture
 import kotlinx.serialization.json.Json
 import nl.ordina.robotics.server.bus.Addresses
+import nl.ordina.robotics.server.robot.RobotSettings
 import nl.ordina.robotics.server.socket.Command
 import nl.ordina.robotics.server.socket.replyMessage
 import nl.ordina.robotics.server.support.decodeFromVertxJsonObject
@@ -17,7 +18,9 @@ class CliVerticle : CoroutineVerticle() {
     val logger = KotlinLogging.logger {}
 
     override suspend fun start() {
-        val robotId = config.getString("robot.id")
+        val robotSettings = Json.decodeFromVertxJsonObject<RobotSettings>(config, prefix = "robot")
+        val robotId = robotSettings.id
+
         val eb = vertx.eventBus()
 
         logger.info { "Starting CLI verticle for robot $robotId" }
@@ -33,10 +36,10 @@ class CliVerticle : CoroutineVerticle() {
         }
 
         eb.consumer(Addresses.Transport.execute(robotId)) { message ->
-            logger.debug { "Preparing command for robot $robotId for network" }
-
             val command = Json.decodeFromVertxJsonObject<Command>(message.body())
-            val instructions = command.toInstructionSet()
+            logger.trace { "[ROBOT $robotId] Preparing command $command for network" }
+
+            val instructions = command.toInstructionSet(robotSettings)
 
             vertxFuture {
                 instructions.run(executor)

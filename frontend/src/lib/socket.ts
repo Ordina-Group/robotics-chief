@@ -1,7 +1,5 @@
 import { Client } from '@stomp/stompjs';
-
-import { writable } from "svelte/store";
-import type { Writable } from "svelte/types/runtime/store";
+import { type Writable, writable } from "svelte/store";
 
 const subscribers: { [k: string]: Writable<any> } = {};
 

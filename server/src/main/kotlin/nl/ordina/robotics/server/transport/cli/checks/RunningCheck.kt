@@ -1,5 +1,6 @@
 package nl.ordina.robotics.server.transport.cli.checks
 
+import nl.ordina.robotics.server.socket.LaunchApp
 import nl.ordina.robotics.server.socket.StatusLine
 import nl.ordina.robotics.server.transport.cli.Cmd
 import nl.ordina.robotics.server.transport.cli.Instruction
@@ -16,11 +17,7 @@ suspend fun runningCheck(execute: InstructionExecutor): StatusLine {
         message = "PID $running",
         success = runningMainAndController,
         pending = runningParts && !runningMainAndController,
-        actionUrl = if (runningParts) {
-            "/commands/restart/\${settings.domainId}"
-        } else {
-            "/commands/launch/\${settings.domainId}"
-        },
-        actionLabel = if (runningParts) "Restart" else "Start",
+        commandLabel = if (runningParts) "Restart" else "Start",
+        command = LaunchApp(restart = runningParts),
     )
 }

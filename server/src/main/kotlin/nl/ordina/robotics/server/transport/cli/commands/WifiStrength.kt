@@ -7,10 +7,10 @@ import nl.ordina.robotics.server.socket.WifiInfo
 import nl.ordina.robotics.server.transport.cli.Cmd
 import nl.ordina.robotics.server.transport.cli.Instruction
 import nl.ordina.robotics.server.transport.cli.InstructionExecutor
-import nl.ordina.robotics.server.transport.cli.InstructionSet
+import nl.ordina.robotics.server.transport.cli.Script
 import org.apache.sshd.common.SshException
 
-class GetWifiInfoInstruction(val command: GetWifiInfo) : InstructionSet {
+class GetWifiInfoInstruction(val command: GetWifiInfo) : Script {
     override suspend fun run(execute: InstructionExecutor): Message = try {
         execute(Instruction(Cmd.Networking.connectionInfo))
             .resultOrError

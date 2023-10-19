@@ -1,5 +1,6 @@
 package nl.ordina.robotics.server.transport.cli.checks
 
+import nl.ordina.robotics.server.socket.ClientAction
 import nl.ordina.robotics.server.socket.StatusLine
 import nl.ordina.robotics.server.transport.cli.Cmd
 import nl.ordina.robotics.server.transport.cli.Instruction
@@ -14,7 +15,7 @@ suspend fun wifiCheck(execute: InstructionExecutor): StatusLine {
         success = connected,
         pending = false,
         message = addresses,
-        actionUrl = "/actions/modal?resource=wifi",
-        actionLabel = "Show networks",
+        commandLabel = "Show networks",
+        command = ClientAction("/actions/modal?resource=wifi"),
     )
 }

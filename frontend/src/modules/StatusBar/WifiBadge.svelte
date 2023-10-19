@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { Badge } from "flowbite-svelte";
+    import { Badge, Tooltip } from "flowbite-svelte";
   import { derived } from "svelte/store";
 
   import { withRefeshableData } from "$lib/withRefeshableData";
   import { ResultType, Status } from "$lib/state";
+  import { onDestroy } from "svelte";
 
   interface WifiInfo {
     ssid: string;
@@ -12,7 +13,7 @@
     known: boolean;
   }
 
-  const [wifiSignal, refresh] = withRefeshableData<WifiInfo>("Message.WifiInfo", "GetWifiInfo");
+  const [wifiSignal, refresh] = withRefeshableData<WifiInfo>("Message.WifiInfo", "Command.GetWifiInfo");
 
   const wifi = derived(
     wifiSignal,
@@ -25,9 +26,15 @@
     },
   );
 
-  // const intervalID = setInterval(refresh, 1000);
+  const intervalID = setInterval(refresh, 2000);
 
-  // onDestroy(() => clearInterval(intervalID));
+  onDestroy(() => clearInterval(intervalID));
 </script>
 
-<Badge large color="dark" class="whitespace-nowrap">🛜 {$wifi}</Badge>
+<Badge large color="dark" class="whitespace-nowrap" id="wifi-connection">
+    🛜 {$wifi}
+</Badge>
+
+<Tooltip placement="bottom" triggeredBy="#wifi-connection">
+    WiFi connection
+</Tooltip>

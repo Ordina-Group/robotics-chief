@@ -7,10 +7,10 @@ import nl.ordina.robotics.server.socket.Message
 import nl.ordina.robotics.server.transport.cli.Cmd
 import nl.ordina.robotics.server.transport.cli.Instruction
 import nl.ordina.robotics.server.transport.cli.InstructionExecutor
-import nl.ordina.robotics.server.transport.cli.InstructionSet
+import nl.ordina.robotics.server.transport.cli.Script
 import org.apache.sshd.common.SshException
 
-class ConnectWifiInstruction(val command: ConnectWifi) : InstructionSet {
+class ConnectWifiInstruction(val command: ConnectWifi) : Script {
     override suspend fun run(execute: InstructionExecutor): Message = try {
         val connectCommand = if (command.password != null) {
             Instruction(Cmd.Networking.connectWifi(command.ssid, command.password), withSudo = true)

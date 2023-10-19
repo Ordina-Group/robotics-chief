@@ -1,6 +1,7 @@
 package nl.ordina.robotics.server.transport.cli.checks
 
 import nl.ordina.robotics.server.socket.BluetoothDevices
+import nl.ordina.robotics.server.socket.ClientAction
 import nl.ordina.robotics.server.socket.CommandFailure
 import nl.ordina.robotics.server.socket.StatusLine
 import nl.ordina.robotics.server.transport.cli.InstructionExecutor
@@ -25,7 +26,7 @@ suspend fun controllerCheck(execute: InstructionExecutor): StatusLine {
         success = message != null,
         pending = false,
         message = message ?: "No bluetooth devices connected.",
-        actionUrl = "/actions/modal?resource=bluetooth",
-        actionLabel = "Pair & Connect",
+        commandLabel = "Pair & Connect",
+        command = ClientAction("/actions/modal?resource=bluetooth"),
     )
 }

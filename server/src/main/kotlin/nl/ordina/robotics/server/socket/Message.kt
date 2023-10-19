@@ -1,5 +1,7 @@
 package nl.ordina.robotics.server.socket
 
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import nl.ordina.robotics.server.robot.RobotSettings
@@ -101,12 +103,14 @@ data class StatusTable(
 }
 
 @Serializable
+@OptIn(ExperimentalSerializationApi::class)
 data class StatusLine(
     val name: String,
     val success: Boolean,
     val pending: Boolean,
+    @EncodeDefault
     val message: String = "",
     val failure: String = "",
-    val actionUrl: String? = null,
-    val actionLabel: String? = null,
+    val commandLabel: String? = null,
+    val command: Command? = null,
 )

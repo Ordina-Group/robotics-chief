@@ -6,14 +6,15 @@ import nl.ordina.robotics.server.socket.Topics
 import nl.ordina.robotics.server.transport.cli.Cmd
 import nl.ordina.robotics.server.transport.cli.Instruction
 import nl.ordina.robotics.server.transport.cli.InstructionExecutor
-import nl.ordina.robotics.server.transport.cli.InstructionSet
+import nl.ordina.robotics.server.transport.cli.Script
 
-class ListTopicsInstruction(val domainId: String) : InstructionSet {
+class ListTopicsInstruction(private val domainId: Int) : Script {
     override suspend fun run(execute: InstructionExecutor): Message {
         val topicNames = execute(
-            Instruction(Cmd.Ros.sourceBash),
-            // TODO:
-//            Instruction(Cmd.Ros.listTopics(domainId)),
+            Instruction(
+                Cmd.Ros.sourceBash,
+                Cmd.Ros.listTopics(domainId),
+            ),
         )
             .resultOrError
             .split('\n')
@@ -21,9 +22,10 @@ class ListTopicsInstruction(val domainId: String) : InstructionSet {
 
         val topicInfos = topicNames.associateWith {
             execute(
-                Instruction(Cmd.Ros.sourceBash),
-                // TODO:
-//                Instruction(Cmd.Ros.topicInfo(domainId, it)),
+                Instruction(
+                    Cmd.Ros.sourceBash,
+                    Cmd.Ros.topicInfo(domainId, it),
+                ),
             )
                 .resultOrError
                 .split("/n")
@@ -35,7 +37,7 @@ class ListTopicsInstruction(val domainId: String) : InstructionSet {
         }
 
         val topics = topicNames.map { id ->
-            Topic(id, topicInfos[id]!!, -1)
+            Topic(id, topicInfos.getOrDefault(id, "[MISSING]"), -1)
         }
 
         return Topics(topics)

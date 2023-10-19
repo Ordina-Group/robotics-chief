@@ -1,11 +1,12 @@
 <script lang="ts">
-  import { Badge } from "flowbite-svelte";
+    import { Badge, Tooltip } from "flowbite-svelte";
   import { derived } from "svelte/store";
 
   import { withRefeshableData } from "$lib/withRefeshableData";
   import { ResultType, Status } from "$lib/state";
 
   import settings from "../Settings/Settings";
+  import { onDestroy } from "svelte";
 
   interface Device {
     mac: string;
@@ -35,7 +36,15 @@
     },
   );
 
-  // setInterval(refresh, 1000);
+  const intervalID = setInterval(refresh, 2000);
+
+  onDestroy(() => clearInterval(intervalID));
 </script>
 
-<Badge large color="dark" class="whitespace-nowrap">🎮 {$controller}</Badge>
+<Badge large color="dark" class="whitespace-nowrap" id="bluetooth-connection">
+    🎮 {$controller}
+</Badge>
+
+<Tooltip placement="bottom" triggeredBy="#bluetooth-connection">
+    Controller/bluetooth connection
+</Tooltip>

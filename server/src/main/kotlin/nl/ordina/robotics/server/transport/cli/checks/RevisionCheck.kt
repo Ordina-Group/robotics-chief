@@ -6,15 +6,14 @@ import nl.ordina.robotics.server.transport.cli.Instruction
 import nl.ordina.robotics.server.transport.cli.InstructionExecutor
 
 suspend fun revisionCheck(execute: InstructionExecutor): StatusLine {
-    val dir = execute(Instruction(Cmd.Unix.list("."), inWorkDir = true)).resultOrError
-    val projectCloned = !dir.contains("No such file or directory")
-    val revision = if (projectCloned) execute(Instruction(Cmd.Git.revision)).resultOrError else ""
+    val projectCloned = execute(Instruction(Cmd.Unix.list("."), inWorkDir = true)).success
+    val revision = execute(Instruction(Cmd.Git.revision))
 
     return StatusLine(
         name = "Revision",
-        success = revision.isNotEmpty(),
-        message = revision,
+        success = projectCloned && revision.success,
+        message = if (projectCloned) revision.resultOrError else "",
         pending = false,
-        actionLabel = "Pull",
+        commandLabel = "Pull",
     )
 }

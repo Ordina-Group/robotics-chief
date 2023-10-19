@@ -39,9 +39,9 @@ class SshConnectionVerticle : CoroutineVerticle() {
 
             vertxFuture {
                 val result = if (instruction.inWorkDir) {
-                    executeInWorkDir(instruction.value)
+                    executeInWorkDir(instruction)
                 } else {
-                    executeCommand(instruction.value)
+                    executeCommand(instruction)
                 }
 
                 val payload = Json.encodeToVertxJsonObject(result)
@@ -84,19 +84,15 @@ class SshConnectionVerticle : CoroutineVerticle() {
     }
 
     private suspend fun executeInWorkDir(
-        vararg command: String,
-        separator: String = Cmd.Unix.And,
+        instruction: Instruction,
     ): InstructionResult = executeCommand(
-        Cmd.Unix.cd(robotSettings.workDir),
-        *command,
-        separator = separator,
+        Instruction(Cmd.Unix.cd(robotSettings.workDir)).compose(instruction),
     )
 
     private suspend fun executeCommand(
-        vararg command: String,
-        separator: String = Cmd.Unix.And,
+        instruction: Instruction,
     ): InstructionResult = network.withSession { runCommand ->
-        runCommand(command.joinToString(separator))
+        runCommand(instruction.toInstructionString())
     }
 
     @WithSpan

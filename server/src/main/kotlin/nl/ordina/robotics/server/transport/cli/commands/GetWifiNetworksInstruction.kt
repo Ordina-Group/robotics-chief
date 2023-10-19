@@ -8,15 +8,14 @@ import nl.ordina.robotics.server.socket.WifiNetworks
 import nl.ordina.robotics.server.transport.cli.Cmd
 import nl.ordina.robotics.server.transport.cli.Instruction
 import nl.ordina.robotics.server.transport.cli.InstructionExecutor
-import nl.ordina.robotics.server.transport.cli.InstructionSet
-import nl.ordina.robotics.server.transport.cli.withSudo
+import nl.ordina.robotics.server.transport.cli.Script
 import org.apache.sshd.common.SshException
 
 private val logger = KotlinLogging.logger {}
 
 private val networksLineSplitter = Regex("(?<!\\\\):")
 
-class GetWifiNetworksInstruction : InstructionSet {
+class GetWifiNetworksInstruction : Script {
     override suspend fun run(execute: InstructionExecutor): Message = try {
         val saved = execute(
             Instruction(

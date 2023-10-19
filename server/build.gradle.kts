@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val vertxVersion = "4.4.5"
 val coroutinesVersion = "1.7.3"
+val sshdVersion = "2.10.0"
 val kotlin_logging_version: String by project
 
 plugins {
@@ -57,10 +58,10 @@ dependencies {
 
     implementation("net.harawata:appdirs:1.2.1")
 
-    implementation("org.apache.sshd:sshd-core:2.9.2")
-    implementation("org.apache.sshd:sshd-common:2.9.2")
-    implementation("org.apache.sshd:sshd-contrib:2.9.2")
-    implementation("org.apache.sshd:sshd-sftp:2.9.2")
+    implementation("org.apache.sshd:sshd-core:$sshdVersion")
+    implementation("org.apache.sshd:sshd-common:$sshdVersion")
+    implementation("org.apache.sshd:sshd-contrib:$sshdVersion")
+    implementation("org.apache.sshd:sshd-sftp:$sshdVersion")
     implementation("net.i2p.crypto:eddsa:0.3.0")
 
     implementation(project(":frontend"))

@@ -1,5 +1,6 @@
 package nl.ordina.robotics.server.transport.cli.checks
 
+import nl.ordina.robotics.server.socket.ClientAction
 import nl.ordina.robotics.server.socket.StatusLine
 import nl.ordina.robotics.server.transport.cli.Cmd
 import nl.ordina.robotics.server.transport.cli.Instruction
@@ -15,7 +16,7 @@ suspend fun buildCheck(execute: InstructionExecutor): StatusLine {
         name = "Build",
         success = projectBuilt,
         pending = projectBuilding,
-        actionUrl = "/commands/build",
-        actionLabel = "Build".onlyWhen(!projectBuilt),
+        commandLabel = "Build".onlyWhen(!projectBuilt),
+        command = ClientAction("/commands/build"),
     )
 }

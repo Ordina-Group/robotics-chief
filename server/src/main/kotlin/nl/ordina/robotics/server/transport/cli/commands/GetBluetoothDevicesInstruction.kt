@@ -7,9 +7,9 @@ import nl.ordina.robotics.server.socket.Message
 import nl.ordina.robotics.server.transport.cli.Cmd
 import nl.ordina.robotics.server.transport.cli.Instruction
 import nl.ordina.robotics.server.transport.cli.InstructionExecutor
-import nl.ordina.robotics.server.transport.cli.InstructionSet
+import nl.ordina.robotics.server.transport.cli.Script
 
-class GetBluetoothDevicesInstruction : InstructionSet {
+class GetBluetoothDevicesInstruction : Script {
     override suspend fun run(execute: InstructionExecutor): Message = try {
         val pairedDevices = execute(Instruction(Cmd.Bluetooth.paired))
             .resultOrError

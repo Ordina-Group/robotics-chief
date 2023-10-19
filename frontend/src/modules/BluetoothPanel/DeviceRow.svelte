@@ -12,6 +12,8 @@
   const friendlyName = settings.get(`bluetooth.device.${device.mac}.name`);
 
   const refresh = () => sendCommand({ type: "Command.GetBluetoothDevices" });
+  const connectWS = () => sendCommand({ type: "Command.BluetoothConnect", mac: device.mac });
+  const disconnectWS = () => sendCommand({ type: "Command.BluetoothDisconnect", mac: device.mac });
   const connect = async () => {
       loading = true;
       try {
@@ -42,7 +44,7 @@
     <TableBodyCell>{device.mac}</TableBodyCell>
     <TableBodyCell>
         {#if !device.connected}
-            <Button on:click={connect}>
+            <Button on:click={connectWS}>
                 {#if loading}
                     <Spinner class="mr-3" size="4" color="white" />
                     Connecting
@@ -51,7 +53,7 @@
                 {/if}
             </Button>
         {:else}
-            <Button color="yellow" on:click={disconnect}>
+            <Button color="yellow" on:click={disconnectWS}>
                 {#if loading}
                     <Spinner class="mr-3" size="4" color="white" />
                     Disconnecting
