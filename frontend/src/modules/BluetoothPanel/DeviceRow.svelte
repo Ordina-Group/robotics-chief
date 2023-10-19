@@ -11,7 +11,7 @@
 
   const friendlyName = settings.get(`bluetooth.device.${device.mac}.name`);
 
-  const refresh = () => sendCommand({ type: "GetBluetoothDevices" });
+  const refresh = () => sendCommand({ type: "Command.GetBluetoothDevices" });
   const connect = async () => {
       loading = true;
       try {

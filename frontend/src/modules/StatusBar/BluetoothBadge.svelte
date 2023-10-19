@@ -16,7 +16,7 @@
     devices: Device[];
   }
 
-  const [devices, refresh] = withRefeshableData<BluetoothDevices>("Message.BluetoothDevices", "GetBluetoothDevices");
+  const [devices, refresh] = withRefeshableData<BluetoothDevices>("Message.BluetoothDevices", "Command.GetBluetoothDevices");
 
   const controller = derived(
     devices,

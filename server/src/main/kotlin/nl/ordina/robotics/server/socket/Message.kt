@@ -2,7 +2,7 @@ package nl.ordina.robotics.server.socket
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import nl.ordina.robotics.server.robot.Settings
+import nl.ordina.robotics.server.robot.RobotSettings
 
 @Serializable
 sealed interface Message {
@@ -72,8 +72,8 @@ data class TopicMessage(val topic: String, override val message: String) : Messa
 
 @Serializable
 @SerialName("Message.Settings")
-data class Settings(val value: Settings) : Message {
-    override val message = "ssh settings"
+data class Settings(val value: RobotSettings) : Message {
+    override val message = "cli settings"
 }
 
 @Serializable

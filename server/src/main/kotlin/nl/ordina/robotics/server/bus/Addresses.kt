@@ -25,13 +25,30 @@ object Addresses {
         private const val PREFIX = "/robots"
 
         /**
-         * Commands for a particular robot.
-         */
-        fun commands(robotId: String) = "$PREFIX/$robotId/commands"
-
-        /**
          * Message for a particular robot.
          */
         fun message(robotId: String) = "$PREFIX/$robotId/message"
+
+        fun topicStart(robotId: String) = "$PREFIX/$robotId/topic"
+
+        fun topicEnd(robotId: String) = "$PREFIX/$robotId/topic"
+
+        fun topicMessage(robotId: String, topic: String) = "$PREFIX/$robotId/topic"
+    }
+
+    object Transport {
+        private const val PREFIX = "/transport"
+
+        fun execute(robotId: String) = "$PREFIX/$robotId/execute"
+
+        fun stream(robotId: String) = "$PREFIX/$robotId/stream"
+
+        fun message(robotId: String) = "$PREFIX/$robotId/message"
+    }
+
+    object Network {
+        private const val PREFIX = "/network"
+
+        fun executeInstruction(robotId: String) = "$PREFIX/$robotId/execute"
     }
 }

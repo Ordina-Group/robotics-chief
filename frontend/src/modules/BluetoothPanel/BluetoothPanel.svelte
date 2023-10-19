@@ -17,13 +17,17 @@
 
   const update = register("Message.BluetoothDevices", { devices: [] });
 
+  $: {
+      console.log($update?.devices)
+  }
+
   let error: string | undefined = undefined;
   let timeout: number;
 
-  const refresh = () => sendCommand({ type: "GetBluetoothDevices" });
+  const refresh = () => sendCommand({ type: "Command.GetBluetoothDevices" });
 
   const startScan = () => {
-    sendCommand({ type: "ScanBluetooth", scan: true });
+    sendCommand({ type: "Command.ScanBluetooth", scan: true });
     timeout = setInterval(() => {
       refresh();
     }, 1000);
@@ -31,7 +35,7 @@
 
   const onDone = () => {
     clearInterval(timeout);
-    sendCommand({ type: "ScanBluetooth", scan: false });
+    sendCommand({ type: "Command.ScanBluetooth", scan: false });
     closeModal("bluetooth");
   };
 
@@ -53,7 +57,7 @@
             <TableHeadCell>Action</TableHeadCell>
         </TableHead>
         <TableBody>
-            {#if $update.devices.length === 0}
+            {#if $update?.devices?.length === 0}
                 <TableBodyRow>
                     <TableBodyCell>No devices found</TableBodyCell>
                     <TableBodyCell>Try scanning</TableBodyCell>
@@ -61,7 +65,7 @@
                 </TableBodyRow>
             {/if}
 
-            {#each $update.devices as device (device.mac)}
+            {#each $update?.devices ?? [] as device (device.mac)}
                 <DeviceRow device={device} />
             {/each}
         </TableBody>

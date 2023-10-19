@@ -9,10 +9,6 @@ sealed interface Command {
 }
 
 @Serializable
-@SerialName("Command.CheckRobotConnection")
-data class CheckRobotConnection(override val name: String = "Command.CheckRobotConnection") : Command
-
-@Serializable
 @SerialName("Command.CreateStatusTable")
 data object CreateStatusTable : Command {
     override val name: String = "Command.CreateStatusTable"
@@ -66,13 +62,13 @@ data class BluetoothConnect(val mac: String) : Command {
 
 @Serializable
 @SerialName("Command.GetBluetoothDevices")
-object GetBluetoothDevices : Command {
+data object GetBluetoothDevices : Command {
     override val name = "GetBluetoothDevices"
 }
 
 @Serializable
 @SerialName("Command.ListTopics")
-object ListTopics : Command {
+data object ListTopics : Command {
     override val name = "ListTopics"
 }
 

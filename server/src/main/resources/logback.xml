@@ -11,5 +11,6 @@
     </root>
 
     <logger name="nl.ordina.robotics" level="DEBUG" />
+    <logger name="nl.ordina.robotics.server.transport.cli" level="TRACE" />
     <logger name="io.opentelemetry" level="INFO" />
 </configuration>
