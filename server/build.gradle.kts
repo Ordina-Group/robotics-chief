@@ -6,8 +6,8 @@ val sshdVersion = "2.10.0"
 val kotlin_logging_version: String by project
 
 plugins {
-    kotlin("jvm") version "1.9.10"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.10"
+    kotlin("jvm") version "1.9.20"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20"
 
     application
 }
@@ -38,6 +38,8 @@ dependencies {
     implementation("io.vertx:vertx-opentelemetry")
     implementation("io.vertx:vertx-lang-kotlin")
     implementation("io.vertx:vertx-lang-kotlin-coroutines")
+
+//    implementation("io.reactivex.rxjava3:rxkotlin:3.0.1")
 
     implementation(platform("io.opentelemetry:opentelemetry-bom:1.31.0"))
 //    implementation("io.opentelemetry:opentelemetry-api")
@@ -72,6 +74,7 @@ dependencies {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
+        languageVersion = "2.0"
         freeCompilerArgs += "-Xjsr305=strict"
         jvmTarget = "17"
     }

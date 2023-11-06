@@ -2,19 +2,19 @@
   import { Button, Spinner, TableBodyCell, TableBodyRow } from "flowbite-svelte";
 
   import { execute } from "$lib/actions";
-  import { sendCommand } from "$lib/socket";
   import settings from "../Settings/Settings";
   import { openModal } from "../ModalManager/modals";
+  import { sendCommand } from "$lib/robot";
 
-  export let network;
+  export let network: any;
 
   let loading: boolean = false;
 
-  const refresh = () => sendCommand({ type: "Command.GetWifiNetworks" });
+  const refresh = () => $sendCommand({ type: "Command.GetWifiNetworks" });
 
   const connect = () => {
     if (network.known === true) {
-      sendCommand({ type: "ConnectWifi", ssid: network.ssid });
+      $sendCommand({ type: "Command.ConnectWifi", ssid: network.ssid });
     } else {
       openModal("connect_wifi", network.ssid)
     }
@@ -23,14 +23,14 @@
   const disconnect = async () => {
       loading = true;
       try {
-        await sendCommand({ type: "DisconnectWifi"  });
+        await $sendCommand({ type: "DisconnectWifi"  });
       } finally {
         loading = false;
         refresh();
       }
   };
 
-  const remove = () => sendCommand({ type: "ForgetWifi", ssid: network.ssid });
+  const remove = () => $sendCommand({ type: "ForgetWifi", ssid: network.ssid });
 </script>
 
 <TableBodyRow>

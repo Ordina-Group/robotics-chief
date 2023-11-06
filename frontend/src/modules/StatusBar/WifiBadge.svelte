@@ -1,34 +1,34 @@
 <script lang="ts">
     import { Badge, Tooltip } from "flowbite-svelte";
-  import { derived } from "svelte/store";
+    import { derived } from "svelte/store";
 
-  import { withRefeshableData } from "$lib/withRefeshableData";
-  import { ResultType, Status } from "$lib/state";
-  import { onDestroy } from "svelte";
 
-  interface WifiInfo {
-    ssid: string;
-    signal: string;
-    rate: string;
-    known: boolean;
-  }
+    import { register } from "$lib/robot";
 
-  const [wifiSignal, refresh] = withRefeshableData<WifiInfo>("Message.WifiInfo", "Command.GetWifiInfo");
+    interface WifiInfo {
+        ssid: string;
+        signal: string;
+        rate: string;
+        known: boolean;
+    }
 
-  const wifi = derived(
-    wifiSignal,
-    (message) => {
-      if (message.status === Status.Loading) {
-        return "Checking";
-      } else if (message.type === ResultType.Success) {
-        return `${message.result.ssid} ${message.result.signal} ${message.result.rate}`;
-      }
-    },
-  );
+    const wifiSignal = register<WifiInfo>("Message.WifiInfo");
+    // const [wifiSignal, refresh] = withRefeshableData<WifiInfo>("Message.WifiInfo", "Command.GetWifiInfo");
 
-  const intervalID = setInterval(refresh, 2000);
+    const wifi = derived(
+        wifiSignal,
+        (message) => {
+            if (message === undefined) {
+                return "Checking";
+            }
+            // } else if (message.type === ResultType.Success) {
+            return `${message.ssid} ${message.signal} ${message.rate}`;
+            // }
+        },
+    );
 
-  onDestroy(() => clearInterval(intervalID));
+    // const intervalID = setInterval(refresh, 2000);
+    // onDestroy(() => clearInterval(intervalID));
 </script>
 
 <Badge large color="dark" class="whitespace-nowrap" id="wifi-connection">

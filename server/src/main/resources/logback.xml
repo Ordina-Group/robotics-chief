@@ -10,8 +10,10 @@
         <appender-ref ref="STDOUT" />
     </root>
 
-    <logger name="nl.ordina.robotics" level="INFO" />
-    <logger name="nl.ordina.robotics.server.robot.RobotVerticle" level="INFO" />
-    <logger name="nl.ordina.robotics.server.transport.cli" level="DEBUG" />
-    <logger name="io.opentelemetry" level="INFO" />
+    <logger name="nl.ordina.robotics" level="DEBUG" />
+    <logger name="nl.ordina.robotics.server.web" level="DEBUG" />
+    <logger name="nl.ordina.robotics.server.robot.RobotVerticle" level="DEBUG" />
+    <logger name="nl.ordina.robotics.server.transport.cli" level="INFO" />
+    <logger name="nl.ordina.robotics.server.network.ssh" level="INFO" />
+    <logger name="io.opentelemetry" level="ERROR" />
 </configuration>

@@ -1,44 +1,39 @@
 <script lang="ts">
     import { Badge, Tooltip } from "flowbite-svelte";
-  import { derived } from "svelte/store";
+    import { derived } from "svelte/store";
 
-  import { withRefeshableData } from "$lib/withRefeshableData";
-  import { ResultType, Status } from "$lib/state";
+    import { withRefeshableData } from "$lib/withRefeshableData";
+    import { ResultType, Status } from "$lib/state";
 
-  import settings from "../Settings/Settings";
-  import { onDestroy } from "svelte";
+    import settings from "../Settings/Settings";
 
-  interface Device {
-    mac: string;
-    connected: boolean;
-  }
+    interface Device {
+        mac: string;
+        connected: boolean;
+    }
 
-  interface BluetoothDevices {
-    devices: Device[];
-  }
+    interface BluetoothDevices {
+        devices: Device[];
+    }
 
-  const [devices, refresh] = withRefeshableData<BluetoothDevices>("Message.BluetoothDevices", "Command.GetBluetoothDevices");
+    const [devices] = $withRefeshableData("Message.BluetoothDevices", "Command.GetBluetoothDevices");
 
-  const controller = derived(
-    devices,
-    (message) => {
-      if (message.status === Status.Loading) {
-        return "Checking";
-      } else if (message.type === ResultType.Success) {
-        const mac = message.result.devices.find((d) => d.connected === true)?.mac;
+    const controller = derived(
+        devices,
+        (message) => {
+            if (message.status === Status.Loading) {
+                return "Checking";
+            } else if (message.type === ResultType.Success) {
+                const mac = (message.result as BluetoothDevices).devices.find((d) => d.connected === true)?.mac;
 
-        if (mac) {
-          return settings.get(`bluetooth.device.${mac}.name`) ?? mac;
-        } else {
-          return "No controller";
-        }
-      }
-    },
-  );
-
-  const intervalID = setInterval(refresh, 2000);
-
-  onDestroy(() => clearInterval(intervalID));
+                if (mac) {
+                    return settings.get(`bluetooth.device.${mac}.name`) ?? mac;
+                } else {
+                    return "No controller";
+                }
+            }
+        },
+    );
 </script>
 
 <Badge large color="dark" class="whitespace-nowrap" id="bluetooth-connection">

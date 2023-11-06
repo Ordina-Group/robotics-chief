@@ -2,7 +2,6 @@
   import { Button, Card, Sidebar, SidebarGroup, SidebarItem, SidebarWrapper, TabItem, Tabs } from "flowbite-svelte";
 
   import { ResultType, Status } from "$lib/state";
-  import type { TopicMessage } from "$lib/topics";
   import { withRefeshableData } from "$lib/withRefeshableData";
 
   import TopicOutput from "./TopicOutput.svelte";
@@ -10,7 +9,7 @@
   let countStyle = "inline-flex justify-center items-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300";
   export let selected: string;
 
-  const [topics, refresh] = withRefeshableData<TopicMessage>("Message.Topics", "Command.ListTopics");
+  const [topics, refresh] = $withRefeshableData("Message.Topics", "Command.ListTopics");
 </script>
 
 <div class="flex gap-1">

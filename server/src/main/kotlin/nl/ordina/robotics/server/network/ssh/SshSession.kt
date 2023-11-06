@@ -6,13 +6,15 @@ import io.vertx.kotlin.coroutines.awaitBlocking
 import nl.ordina.robotics.server.network.CommandRunner
 import nl.ordina.robotics.server.network.RobotNetwork
 import nl.ordina.robotics.server.robot.RobotSettings
-import org.apache.sshd.client.SshClient
+import org.apache.sshd.client.ClientBuilder
 import org.apache.sshd.client.session.ClientSession
 import kotlin.time.toJavaDuration
 
-class SshSession(private val settings: RobotSettings) : RobotNetwork {
+class SshSession(private val settings: RobotSettings, private val connectionUpdated: (Boolean) -> Unit) : RobotNetwork {
     private val logger = KotlinLogging.logger {}
-    private val client = SshClient.setUpDefaultClient()
+    private val client = ClientBuilder.builder()
+        .serverKeyVerifier { _, _, _ -> true }
+        .build()
     private var current: ClientSession? = null
 
     override suspend fun connected(): Boolean {
@@ -25,6 +27,7 @@ class SshSession(private val settings: RobotSettings) : RobotNetwork {
             try {
                 initialize()
             } catch (e: Exception) {
+                connectionUpdated(false)
                 logger.warn { e.message }
             }
         }
@@ -55,6 +58,7 @@ class SshSession(private val settings: RobotSettings) : RobotNetwork {
             }
         } catch (e: Exception) {
             current = null
+            connectionUpdated(false)
             throw e
         }
     }
@@ -67,7 +71,9 @@ class SshSession(private val settings: RobotSettings) : RobotNetwork {
         }
 
     private suspend fun initialize(): ClientSession = awaitBlocking {
+        connectionUpdated(false)
         settings.doInitialize()
+            .also { connectionUpdated(true) }
     }
 
     @WithSpan

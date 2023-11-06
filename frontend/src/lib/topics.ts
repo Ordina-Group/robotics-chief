@@ -1,7 +1,7 @@
 import { derived } from "svelte/store";
-import { register } from "$lib/socket";
 import type { State } from "$lib/state";
 import { ResultType } from "$lib/state";
+import { register } from "$lib/robot";
 
 export interface TopicMessage {
   topics: Topic[];

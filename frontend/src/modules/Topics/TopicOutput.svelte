@@ -3,16 +3,16 @@
 
   import type { Topic } from "$lib/topics";
   import { onDestroy, onMount } from "svelte";
-  import { register, sendCommand } from "$lib/socket";
 
   import PlayIcon from "../../icons/PlayIcon.svelte";
   import PauseIcon from "../../icons/PauseIcon.svelte";
+  import { register, sendCommand } from "$lib/robot";
 
   const start = () => {
-    sendCommand({ type: "Command.SubscribeTopic", id: topic.id });
+    $sendCommand({ type: "Command.SubscribeTopic", id: topic.id });
   };
   const stop = () => {
-    sendCommand({ type: "Command.UnsubscribeTopic", id: topic.id });
+    $sendCommand({ type: "Command.UnsubscribeTopic", id: topic.id });
   };
 
   export let topic: Topic;

@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.9.10"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.10"
+    kotlin("jvm") version "1.9.20"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.20"
     id("com.github.node-gradle.node") version "4.0.0"
     id("com.github.ManifestClasspath") version "0.1.0-RELEASE"
     id("org.jlleitschuh.gradle.ktlint") version "11.3.2"

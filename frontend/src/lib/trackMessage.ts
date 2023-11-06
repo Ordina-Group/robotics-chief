@@ -1,9 +1,9 @@
 import { derived } from "svelte/store";
 import type { Writable } from "svelte/store";
 
-import { register } from "$lib/socket";
 import type { State } from "$lib/state";
 import { ResultType, Status } from "$lib/state";
+import { register } from "$lib/robot";
 
 export interface CommandFailure {
   command: string;

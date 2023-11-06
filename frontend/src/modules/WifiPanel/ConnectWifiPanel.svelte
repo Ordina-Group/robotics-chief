@@ -1,8 +1,8 @@
 <script lang="ts">
   import { Alert, Button, Input, Label } from "flowbite-svelte";
 
-  import { register, sendCommand } from "$lib/socket";
   import { closeModal } from "../ModalManager/modals";
+  import { register, sendCommand } from "$lib/robot";
 
   const success = register("Message.CommandSuccess");
   const failure = register("Message.CommandFailure");
@@ -14,17 +14,17 @@
 
   const connect = () => {
     connecting = true;
-    sendCommand({ type: "ConnectWifi", ssid, password });
+    $sendCommand({ type: "Command.ConnectWifi", ssid, password });
   };
 
   $: {
-    if ($success?.command === "ConnectWifi") {
+    if ($success?.command === "Command.ConnectWifi") {
       closeModal("connect_wifi");
       success.set(undefined);
-      sendCommand({ type: "Command.GetWifiNetworks" });
+      $sendCommand({ type: "Command.GetWifiNetworks" });
     }
 
-    if ($failure?.command === "ConnectWifi") {
+    if ($failure?.command === "Command.ConnectWifi") {
       connecting = false;
       error = $failure.message;
     }

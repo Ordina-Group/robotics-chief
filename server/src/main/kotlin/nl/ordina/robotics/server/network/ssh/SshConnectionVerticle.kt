@@ -5,15 +5,15 @@ import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.vertx.core.eventbus.EventBus
 import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.coroutines.CoroutineVerticle
+import io.vertx.kotlin.coroutines.toReceiveChannel
 import io.vertx.kotlin.coroutines.vertxFuture
-import kotlinx.serialization.json.Json
+import kotlinx.coroutines.launch
 import nl.ordina.robotics.server.bus.Addresses
 import nl.ordina.robotics.server.robot.RobotSettings
 import nl.ordina.robotics.server.robot.RobotSettingsRepository
-import nl.ordina.robotics.server.support.decodeFromVertxJsonObject
-import nl.ordina.robotics.server.support.encodeToVertxJsonObject
+import nl.ordina.robotics.server.socket.RobotConnection
+import nl.ordina.robotics.server.socket.publishMessage
 import nl.ordina.robotics.server.support.loadConfig
-import nl.ordina.robotics.server.transport.cli.Cmd
 import nl.ordina.robotics.server.transport.cli.Instruction
 import nl.ordina.robotics.server.transport.cli.InstructionResult
 
@@ -34,21 +34,35 @@ class SshConnectionVerticle : CoroutineVerticle() {
 
         initializeConnection()
 
-        eb.consumer(Addresses.Network.executeInstruction(id)) { msg ->
-            val instruction = Json.decodeFromVertxJsonObject<Instruction>(msg.body())
+        val instructions = eb
+            .consumer<Instruction>(Addresses.Network.executeInstruction(id))
+            .toReceiveChannel(vertx)
 
-            vertxFuture {
-                val result = if (instruction.inWorkDir) {
-                    executeInWorkDir(instruction)
-                } else {
-                    executeCommand(instruction)
+        launch {
+            for (msg in instructions) {
+                try {
+                    val instruction = msg.body()
+                    val result = executeCommand(instruction)
+
+                    msg.reply(result)
+                } catch (e: Exception) {
+                    logger.error(e) { "Error executing instruction" }
+                    msg.fail(500, e.message)
                 }
-
-                val payload = Json.encodeToVertxJsonObject(result)
-
-                msg.reply(payload)
             }
         }
+
+        lateinit var refresh: (Long) -> Unit
+
+        refresh = { _ ->
+            vertxFuture {
+                network.tryConnect()
+            }
+
+            vertx.setTimer(200, refresh)
+        }
+
+        vertx.setTimer(200, refresh)
 
 //        logger.debug { "Setting up SSH command listener for robot $id" }
 //        eb.consumer(Addresses.Robots.commands(id)) {
@@ -70,12 +84,19 @@ class SshConnectionVerticle : CoroutineVerticle() {
 //        }
     }
 
+    override suspend fun stop() {
+        updateConnectionState(false)
+    }
+
     private suspend fun connected(): Boolean {
         if (!network.connected()) {
+            vertx.sharedData().getLock("ssh") {
+            }
             network.tryConnect()
             if (network.connected()) {
-//                updateConnectionState(true)
+                updateConnectionState(true)
             } else {
+                updateConnectionState(false)
                 logger.warn { "Failed to connect" }
             }
         }
@@ -83,28 +104,21 @@ class SshConnectionVerticle : CoroutineVerticle() {
         return network.connected()
     }
 
-    private suspend fun executeInWorkDir(
-        instruction: Instruction,
-    ): InstructionResult = executeCommand(
-        Instruction(Cmd.Unix.cd(robotSettings.workDir)).compose(instruction),
-    )
-
     private suspend fun executeCommand(
         instruction: Instruction,
     ): InstructionResult = network.withSession { runCommand ->
-        runCommand(instruction.toInstructionString())
+        runCommand(instruction.toInstructionString(robotSettings))
     }
 
     @WithSpan
     private suspend fun initializeConnection() = try {
         val repository = RobotSettingsRepository()
         robotSettings = repository.create(id, RobotSettings())
-        network = SshSession(robotSettings)
+        network = SshSession(robotSettings, ::updateConnectionState)
 
-        publish("Robot is ${connected()}!")
-//        robotStateService.updateRobotState(RobotConnection(true))
+        updateConnectionState(connected())
     } catch (e: Exception) {
-//        robotStateService.updateRobotState(RobotConnection(false))
+        updateConnectionState(false)
         publish("Error connecting to robot $id")
         logger.error(e) { "Failed to initialize robot" }
     }
@@ -113,6 +127,13 @@ class SshConnectionVerticle : CoroutineVerticle() {
         eb.publish(
             Addresses.Boundary.updates(id),
             JsonObject().put("message", message),
+        )
+    }
+
+    private fun updateConnectionState(connected: Boolean) {
+        eb.publishMessage(
+            Addresses.Network.message(id),
+            RobotConnection(connected),
         )
     }
 }

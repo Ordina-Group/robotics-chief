@@ -1,6 +1,7 @@
 import { derived, writable } from "svelte/store";
 
-import { register } from "./socket";
+
+import { register } from "$lib/robot";
 
 export const alertStore = writable<String | undefined>(undefined);
 

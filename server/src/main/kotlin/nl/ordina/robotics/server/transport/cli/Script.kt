@@ -1,6 +1,7 @@
 package nl.ordina.robotics.server.transport.cli
 
 import kotlinx.serialization.Serializable
+import nl.ordina.robotics.server.robot.RobotSettings
 import nl.ordina.robotics.server.socket.Message
 
 typealias InstructionExecutor = suspend (Instruction) -> InstructionResult
@@ -23,14 +24,17 @@ data class Instruction(
         separator: String = Cmd.Unix.And,
     ) : this(value.toList(), withSudo, inWorkDir, separator)
 
-    fun toInstructionString(): String = value.joinToString(separator)
+    fun toInstructionString(robotSettings: RobotSettings): String {
+        val prefixes = listOf(
+            if (inWorkDir) "${Cmd.Unix.cd(robotSettings.workDir)} && " else "",
+            if (withSudo) sudoPrefix(robotSettings.password) else "",
+        ).joinToString(" ")
 
-    fun compose(other: Instruction): Instruction = Instruction(
-        value = value + other.value,
-        withSudo = withSudo || other.withSudo,
-        inWorkDir = inWorkDir || other.inWorkDir,
-        separator = separator,
-    )
+        return value.joinToString(
+            separator,
+            prefix = prefixes,
+        )
+    }
 }
 
 @Serializable

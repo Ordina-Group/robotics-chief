@@ -1,6 +1,6 @@
 package nl.ordina.robotics.server.robot
 
-class RobotSettingsRepository {
+class RobotSettingsRepository() {
     private val items: MutableList<RobotSettings> = mutableListOf()
 
     fun create(id: String, settings: RobotSettings): RobotSettings {

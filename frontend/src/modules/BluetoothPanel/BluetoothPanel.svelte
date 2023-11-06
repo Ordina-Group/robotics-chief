@@ -11,9 +11,9 @@
   } from "flowbite-svelte";
   import { onDestroy, onMount } from "svelte";
 
-  import { register, sendCommand } from "$lib/socket";
   import DeviceRow from "./DeviceRow.svelte";
   import { closeModal } from "../ModalManager/modals";
+  import { register, sendCommand } from "$lib/robot";
 
   const update = register("Message.BluetoothDevices", { devices: [] });
 
@@ -24,10 +24,10 @@
   let error: string | undefined = undefined;
   let timeout: number;
 
-  const refresh = () => sendCommand({ type: "Command.GetBluetoothDevices" });
+  const refresh = () => $sendCommand({ type: "Command.GetBluetoothDevices" });
 
   const startScan = () => {
-    sendCommand({ type: "Command.ScanBluetooth", scan: true });
+    $sendCommand({ type: "Command.ScanBluetooth", scan: true });
     timeout = setInterval(() => {
       refresh();
     }, 1000);
@@ -35,7 +35,7 @@
 
   const onDone = () => {
     clearInterval(timeout);
-    sendCommand({ type: "Command.ScanBluetooth", scan: false });
+    $sendCommand({ type: "Command.ScanBluetooth", scan: false });
     closeModal("bluetooth");
   };
 

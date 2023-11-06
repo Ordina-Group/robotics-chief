@@ -7,11 +7,14 @@ import io.vertx.core.json.JsonArray
 import io.vertx.core.json.JsonObject
 import io.vertx.ext.bridge.PermittedOptions
 import io.vertx.ext.stomp.BridgeOptions
+import io.vertx.ext.stomp.Command
 import io.vertx.ext.stomp.DefaultSubscribeHandler
+import io.vertx.ext.stomp.Frame
 import io.vertx.ext.stomp.ServerFrame
 import io.vertx.ext.stomp.StompServer
 import io.vertx.ext.stomp.StompServerHandler
 import io.vertx.ext.stomp.StompServerOptions
+import io.vertx.ext.stomp.utils.Headers
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.handler.StaticHandler
 import io.vertx.kotlin.coroutines.CoroutineVerticle
@@ -60,12 +63,16 @@ class WebVerticle : CoroutineVerticle() {
         )
 
         val router = hostStaticContent(config)
-        val stompServer = createSTOMPServer(config)
+        try {
+            val stompServer = createSTOMPServer(config)
 
-        server
-            .requestHandler(router)
-            .webSocketHandler(stompServer.webSocketHandler())
-            .listen(config.getInteger("server.port", 8080))
+            server
+                .requestHandler(router)
+                .webSocketHandler(stompServer.webSocketHandler())
+                .listen(config.getInteger("server.port", 8080))
+        } catch (e: Exception) {
+            logger.error { "Failed to start web server: ${e.message}" }
+        }
     }
 
     private fun createSTOMPServer(config: JsonObject): StompServer {
@@ -93,15 +100,45 @@ class WebVerticle : CoroutineVerticle() {
         val eventBus = vertx.eventBus()
 
         return Handler<ServerFrame> { serverFrame ->
-            val slice = serverFrame.frame().destination
+            val subscriptionId = serverFrame.frame().getHeader(Frame.ID)!!
+            val slice = serverFrame.frame().destination!!
+            logger.debug { "Received subscribe request for $slice" }
 
-            eventBus.request<JsonObject>(
-                Addresses.initialSlice(),
-                JsonObject.of("slice", slice),
-            ).onSuccess {
-                logger.debug { "Sending initial state: $slice}" }
-                serverFrame.connection().write(it.body().toBuffer())
+            eventBus.consumer<JsonObject>(Addresses.initialSlice(subscriptionId)) {
+                logger.debug { "Sending initial state $slice: ${it.body()}" }
+
+                if (it.body()?.isEmpty != false) {
+                    return@consumer
+                }
+
+                try {
+                    val body = it.body()?.toBuffer()
+                    val headers: Headers =
+                        Headers.create()
+                            .add(Frame.DESTINATION, slice)
+                            .add(Frame.SUBSCRIPTION, subscriptionId)
+                            .add(Frame.CONTENT_LENGTH, (body?.length() ?: 0).toString())
+                    val message = Frame(
+                        Command.MESSAGE,
+                        headers,
+                        body,
+                    )
+
+                    serverFrame.connection().write(message)
+                } catch (e: Exception) {
+                    logger.error { "Failed to send initial state $slice: ${e.message}" }
+                }
             }
+
+            eventBus.publish(
+                Addresses.initialSlice(),
+                JsonObject.of(
+                    "slice",
+                    slice,
+                    "subscriptionId",
+                    subscriptionId,
+                ),
+            )
 
             defaultHandler.handle(serverFrame)
         }

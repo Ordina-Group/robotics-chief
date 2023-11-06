@@ -11,20 +11,20 @@
   } from "flowbite-svelte";
   import { onDestroy, onMount } from "svelte";
 
-  import { register, sendCommand } from "$lib/socket";
   import { closeModal } from "../ModalManager/modals";
 
   import NetworkRow from "./NetworkRow.svelte";
+  import { register, sendCommand } from "$lib/robot";
 
   const update = register("Message.WifiNetworks", { networks: [] });
 
   let error: string | undefined = undefined;
   let timeout: number;
 
-  const refresh = () => sendCommand({ type: "Command.GetWifiNetworks" });
+  const refresh = () => $sendCommand({ type: "Command.GetWifiNetworks" });
 
   const startScan = () => {
-    sendCommand({ type: "Command.GetWifiNetworks" });
+    $sendCommand({ type: "Command.GetWifiNetworks" });
     timeout = setInterval(() => {
       refresh();
     }, 1000);

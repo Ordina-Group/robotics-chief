@@ -1,15 +1,19 @@
 <script lang="ts">
-  import { currentAlert } from "$lib/alert";
+    import { currentAlert } from "$lib/alert";
+    import { initializeSocket } from "$lib/socket";
 
-  import "../app.postcss";
-  import Alert from "../modules/Alert/Alert.svelte";
-  import ModalManager from "../modules/ModalManager/ModalManager.svelte";
+    import "../app.postcss";
+    import Alert from "../modules/Alert/Alert.svelte";
+    import ModalManager from "../modules/ModalManager/ModalManager.svelte";
+
+
+    initializeSocket().catch(console.error);
 </script>
 
 <div class="grid container mx-auto gap-1">
-    <slot />
+    <slot/>
 
-    <ModalManager />
+    <ModalManager/>
     {#if $currentAlert !== undefined}
         <Alert color={$currentAlert.color} message={$currentAlert.message}/>
     {/if}

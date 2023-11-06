@@ -1,31 +1,28 @@
-import { Client } from '@stomp/stompjs';
-import { type Writable, writable } from "svelte/store";
-
-const subscribers: { [k: string]: Writable<any> } = {};
-
-export type Command = { [k: string]: string | boolean | number } & { type: string };
+import { Client, type IMessage } from '@stomp/stompjs';
+import { writable } from "svelte/store";
 
 export const connected = writable(false);
 
-const handleMessage = (message: { type: string }) => {
-    const store = subscribers[message.type];
+let socket: Client;
 
-    if (store !== undefined) {
-        store.set(message);
-    }
+const connectHandlers: { [k: string]: [(message: IMessage) => void, () => void] } = {};
 
-    if (subscribers["*"] !== undefined) {
-        subscribers["*"].set(message);
-    }
+export const registerConnectHandler = (id: string, handler: (message: IMessage) => void) => {
+    connectHandlers[id] = [handler, () => socket.unsubscribe(id)];
 
-    if (store === undefined && subscribers["*"] === undefined) {
-        console.log(`Discarding ${message}`);
+    if (socket?.connected) {
+        socket.subscribe(id, handler);
     }
 };
 
-let socket: Client;
+export const unregisterConnectHandler = (id: string) => {
+    connectHandlers[id]?.[1]();
+    delete connectHandlers[id];
+}
 
-const initializeSocket = async () => {
+export const getSocket = (): Client => socket;
+
+export const initializeSocket = async () => {
     if (socket !== undefined && socket.active) {
         return;
     }
@@ -39,12 +36,13 @@ const initializeSocket = async () => {
         // debug: console.debug,
         reconnectDelay: 5000,
         onConnect: () => {
-            connected.set(true);
-
-            socket.subscribe("/boundary/robots/3/updates", (message) => {
-                console.log("STATUS UPDATE", message);
-                handleMessage(JSON.parse(message.body));
+            Object.entries(connectHandlers).forEach(([id, [handler]]) => {
+                socket.subscribe(id, (message) => {
+                    handler(message);
+                });
             });
+
+            connected.set(true);
         },
         onDisconnect: () => {
             connected.set(false);
@@ -55,20 +53,4 @@ const initializeSocket = async () => {
     });
 
     socket.activate();
-};
-
-initializeSocket().catch(console.error);
-
-export const register = <T = any>(type: string, initial: any = undefined): Writable<T> => {
-    subscribers[type] ||= writable(initial);
-
-    return subscribers[type];
-};
-
-export const sendCommand = (command: Command) => {
-    if (socket.connected) {
-        socket.publish({ destination: '/boundary/robots/3/commands', body: JSON.stringify(command) });
-    } else {
-        console.error(`Discarding command ${command}, asked too soon`);
-    }
 };

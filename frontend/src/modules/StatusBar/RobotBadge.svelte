@@ -1,40 +1,57 @@
 <script lang="ts">
-  import { Badge, Tooltip } from "flowbite-svelte";
-  import { derived } from "svelte/store";
+    import { Badge, Button, Dropdown, DropdownItem, Tooltip } from "flowbite-svelte";
+    import { ChevronDownSolid, PlusSolid } from "flowbite-svelte-icons";
+    import { derived } from "svelte/store";
 
-  import { connected, register } from "$lib/socket";
+    import { connected } from "$lib/socket";
+    import { currentId, register, settings } from "$lib/robot";
 
-  interface RobotConnection {
-    connected: boolean;
-  }
+    const robotConnection = register("Message.RobotConnection", { connected: undefined });
 
-  const robotConnection = register("Message.RobotConnection", { connected: undefined });
-  // const robotConnection = derived(robotConnectionMessage, (message) => message.connected);
+    $: {
+        if ($currentId === undefined && $settings?.robots?.length > 0) {
+            console.log("Set new ID", $currentId, $settings.robots[0].id);
+            $currentId = $settings.robots[0].id;
+        }
+    }
 
-  const robotConnected = derived(
-    [connected, robotConnection],
-    ([connected, message]) => {
-      console.log(connected, message);
-      return message?.connected;
-      // if (!connected || message?.status === Status.Loading) {
-      //   return undefined;
-      // } else if (message?.type === ResultType.Success) {
-      //   return message.result.connected;
-      // }
-    },
-  );
+    const robotConnected = derived(
+        [connected, robotConnection],
+        ([connected, message]) => {
+            return message?.connected ?? connected;
+        },
+    );
 </script>
 
-<Badge large color="dark" class="whitespace-nowrap" id="robot-connection">
-    {#if $robotConnected === true}
-        🟢
-    {:else if $robotConnected === undefined}
-        🟡
-    {:else}
-        🔴
-    {/if}
-    Robot
-</Badge>
+<div class="flex">
+    <Badge
+        large
+        id="robot-connection"
+        color="dark"
+        class="cursor-pointer whitespace-nowrap !rounded-r-none hover:bg-gray-200 focus:ring-4 focus:outline-none focus:ring-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700 dark:text-white dark:border-gray-600"
+        type="button"
+    >
+        {#if $robotConnected === true}
+            🟢
+        {:else if $robotConnected === undefined}
+            🟡
+        {:else}
+            🔴
+        {/if}
+        Robot {$currentId}
+        <ChevronDownSolid class="outline-none w-3 h-3 ml-2"/>
+    </Badge>
+    <Button class="!rounded-l-none">
+        <PlusSolid class="outline-none w-3 h-3"/>
+    </Button>
+</div>
+<Dropdown triggeredBy="#robot-connection">
+    {#each $settings.robots as robot}
+        <DropdownItem class="flex items-center" on:click={() => $currentId = robot.id}>
+            Robot {robot.id}
+        </DropdownItem>
+    {/each}
+</Dropdown>
 
 <Tooltip placement="bottom" triggeredBy="#robot-connection">
     Connection to the robot.

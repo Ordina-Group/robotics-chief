@@ -84,4 +84,4 @@ object Cmd {
 
 fun String.ignoreFailure() = "($this || true)"
 
-fun String.withSudo(password: String) = " (echo '$password' | sudo -Si >/dev/null 2>&1); $this"
+fun sudoPrefix(password: String) = " (echo '$password' | sudo -Si >/dev/null 2>&1); sudo "

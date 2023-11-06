@@ -34,9 +34,9 @@ fun Command.toInstructionSet(robotSettings: RobotSettings): Script = when (this)
     is LaunchApp -> LaunchAppInstruction(this, robotSettings.domainId)
 
     is ListTopics -> ListTopicsInstruction(robotSettings.domainId)
-    is SubscribeTopic -> TODO()
-    is UnsubscribeTopic -> TODO()
-    is UpdateDomain -> TODO()
-    is UpdateHost -> TODO()
+    is SubscribeTopic -> Unimplemented(this)
+    is UnsubscribeTopic -> Unimplemented(this)
+    is UpdateDomain -> Unimplemented(this)
+    is UpdateHost -> Unimplemented(this)
     is ClientAction -> error("Action is not a server-side command.")
 }

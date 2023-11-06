@@ -1,18 +1,22 @@
 import { currentAlert } from "$lib/alert";
-import { type Command, sendCommand } from "$lib/socket";
 import { closeModal, openModal } from "../modules/ModalManager/modals";
+import { type Command, sendCommand } from "$lib/robot";
+import { derived, type Readable } from "svelte/store";
 
 export interface Action extends Command {
   actionUrl: string;
 }
 
-export const execute = async (command: Command): Promise<unknown> => {
-  if (command.actionUrl !== undefined) {
-    return executeAction(command as Action);
-  }
+export const execute: Readable<(c: Action | Command) => Promise<unknown> | void> = derived(
+    [sendCommand],
+([sendCommand]) => (command: Action | Command) => {
+      if (command.actionUrl !== undefined) {
+        return executeAction(command as Action);
+      }
 
-  return sendCommand(command as Command);
-}
+      return sendCommand(command as Command);
+    },
+);
 
 export const executeAction = async (action: Action): Promise<unknown> => {
   const url = new URL(action.actionUrl, window.location.origin);

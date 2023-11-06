@@ -1,7 +1,6 @@
 package nl.ordina.robotics.server.network
 
 import kotlinx.coroutines.flow.Flow
-import nl.ordina.robotics.server.robot.RobotSettings
 import nl.ordina.robotics.server.transport.cli.InstructionResult
 
 typealias CommandRunner = suspend (command: String) -> InstructionResult

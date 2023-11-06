@@ -4,11 +4,12 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.vertx.core.eventbus.EventBus
 import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.coroutines.CoroutineVerticle
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.InternalSerializationApi
+import kotlinx.serialization.serializer
 import nl.ordina.robotics.server.bus.Addresses
 import nl.ordina.robotics.server.socket.Message
-import nl.ordina.robotics.server.socket.publishMessage
-import nl.ordina.robotics.server.support.decodeFromVertxJsonObject
+import nl.ordina.robotics.server.socket.publishBoundaryMessage
 import nl.ordina.robotics.server.support.loadConfig
 import kotlin.reflect.KClass
 
@@ -21,45 +22,62 @@ import kotlin.reflect.KClass
  */
 class RobotStateService : CoroutineVerticle() {
     private val logger = KotlinLogging.logger {}
-    private val stateMap = mutableMapOf<KClass<out Message>, Message>()
+    private val typeMap = mutableMapOf<KClass<out Message>, String>()
+    private val stateMap = mutableMapOf<String, Message>()
     private lateinit var robotId: String
     private lateinit var eb: EventBus
 
     override suspend fun start() {
-        logger.info { "Starting robot state service" }
-
         val config = vertx.loadConfig()
-
         robotId = config.getString("robot.id")
         eb = vertx.eventBus()
 
+        logger.info { "[ROBOT $robotId] Starting robot state service" }
+
         eb.consumer<JsonObject>(Addresses.initialSlice()) {
-            if (it.body().getString("slice") == Addresses.Boundary.updates(robotId)) {
-                for (state in stateMap.values) {
-                    eb.publishMessage(Addresses.Boundary.updates(robotId), state)
+            val type = it.body().getString("slice")
+            logger.trace { "[ROBOT $robotId] Received initial state request for $type" }
+
+            if (type == Addresses.Boundary.updates(robotId)) {
+                for ((_, state) in stateMap) {
+                    try {
+                        eb.publishBoundaryMessage(
+                            Addresses.initialSlice(it.body().getString("subscriptionId")),
+                            state,
+                        )
+                    } catch (e: Exception) {
+                        logger.error { "Failed to send initial state $state, ${e.message}" }
+                    }
                 }
             }
         }
 
-        eb.consumer(Addresses.Robots.message(robotId)) {
-            logger.debug { "Received message for $robotId: ${it.body()} from ${it.address()}" }
-            val message = Json.decodeFromVertxJsonObject<Message>(it.body())
+        eb.consumer<Message>(Addresses.Robots.message(robotId)) {
+            logger.trace { "Received message for $robotId: ${it.body()} from ${it.address()}" }
+            val message = it.body()
 
             if (it.replyAddress() != null) {
                 TODO()
             }
+
             updateRobotState(message)
         }
     }
 
+    @OptIn(InternalSerializationApi::class, ExperimentalSerializationApi::class)
     private fun updateRobotState(state: Message) {
-        if (stateMap[state::class] == state) {
-            logger.debug { "State of type ${state::class} is unchanged, not publishing" }
+        val type = typeMap.getOrPut(state::class) {
+            val serializer = state::class.serializer()
+            serializer.descriptor.serialName
+        }
+
+        if (stateMap[type] == state) {
+            logger.trace { "State of type ${state::class} is unchanged, not publishing" }
             return
         }
 
-        stateMap[state::class] = state
+        stateMap[type] = state
 
-        eb.publishMessage(Addresses.Boundary.updates(robotId), state)
+        eb.publishBoundaryMessage(Addresses.Boundary.updates(robotId), state)
     }
 }

@@ -12,6 +12,12 @@ sealed interface Message {
 }
 
 @Serializable
+@SerialName("Message.ChiefSettings")
+data class ChiefSettings(val robots: List<RobotSettings>) : Message {
+    override val message = "chief settings"
+}
+
+@Serializable
 @SerialName("Message.Info")
 data class Info(override val message: String) : Message
 

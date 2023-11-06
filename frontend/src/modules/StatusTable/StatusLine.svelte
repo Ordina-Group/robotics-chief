@@ -2,7 +2,8 @@
 
   import { execute } from "$lib/actions";
   import { Button, Spinner, TableBodyCell, TableBodyRow } from "flowbite-svelte";
-  import type { Command } from "$lib/socket";
+
+  import type { Command } from "$lib/robot";
 
   export interface StatusItem {
     name: string;
@@ -20,7 +21,7 @@
   const execAction = async () => {
     loading = true;
     try {
-        await execute(item.command);
+        await $execute(item.command);
     } finally {
         loading = false;
     }

@@ -16,7 +16,7 @@ data object CreateStatusTable : Command {
 
 @Serializable
 @SerialName("Command.UpdateHost")
-data class UpdateHost(val host: String) : Command {
+data class UpdateHost(val host: String, val robotId: String) : Command {
     override val name = "UpdateHost"
 }
 

@@ -18,9 +18,13 @@ import nl.ordina.robotics.server.bus.Addresses
 import nl.ordina.robotics.server.socket.Command
 import nl.ordina.robotics.server.socket.CreateStatusTable
 import nl.ordina.robotics.server.socket.SubscribeTopic
+import nl.ordina.robotics.server.socket.UpdateDomain
+import nl.ordina.robotics.server.socket.publishMessage
+import nl.ordina.robotics.server.socket.replyMessage
 import nl.ordina.robotics.server.socket.requestCommand
 import nl.ordina.robotics.server.support.loadConfig
 import java.io.ByteArrayInputStream
+import kotlin.time.TimeSource
 
 /**
  * Represents a Robot in the network.
@@ -38,14 +42,21 @@ class RobotVerticle : CoroutineVerticle() {
 
         eb = vertx.eventBus()
 
+        eb.consumer(Addresses.Transport.message(robotId)) {
+            logger.trace { "[ROBOT $robotId] Received message: ${it.body()}" }
+            eb.publishMessage(Addresses.Robots.message(robotId), it.body())
+        }
+
         eb.consumer(Addresses.Boundary.commands(robotId)) {
             vertxFuture {
                 handleWebsocketCommand(it)
             }
         }
 
-        vertx.setPeriodicAwait(10_000) {
-            updateTable()
+        vertx.setPeriodicAwait(5_000) {
+            vertx.sharedData().getLockWithTimeout("updateTable-$robotId", 200) {
+                updateTable()
+            }
         }
     }
 
@@ -53,12 +64,12 @@ class RobotVerticle : CoroutineVerticle() {
     private suspend fun handleWebsocketCommand(message: Message<Buffer>) {
         try {
             val command = Json.decodeFromStream<Command>(ByteArrayInputStream(message.body().bytes))
-            logger.debug { "[ROBOT $robotId] Command: $command" }
+            logger.trace { "[ROBOT $robotId] Command: $command" }
 
-            if (command is SubscribeTopic) {
-                handleTopicSubscribe(command.id)
-            } else {
-                handleRegularCommand(message, command)
+            when (command) {
+                is SubscribeTopic -> handleTopicSubscribe(command.id)
+                is UpdateDomain -> handleDomainUpdate(command.domain)
+                else -> handleRegularCommand(message, command)
             }
         } catch (e: Exception) {
             logger.error(e) { "Failed to handle websocket command: ${e.message}" }
@@ -67,14 +78,17 @@ class RobotVerticle : CoroutineVerticle() {
 
     private suspend fun handleRegularCommand(message: Message<Buffer>, command: Command) {
         try {
-            val it = eb.requestCommand<JsonObject>(Addresses.Transport.execute(robotId), command).await()
+            val it = eb.requestCommand<nl.ordina.robotics.server.socket.Message>(
+                Addresses.Transport.execute(robotId),
+                command,
+            ).await()
 
             if (message.replyAddress() != null) {
                 logger.error { "websockets do have reply addresses" }
-                message.reply(it.body())
+                message.replyMessage(it.body())
             } else {
-                logger.debug { "[ROBOT $robotId] Answer for $command: ${it.body()}" }
-                eb.publish(Addresses.Robots.message(robotId), it.body())
+                logger.trace { "[ROBOT $robotId] Answer for $command: ${it.body()}" }
+                eb.publishMessage(Addresses.Robots.message(robotId), it.body())
             }
         } catch (e: Exception) {
             logger.error(e) { "Failed to execute command: ${e.message}" }
@@ -98,21 +112,27 @@ class RobotVerticle : CoroutineVerticle() {
         }
     }
 
+    private suspend fun handleDomainUpdate(domainId: Int) {
+        logger.debug { "Updating domain to $domainId" }
+
+        vertx.sharedData().getLocalMap<String, String>("domains")[robotId] = domainId.toString(10)
+    }
+
     @WithSpan
     private fun updateTable() {
-        try {
-            eb.requestCommand<JsonObject>(Addresses.Transport.execute(robotId), CreateStatusTable)
-                .onSuccess {
-                    if (logger.isTraceEnabled()) {
-                        logger.trace { "Publish StatusTable with result ${it.body()}" }
-                    } else {
-                        logger.debug { "Publish StatusTable" }
-                    }
+        val start = TimeSource.Monotonic.markNow()
 
-                    eb.publish(Addresses.Robots.message(robotId), it.body())
+        try {
+            eb.requestCommand<nl.ordina.robotics.server.socket.Message>(Addresses.Transport.execute(robotId), CreateStatusTable)
+                .onSuccess {
+                    logger.trace { "Publish StatusTable with result ${it.body()}" }
+
+                    eb.publishMessage(Addresses.Robots.message(robotId), it.body())
+                    logger.debug { "TABLE SUCCESS: ${start.elapsedNow()}" }
                 }
         } catch (e: Exception) {
             logger.error(e) { "Failed to update robot state: ${e.message}" }
+            logger.debug { "TABLE FAIL: ${start.elapsedNow()}" }
         }
     }
 }

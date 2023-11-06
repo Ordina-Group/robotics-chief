@@ -14,7 +14,7 @@
             <TableHeadCell>Message</TableHeadCell>
             <TableHeadCell>Action</TableHeadCell>
         </TableHead>
-        <TableBody class="divide-y">
+        <TableBody tableBodyClass="divide-y">
             {#if $statusStore !== undefined}
                 {#each $statusStore.items as item, i}
                     <StatusLine item={item} />
