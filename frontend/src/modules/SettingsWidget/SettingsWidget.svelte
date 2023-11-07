@@ -57,7 +57,7 @@
         <form
                 action="#"
                 class="flex flex-col gap-1"
-                on:submit|preventDefault={() => $sendChiefCommand({ type: 'Command.UpdateDomain', domain: $settingsStore.domainId })}
+                on:submit|preventDefault={() => $sendChiefCommand({ type: 'Command.UpdateDomain', robotId: $currentId, domain: $settingsStore.domainId })}
         >
             <div>
                 <Label for="host">Domain id</Label>

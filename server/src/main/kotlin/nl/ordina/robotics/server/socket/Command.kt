@@ -22,7 +22,7 @@ data class UpdateHost(val host: String, val robotId: String) : Command {
 
 @Serializable
 @SerialName("Command.UpdateDomain")
-data class UpdateDomain(val domain: Int) : Command {
+data class UpdateDomain(val domain: Int, val robotId: String) : Command {
     override val name = "UpdateDomain"
 }
 

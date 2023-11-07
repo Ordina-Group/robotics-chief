@@ -15,9 +15,9 @@ object Addresses {
     object Boundary {
         private const val PREFIX = "/boundary"
 
-        fun inboundPermitted() = "($PREFIX/robots/\\d+/(updates|commands)|/chief/command)"
+        fun inboundPermitted() = ".*" // "($PREFIX/robots/\\d+/(updates|commands)|/chief/command)"
 
-        fun outboundPermitted() = "($PREFIX/robots/\\d+/updates|.*)"
+        fun outboundPermitted() = ".*" // "($PREFIX/robots/\\d+/updates|.*)"
 
         /**
          * Commands for a particular robot from outside the boundary.

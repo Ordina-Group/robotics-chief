@@ -3,7 +3,12 @@ import { getSocket, registerConnectHandler, unregisterConnectHandler } from "$li
 
 export type Command = { [k: string]: string | boolean | number | undefined } & { type: string };
 
-export type RobotSettings = { id: string };
+export type RobotSettings = {
+    id: string,
+    host: string,
+    controller: string,
+    domainId: number,
+};
 
 const subscribers: { [k: string]: Writable<any> } = {};
 
@@ -33,7 +38,7 @@ export const sendChiefCommand = derived(
     [currentId],
     ([currentId]) => (command: Command) => {
         if (getSocket()?.connected) {
-            getSocket().publish({ destination: `/boundary/robots/${currentId}/commands`, body: JSON.stringify(command) });
+            getSocket().publish({ destination: `/chief/command`, body: JSON.stringify(command) });
         } else {
             console.error(`Discarding command ${command}, asked too soon`);
         }

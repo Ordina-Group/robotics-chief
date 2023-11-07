@@ -10,7 +10,7 @@ sealed class ChiefCommand
 class AddRobot(val robotSettings: RobotSettings) : ChiefCommand()
 
 @Serializable
-class UpdateRobot(val robotSettings: RobotSettings) : ChiefCommand()
+class UpdateRobot(val robotId: String, val robotSettings: RobotSettings) : ChiefCommand()
 
 @Serializable
 class RemoveRobot(val robotId: String) : ChiefCommand()
