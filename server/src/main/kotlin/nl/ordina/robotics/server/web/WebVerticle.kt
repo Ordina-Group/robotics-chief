@@ -72,6 +72,7 @@ class WebVerticle : CoroutineVerticle() {
                 .listen(config.getInteger("server.port", 8080))
         } catch (e: Exception) {
             logger.error { "Failed to start web server: ${e.message}" }
+            vertx.close()
         }
     }
 

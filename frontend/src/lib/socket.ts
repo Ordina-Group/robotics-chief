@@ -5,13 +5,13 @@ export const connected = writable(false);
 
 let socket: Client;
 
-const connectHandlers: { [k: string]: [(message: IMessage) => void, () => void] } = {};
+const connectHandlers: { [k: string]: [handler: (message: IMessage) => void, unsubscribe: () => void] } = {};
 
 export const registerConnectHandler = (id: string, handler: (message: IMessage) => void) => {
-    connectHandlers[id] = [handler, () => socket.unsubscribe(id)];
+    connectHandlers[id] = [handler, () => undefined];
 
     if (socket?.connected) {
-        socket.subscribe(id, handler);
+        connectHandlers[id][1] = socket.subscribe(id, handler).unsubscribe;
     }
 };
 
@@ -37,9 +37,9 @@ export const initializeSocket = async () => {
         reconnectDelay: 5000,
         onConnect: () => {
             Object.entries(connectHandlers).forEach(([id, [handler]]) => {
-                socket.subscribe(id, (message) => {
+                connectHandlers[id][1] = socket.subscribe(id, (message) => {
                     handler(message);
-                });
+                }).unsubscribe;
             });
 
             connected.set(true);

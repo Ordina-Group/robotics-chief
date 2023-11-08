@@ -3,11 +3,14 @@ package nl.ordina.robotics.server.network.ssh
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.opentelemetry.instrumentation.annotations.WithSpan
 import io.vertx.core.eventbus.EventBus
+import io.vertx.core.eventbus.Message
 import io.vertx.core.json.JsonObject
 import io.vertx.kotlin.coroutines.CoroutineVerticle
-import io.vertx.kotlin.coroutines.toReceiveChannel
+import io.vertx.kotlin.coroutines.receiveChannelHandler
 import io.vertx.kotlin.coroutines.vertxFuture
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import nl.ordina.robotics.server.bus.Addresses
 import nl.ordina.robotics.server.robot.RobotSettings
 import nl.ordina.robotics.server.robot.RobotSettingsRepository
@@ -32,22 +35,26 @@ class SshConnectionVerticle : CoroutineVerticle() {
         logger.info { "Starting SSH network verticle for $id" }
         eb = vertx.eventBus()
 
-        initializeConnection()
-
-        val instructions = eb
-            .consumer<Instruction>(Addresses.Network.executeInstruction(id))
-            .toReceiveChannel(vertx)
+        val adapter = vertx.receiveChannelHandler<Message<Instruction>>()
+        eb.consumer(Addresses.Network.executeInstruction(id), adapter)
 
         launch {
-            for (msg in instructions) {
+            while (true) {
+                val msg = adapter.receive()
                 try {
-                    val instruction = msg.body()
-                    val result = executeCommand(instruction)
+                    withTimeout(10_000) {
+                        try {
+                            val instruction = msg.body()
+                            val result = executeCommand(instruction)
 
-                    msg.reply(result)
-                } catch (e: Exception) {
-                    logger.error(e) { "Error executing instruction" }
-                    msg.fail(500, e.message)
+                            msg.reply(result)
+                        } catch (e: Exception) {
+                            logger.error(e) { "Error executing instruction: ${e.message}" }
+                            msg.reply(InstructionResult(null, error = e.message))
+                        }
+                    }
+                } catch (e: TimeoutCancellationException) {
+                    msg.reply(InstructionResult(null, error = e.message))
                 }
             }
         }
@@ -64,24 +71,7 @@ class SshConnectionVerticle : CoroutineVerticle() {
 
         vertx.setTimer(200, refresh)
 
-//        logger.debug { "Setting up SSH command listener for robot $id" }
-//        eb.consumer(Addresses.Robots.commands(id)) {
-//            handleInternalCommand(it)
-//            eb.request<JsonObject>(Addresses.Transport.execute(id), it.body())
-//        }
-
-//        val channel = eb
-//            .consumer<JsonObject>(Addresses.Robots.topicStart(id))
-//            .toReceiveChannel(vertx)
-//
-//        for (subscribeRequest in channel) {
-//            val topicId = Json.decodeCommand<SubscribeTopic>(subscribeRequest.body()).id
-//
-//            robot.subscribeTopic(executor, SubscribeTopic(topicId)).collect { message ->
-//                logger.trace { "Publishing on topic $topicId: $message" }
-//                eb.publishMessage(Addresses.Robots.topicMessage(id, topicId), message)
-//            }
-//        }
+        initializeConnection()
     }
 
     override suspend fun stop() {

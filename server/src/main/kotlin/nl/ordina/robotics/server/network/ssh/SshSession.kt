@@ -23,7 +23,7 @@ class SshSession(private val settings: RobotSettings, private val connectionUpda
 
     override suspend fun tryConnect() {
         if (!connected()) {
-            logger.info { "Trying to connect via SSH" }
+            logger.debug { "Trying to connect via SSH" }
             try {
                 initialize()
             } catch (e: Exception) {

@@ -1,4 +1,4 @@
-import { derived, type Writable, writable } from "svelte/store";
+import { derived, get, type Updater, type Writable, writable } from "svelte/store";
 import { getSocket, registerConnectHandler, unregisterConnectHandler } from "$lib/socket";
 
 export type Command = { [k: string]: string | boolean | number | undefined } & { type: string };
@@ -12,7 +12,34 @@ export type RobotSettings = {
 
 const subscribers: { [k: string]: Writable<any> } = {};
 
-export const currentId = writable<string | undefined>(undefined);
+export const currentId = ((value: string | undefined): Writable<string | undefined> => {
+    const store = writable<string | undefined>(value);
+
+    const updateSubscriptions = (previous: string | undefined, current: string | undefined) => {
+        if (previous !== undefined) {
+            unregisterConnectHandler(`/boundary/robots/${previous}/updates`);
+        }
+
+        if (current !== undefined) {
+            registerConnectHandler(`/boundary/robots/${current}/updates`, (message) => {
+                handleMessage(JSON.parse(message.body));
+            });
+        }
+    };
+
+    const set = (value: string | undefined) => {
+        const previous = get(store);
+        updateSubscriptions(previous, value);
+
+        store.set(value);
+    };
+
+    return {
+        subscribe: store.subscribe,
+        update: (fn: Updater<string | undefined>) => set(fn(get(store))),
+        set,
+    };
+})(undefined);
 
 export const settings = writable<{ robots: RobotSettings[] }>({ robots: [] });
 
@@ -81,22 +108,3 @@ export const register = <T = any>(type: string, initial: any = undefined): Writa
 
     return subscribers[type];
 };
-
-currentId.subscribe(
-    (robotId) => {
-        if (robotId === undefined) {
-            return;
-        }
-
-        registerConnectHandler(`/boundary/robots/${robotId}/updates`, (message) => {
-            handleMessage(JSON.parse(message.body));
-        });
-    },
-    (robotId) => {
-        console.log("INVALIDATE", robotId);
-        if (robotId !== undefined) {
-            getSocket().unsubscribe(`/boundary/robots/${robotId}/updates`);
-            unregisterConnectHandler(`/boundary/robots/${robotId}/updates`);
-        }
-    }
-);

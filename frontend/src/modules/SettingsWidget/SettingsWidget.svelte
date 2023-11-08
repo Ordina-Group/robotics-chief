@@ -39,7 +39,7 @@
 </style>
 
 <div class="flex columns-2 gap-2">
-    <Card class="gap-1" size="s">
+    <Card class="gap-1" size="sm">
         <form
                 action="#"
                 class="flex flex-col gap-1"
@@ -69,7 +69,7 @@
         </form>
     </Card>
 
-    <Card class="grow" size="l">
+    <Card class="grow" size="lg">
         <span>Message:</span>
         <span class="message-container break-words">
             {#key lastMessage}

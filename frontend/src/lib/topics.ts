@@ -1,6 +1,6 @@
 import { derived } from "svelte/store";
 import type { State } from "$lib/state";
-import { ResultType } from "$lib/state";
+import { ResultType, Status } from "$lib/state";
 import { register } from "$lib/robot";
 
 export interface TopicMessage {
@@ -24,11 +24,11 @@ export const topics = derived(
   ],
   ([topics, failure]): State<TopicMessage, string> => {
     if (topics  !== undefined) {
-      return { status: ResultType.Success, result: topics };
+      return { status: Status.Done, type: ResultType.Success, result: topics };
     } else if (failure?.command === "Command.ListTopics") {
-      return { status: ResultType.Failure, result: failure.message };
+      return { status: Status.Done, type: ResultType.Failure, result: failure.message };
     }
 
-    return { status: ResultType.Loading, result: undefined };
+    return { status: Status.Loading, type: ResultType.Empty, result: undefined };
   },
 );
