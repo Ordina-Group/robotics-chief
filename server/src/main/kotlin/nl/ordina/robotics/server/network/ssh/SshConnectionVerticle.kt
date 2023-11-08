@@ -9,7 +9,6 @@ import io.vertx.kotlin.coroutines.CoroutineVerticle
 import io.vertx.kotlin.coroutines.receiveChannelHandler
 import io.vertx.kotlin.coroutines.vertxFuture
 import kotlinx.coroutines.TimeoutCancellationException
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import kotlinx.serialization.json.Json
@@ -45,12 +44,13 @@ class SshConnectionVerticle : CoroutineVerticle() {
 
         launch {
             while (true) {
+                val msg = adapter.receive()
+
                 if (!connected()) {
-                    delay(100)
+                    msg.reply(InstructionResult(null, error = "Cannot connect"))
                     continue
                 }
 
-                val msg = adapter.receive()
                 try {
                     withTimeout(10_000) {
                         try {
@@ -90,8 +90,6 @@ class SshConnectionVerticle : CoroutineVerticle() {
 
     private suspend fun connected(): Boolean {
         if (!network.connected()) {
-            vertx.sharedData().getLock("ssh") {
-            }
             network.tryConnect()
             if (network.connected()) {
                 updateConnectionState(true)

@@ -5,6 +5,9 @@
     import { settingsStore } from "$lib/dashboard";
     import { onDestroy } from "svelte";
     import { currentId, register, sendChiefCommand } from "$lib/robot";
+    import { sendCommand } from "$lib/robot.js";
+
+    let customCommand = "";
 
     const excluded = [
         "Message.BluetoothDevices",
@@ -39,34 +42,52 @@
 </style>
 
 <div class="flex columns-2 gap-2">
-    <Card class="gap-1" size="sm">
-        <form
-                action="#"
-                class="flex flex-col gap-1"
-                on:submit|preventDefault={() => $sendChiefCommand({ type: 'Command.UpdateHost', robotId: $currentId, host: $settingsStore.host })}
-        >
-            <div>
-                <Label for="host">Host</Label>
-                <Input bind:value={$settingsStore.host} id="host" type="text"/>
-            </div>
-            <Button type="submit">
-                Update host
-            </Button>
-        </form>
+    <Card class="gap-4 flex-row" size="sm">
+        <div class="flex flex-col gap-4">
+            <form
+                    action="#"
+                    class="flex flex-col gap-1"
+                    on:submit|preventDefault={() => $sendChiefCommand({ type: 'Command.UpdateHost', robotId: $currentId, host: $settingsStore.host })}
+            >
+                <div>
+                    <Label for="host">Host</Label>
+                    <Input bind:value={$settingsStore.host} id="host" type="text"/>
+                </div>
+                <Button type="submit">
+                    Update host
+                </Button>
+            </form>
 
-        <form
-                action="#"
-                class="flex flex-col gap-1"
-                on:submit|preventDefault={() => $sendChiefCommand({ type: 'Command.UpdateDomain', robotId: $currentId, domain: $settingsStore.domainId })}
-        >
-            <div>
-                <Label for="host">Domain id</Label>
-                <Input bind:value={$settingsStore.domainId} id="domainId" type="number"/>
-            </div>
-            <Button type="submit">
-                Update domain
-            </Button>
-        </form>
+            <form
+                    action="#"
+                    class="flex flex-col gap-1"
+                    on:submit|preventDefault={() => $sendChiefCommand({ type: 'Command.UpdateDomain', robotId: $currentId, domain: $settingsStore.domainId })}
+            >
+                <div>
+                    <Label for="host">Domain id</Label>
+                    <Input bind:value={$settingsStore.domainId} id="domainId" type="number"/>
+                </div>
+                <Button type="submit">
+                    Update domain
+                </Button>
+            </form>
+        </div>
+
+        <div class="flex flex-col gap-4">
+            <form
+                    action="#"
+                    class="flex flex-col gap-1"
+                    on:submit|preventDefault={() => $sendCommand({ type: 'Command.CustomCommand', robotId: $currentId, command: customCommand })}
+            >
+                <div>
+                    <Label for="customCommand">Custom command</Label>
+                    <Input bind:value={customCommand} id="customCommand" type="text"/>
+                </div>
+                <Button type="submit">
+                    Execute
+                </Button>
+            </form>
+        </div>
     </Card>
 
     <Card class="grow" size="lg">

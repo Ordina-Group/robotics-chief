@@ -15,6 +15,12 @@ data object CreateStatusTable : Command {
 }
 
 @Serializable
+@SerialName("Command.CustomCommand")
+data class CustomCommand(val command: String, val robotId: String) : Command {
+    override val name = "CustomCommand"
+}
+
+@Serializable
 @SerialName("Command.UpdateHost")
 data class UpdateHost(val host: String, val robotId: String) : Command {
     override val name = "UpdateHost"

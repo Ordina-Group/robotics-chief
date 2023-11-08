@@ -7,6 +7,7 @@ import nl.ordina.robotics.server.socket.ClientAction
 import nl.ordina.robotics.server.socket.Command
 import nl.ordina.robotics.server.socket.ConnectWifi
 import nl.ordina.robotics.server.socket.CreateStatusTable
+import nl.ordina.robotics.server.socket.CustomCommand
 import nl.ordina.robotics.server.socket.ForgetWifi
 import nl.ordina.robotics.server.socket.GetBluetoothDevices
 import nl.ordina.robotics.server.socket.GetWifiInfo
@@ -23,6 +24,7 @@ import nl.ordina.robotics.server.transport.cli.checks.CreateStatusTableInstructi
 
 fun Command.toInstructionSet(robotSettings: RobotSettings): Script = when (this) {
     is CreateStatusTable -> CreateStatusTableInstruction()
+    is CustomCommand -> CustomCommandInstruction(this)
     is ConnectWifi -> ConnectWifiInstruction(this)
     is GetWifiNetworks -> GetWifiNetworksInstruction()
     is GetWifiInfo -> GetWifiInfoInstruction(this)
