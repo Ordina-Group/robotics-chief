@@ -11,11 +11,12 @@ import io.vertx.kotlin.coroutines.vertxFuture
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import kotlinx.serialization.json.Json
 import nl.ordina.robotics.server.bus.Addresses
 import nl.ordina.robotics.server.robot.RobotSettings
-import nl.ordina.robotics.server.robot.RobotSettingsRepository
 import nl.ordina.robotics.server.socket.RobotConnection
 import nl.ordina.robotics.server.socket.publishMessage
+import nl.ordina.robotics.server.support.decodeFromVertxJsonObject
 import nl.ordina.robotics.server.support.loadConfig
 import nl.ordina.robotics.server.transport.cli.Instruction
 import nl.ordina.robotics.server.transport.cli.InstructionResult
@@ -34,6 +35,9 @@ class SshConnectionVerticle : CoroutineVerticle() {
 
         logger.info { "Starting SSH network verticle for $id" }
         eb = vertx.eventBus()
+
+        robotSettings = fromConfigJson(config)
+        network = SshSession(robotSettings, ::updateConnectionState)
 
         val adapter = vertx.receiveChannelHandler<Message<Instruction>>()
         eb.consumer(Addresses.Network.executeInstruction(id), adapter)
@@ -102,16 +106,17 @@ class SshConnectionVerticle : CoroutineVerticle() {
 
     @WithSpan
     private suspend fun initializeConnection() = try {
-        val repository = RobotSettingsRepository()
-        robotSettings = repository.create(id, RobotSettings())
-        network = SshSession(robotSettings, ::updateConnectionState)
-
         updateConnectionState(connected())
     } catch (e: Exception) {
         updateConnectionState(false)
         publish("Error connecting to robot $id")
         logger.error(e) { "Failed to initialize robot" }
     }
+
+    private fun fromConfigJson(config: JsonObject): RobotSettings = config
+        .filter { it.key.startsWith("robot.") }
+        .associate { it.key.removePrefix("robot.") to it.value }
+        .let { Json.decodeFromVertxJsonObject(JsonObject(it)) }
 
     private fun publish(message: String) {
         eb.publish(
